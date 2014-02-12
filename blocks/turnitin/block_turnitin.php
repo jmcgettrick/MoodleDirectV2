@@ -14,13 +14,6 @@ class block_turnitin extends block_base {
 			return $this->content;
 		}
 
-		// Check that turnitintooltwo module is installed
-        $modules = $DB->get_record('modules', array('name' => 'turnitintooltwo'));
-        $installed = ($modules) ? true : false;
-        if ($installed == false) {
-         	return false;
-        }
-
 		$output = '';
 
 		if (!empty($USER->id)) {
