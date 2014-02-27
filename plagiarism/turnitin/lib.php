@@ -904,9 +904,9 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
         if (!empty($moduledata->duedate)) {
             $dtdue = $moduledata->duedate;
-            if (isset($dtdue->cutoffdate)) {
-                if ($dtdue->cutoffdate > 0) {
-                    $duedate = $moduledata->cutoffdate;
+            if (isset($moduledata->cutoffdate)) {
+                if ($moduledata->cutoffdate > 0) {
+                    $dtdue = $moduledata->cutoffdate;
                 }
             }
         } else if (!empty($moduledata->timedue)) {
