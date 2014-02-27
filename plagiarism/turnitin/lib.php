@@ -872,20 +872,16 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
         $assignment->setSmallMatchExclusionThreshold($modulepluginsettings["plagiarism_exclude_matches_value"]);
         $assignment->setAnonymousMarking($modulepluginsettings["plagiarism_anonymity"]);
-        $assignment->setAllowNonOrSubmissions($modulepluginsettings["plagiarism_allow_non_or_submissions"]);
+        $assignment->setAllowNonOrSubmissions(!empty($modulepluginsettings["plagiarism_allow_non_or_submissions"]) ? 1 : 0);
         $assignment->setTranslatedMatching(!empty($modulepluginsettings["plagiarism_transmatch"]) ? 1 : 0);
 
         // In Moodle 2.4 the preventlatesubmissions setting was removed and replaced by a cut off date
         if (isset($moduledata->preventlatesubmissions)) {
-            $latesubmissionsallowed = ($moduledata->preventlatesubmissions = 1) ? 0 : 1;
-        } else if (isset($moduledata->cutoffdate)) {
-            if ($moduledata->cutoffdate == 0) {
-                $latesubmissionsallowed = 1;
-            } else if ($moduledata->cutoffdate == $moduledata->duedate) {
-                $latesubmissionsallowed = 0;
-            }
-        } else {
+            $latesubmissionsallowed = ($moduledata->preventlatesubmissions == 1) ? 0 : 1;
+        } else if ($moduledata->cutoffdate > time()) {
             $latesubmissionsallowed = 1;
+        } else {
+            $latesubmissionsallowed = 0;
         }
 
         $assignment->setLateSubmissionsAllowed($latesubmissionsallowed);
@@ -908,9 +904,9 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
         if (!empty($moduledata->duedate)) {
             $dtdue = $moduledata->duedate;
-            if (isset($dtdue->cutoffdate)) {
-                if ($dtdue->cutoffdate > 0) {
-                    $duedate = $moduledata->cutoffdate;
+            if (isset($moduledata->cutoffdate)) {
+                if ($moduledata->cutoffdate > 0) {
+                    $dtdue = $moduledata->cutoffdate;
                 }
             }
         } else if (!empty($moduledata->timedue)) {
