@@ -872,7 +872,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
         $assignment->setSmallMatchExclusionThreshold($modulepluginsettings["plagiarism_exclude_matches_value"]);
         $assignment->setAnonymousMarking($modulepluginsettings["plagiarism_anonymity"]);
-        $assignment->setAllowNonOrSubmissions($modulepluginsettings["plagiarism_allow_non_or_submissions"]);
+        $assignment->setAllowNonOrSubmissions(!empty($modulepluginsettings["plagiarism_allow_non_or_submissions"]) ? 1 : 0);
         $assignment->setTranslatedMatching(!empty($modulepluginsettings["plagiarism_transmatch"]) ? 1 : 0);
 
         // In Moodle 2.4 the preventlatesubmissions setting was removed and replaced by a cut off date
