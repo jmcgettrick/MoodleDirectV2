@@ -878,14 +878,10 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         // In Moodle 2.4 the preventlatesubmissions setting was removed and replaced by a cut off date
         if (isset($moduledata->preventlatesubmissions)) {
             $latesubmissionsallowed = ($moduledata->preventlatesubmissions == 1) ? 0 : 1;
-        } else if (isset($moduledata->cutoffdate)) {
-            if ($moduledata->cutoffdate == 0) {
-                $latesubmissionsallowed = 1;
-            } else if ($moduledata->cutoffdate == $moduledata->duedate) {
-                $latesubmissionsallowed = 0;
-            }
-        } else {
+        } else if ($moduledata->cutoffdate > time()) {
             $latesubmissionsallowed = 1;
+        } else {
+            $latesubmissionsallowed = 0;
         }
 
         $assignment->setLateSubmissionsAllowed($latesubmissionsallowed);
