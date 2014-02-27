@@ -40,13 +40,14 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
      * @return array of settings fields
      */
     public function get_settings_fields() {
-        return array('use_turnitin', 'plagiarism_show_student_report', 'plagiarism_allow_non_or_submissions', 'plagiarism_submitpapersto',
-                        'plagiarism_compare_student_papers', 'plagiarism_compare_internet', 'plagiarism_compare_journals',
-                        'plagiarism_report_gen', 'plagiarism_compare_institution', 'plagiarism_exclude_biblio',
-                        'plagiarism_exclude_quoted', 'plagiarism_exclude_matches', 'plagiarism_exclude_matches_value',
-                        'plagiarism_rubric', 'plagiarism_erater', 'plagiarism_erater_handbook', 'plagiarism_erater_dictionary',
-                        'plagiarism_erater_spelling', 'plagiarism_erater_grammar', 'plagiarism_erater_usage',
-                        'plagiarism_erater_mechanics', 'plagiarism_erater_style', 'plagiarism_anonymity', 'plagiarism_transmatch');
+        return array('use_turnitin', 'plagiarism_show_student_report', 'plagiarism_draft_submit', 
+                        'plagiarism_allow_non_or_submissions', 'plagiarism_submitpapersto', 'plagiarism_compare_student_papers', 
+                        'plagiarism_compare_internet', 'plagiarism_compare_journals', 'plagiarism_report_gen', 
+                        'plagiarism_compare_institution', 'plagiarism_exclude_biblio', 'plagiarism_exclude_quoted', 
+                        'plagiarism_exclude_matches', 'plagiarism_exclude_matches_value', 'plagiarism_rubric', 'plagiarism_erater', 
+                        'plagiarism_erater_handbook', 'plagiarism_erater_dictionary', 'plagiarism_erater_spelling', 
+                        'plagiarism_erater_grammar', 'plagiarism_erater_usage', 'plagiarism_erater_mechanics', 
+                        'plagiarism_erater_style', 'plagiarism_anonymity', 'plagiarism_transmatch');
     }
 
     /**
@@ -315,7 +316,9 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
             if ($cm->modname == 'assign') {
                 if ($submission = $DB->get_record('assign_submission',
                                                 array('userid' => $linkarray["userid"], 'assignment' => $moduledata->id))) {
-                    $submission_status = ($submission->status == "submitted") ? true : false;
+                    $submission_status = ($submission->status == "submitted" || 
+                                        ($moduledata->submissiondrafts == 1 && $plagiarismsettings->plagiarism_draft_submit == 0)) 
+                                        ? true : false;
                 }
             }
 
@@ -412,7 +415,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                     }
                 }
 
-                // If a user has just submitted then send to Turnitin via Ajax (not forums). (!$istutor || $cm->course == SITEID) &&.
+                // If a user has just submitted then send to Turnitin via Ajax (not forums).
                 if ($submitting && $submission_status) {
                     // Include Javascript for Submitting.
                     $jsurl = new moodle_url('/mod/turnitintooltwo/scripts/plagiarism_submission.js');
@@ -465,7 +468,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 } else {
                     $currentgradequery = $DB->get_record('assign_grades',
                                                 array('userid' => $linkarray["userid"], 'assignment' => $cm->instance));
-                    $duedate = $moduledata->duedate;
+                    $duedate = (!empty($moduledata->duedate)) ? $moduledata->duedate : time();
                 }
 
                 $output .= $OUTPUT->box_start('tii_links_container');
@@ -473,7 +476,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 if ($plagiarismfile) {
                     if ($plagiarismfile->statuscode == 'success') {
                         // Show Originality Report score and link.
-                        if ($istutor || $plagiarismsettings["plagiarism_show_student_report"]) {
+                        if (($istutor || $plagiarismsettings["plagiarism_show_student_report"]) && $submission->orcapable == 1) {
                             $output .= $OUTPUT->box_start('row_score origreport_open origreport_'.
                                                             $plagiarismfile->externalid.'_'.$linkarray["cmid"], '');
                             // Show score.
@@ -503,8 +506,9 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                         }
 
                         // Show link to open grademark.
-                        if (($istutor || ((!empty($currentgradequery) && (!empty($duedate) && $duedate < time())))) 
-                            && $config->usegrademark && $plagiarismfile) {
+                        if (($istutor || ((!empty($currentgradequery) && (!empty($duedate) && $duedate <= time())))) 
+                            && $config->usegrademark) {
+
                             // Output grademark icon.
                             $output .= $OUTPUT->box_start('grade_icon', '');
                             $output .= html_writer::tag('div', $OUTPUT->pix_icon('icon-edit',
@@ -612,6 +616,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                     $plagiarismfile->transmatch = 1;
                 }
                 $plagiarismfile->grade = ($readsubmission->getGrade()) ? $readsubmission->getGrade() : null;
+                $plagiarismfile->orcapable = ($readsubmission->getOriginalityReportCapable() == 1) ? 1 : 0;
 
                 // Identify if an update is required for the similarity score and grade.
                 if (!is_null($plagiarismfile->similarityscore) || !is_null($plagiarismfile->grade)) {
@@ -902,7 +907,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         } else if (!empty($moduledata->timeavailable)) {
             $dtstart = $moduledata->timeavailable;
         } else {
-            $dtstart = strtotime('-10 minutes');
+            $dtstart = $cm->added;
         }
         $assignment->setStartDate(gmdate("Y-m-d\TH:i:s\Z", $dtstart));
 
@@ -910,14 +915,21 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
             $dtdue = $moduledata->duedate;
             if (isset($dtdue->cutoffdate)) {
                 if ($dtdue->cutoffdate > 0) {
-                    $duedate = $moduledata->cutoffdate;
+                    $dtdue = $moduledata->cutoffdate;
                 }
             }
         } else if (!empty($moduledata->timedue)) {
             $dtdue = $moduledata->timedue;
         } else {
             // Forums do not have a due date.
-            $dtdue = strtotime('+1 year');
+            if ($cm->modname == "forum") {
+                $dtdue = strtotime('+1 year');
+            } else {
+                // If the assignment has no submission from date we take the due date
+                // to be 1 year from when it was created.
+                $dtdue = (!empty($moduledata->allowsubmissionsfromdate)) ? 
+                                $moduledata->allowsubmissionsfromdate : ($cm->added + (365 * 24 * 60 * 60));
+            }
         }
         $assignment->setDueDate(gmdate("Y-m-d\TH:i:s\Z", $dtdue));
         $assignment->setFeedbackReleaseDate(gmdate("Y-m-d\TH:i:s\Z", $dtdue));
@@ -976,6 +988,14 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         if ($cm->modname == "assign") {
             $moduledata = $DB->get_record($cm->modname, array('id' => $cm->instance));
             $lastsubmissiondate = $moduledata->duedate;
+            if (empty($moduledata->duedate)) {
+                if (empty($moduledata->allowsubmissionsfromdate)) {
+                    $lastsubmissiondate = $cm->added + (365 * 24 * 60 * 60);
+                } else {
+                    $lastsubmissiondate = $moduledata->allowsubmissionsfromdate + (365 * 24 * 60 * 60);
+                }
+            }
+
             if (isset($moduledata->cutoffdate)) {
                 if ($moduledata->cutoffdate > 0) {
                     $lastsubmissiondate = $moduledata->cutoffdate;
@@ -1052,6 +1072,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                         $plagiarismfile->externalid = $tiisubmissionid;
                         $plagiarismfile->similarityscore = (is_numeric($readsubmission->getOverallSimilarity())) ?
                                                                         $readsubmission->getOverallSimilarity() : null;
+                        $plagiarismfile->orcapable = ($readsubmission->getOriginalityReportCapable() == 1) ? 1 : 0;
                         $plagiarismfile->transmatch = 0;
                         if (is_int($readsubmission->getTranslatedOverallSimilarity()) &&
                                 $readsubmission->getTranslatedOverallSimilarity() > $readsubmission->getOverallSimilarity()) {
@@ -1204,9 +1225,11 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                        $moduledata->submissiondrafts = 0;
                     }
 
-                    // If draft submissions are turned on then do not submit to Turnitin if using newer than 2.3.
-                    if ($moduledata->submissiondrafts && $CFG->branch > 23 &&
-                     ($eventdata->event_type == 'file_uploaded' || $eventdata->event_type == 'content_uploaded')) {
+                    // If draft submissions are turned on then only submit to Turnitin if using newer than 2.3 and
+                    // the Turnitin draft submit setting is set.
+                    if ($moduledata->submissiondrafts && $CFG->branch > 23 && 
+                        $plagiarismsettings->plagiarism_draft_submit == 1 &&
+                        ($eventdata->event_type == 'file_uploaded' || $eventdata->event_type == 'content_uploaded')) {
                         return true;
                     }
 

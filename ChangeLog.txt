@@ -1,0 +1,12 @@
+2014-02-26 : Vietnamese Language pack added.
+2014-02-26 : Option to send draft submissions to Turnitin in Plagiarism Plugin reinstated.
+2014-02-26 : Diagnostic mode reinstated to disable logging by default.
+2014-02-26 : Student who’d never submitted could not view rubric, they’re now enrolled at this point.
+2014-02-26 : Instructor now being enrolled in course when resetting to prevent errors in reading memberships.
+2014-02-26 : OR Link was being shown in Plagiarism Plugin for non OR submissions.
+2014-02-26 : Submissions now processed in Plagiarism Plugin if due date disabled.
+2014-02-26 : Rubric List was not being populated in Plagiarism Plugin settings.
+2014-01-24 : Removed file type limit for file upload
+2014-01-24 : Ability to accept no file added so that grades can be allocated to non file submissions 
+2014-01-24 : Dependencies added to plagiarism plugin and blocks
+2014-01-24 : Bug fixed in course reset when recreating new assignment 

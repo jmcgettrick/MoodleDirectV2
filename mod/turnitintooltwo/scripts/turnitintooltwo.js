@@ -194,7 +194,7 @@ jQuery(document).ready(function($) {
             "bProcessing": true,
             "sAjaxSource": "ajax.php",
             "aoColumnDefs": [
-                {"bSortable": false, "sClass": "center", "aTargets": [0]},
+                {"bSortable": false, "sClass": "centered_cell", "aTargets": [0]},
                 {"sClass": "left", "aTargets": [1]}
             ],
             "oLanguage": dataTablesLang,
@@ -566,7 +566,8 @@ jQuery(document).ready(function($) {
 
     // Get the rubrics belonging to a user from Turnitin and refresh menu accordingly
     function refreshRubricSelect() {
-        var currentRubric = $('#id_rubric').val();
+        var rubricElementId = ($('#id_rubric').length) ? '#id_rubric' : '#id_plagiarism_rubric';
+        var currentRubric = $(rubricElementId).val();
         $.ajax({
             "dataType": 'json',
             "type": "POST",
@@ -574,15 +575,15 @@ jQuery(document).ready(function($) {
             "data": {action: "refresh_rubric_select", assignment: $('input[name="instance"]').val(),
                         modulename: $('input[name="modulename"]').val(), course: $('input[name="course"]').val()},
             success: function(data) {
-                $('#id_rubric').empty();
+                $($(rubricElementId)).empty();
                 var options = data;
                 $.each(options, function(i, val) {
-                    $('#id_rubric').append($('<option>', {
+                    $($(rubricElementId)).append($('<option>', {
                         value: i,
                         text : val
                     }));
                 });
-                $('#id_rubric option[value="'+currentRubric+'"]').attr("selected","selected");
+                $(rubricElementId+' option[value="'+currentRubric+'"]').attr("selected","selected");
             }
         });
     }
