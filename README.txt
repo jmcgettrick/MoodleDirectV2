@@ -12,6 +12,9 @@ Release:    v2014012402
 	> OR Link was being shown in Plagiarism Plugin for non OR submissions.
 	> Submissions now processed in Plagiarism Plugin if due date disabled.
 	> Rubric List was not being populated in Plagiarism Plugin settings.
+	> Updating of OR scores depending on OR submissions capability fixed in Plagiarism Plugin.
+	> Cut off date / late submission issues solved in Plagiarism Plugin (Thanks to Chris Wharton).
+	> Generic CSS issues fixed that were breaking some user’s themes.
 
 ####################################################################################
 

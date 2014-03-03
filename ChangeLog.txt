@@ -1,3 +1,6 @@
+2014-02-26 : Generic CSS issues that were breaking some user’s themes fixed.
+2014-02-26 : Bug with updating of OR scores in Plagiarism Plugin depending on OR submissions capability fixed.
+2014-02-26 : Cut off date / late submission issues solved in Plagiarism Plugin (Thanks to Chris Wharton).
 2014-02-26 : Vietnamese Language pack added.
 2014-02-26 : Option to send draft submissions to Turnitin in Plagiarism Plugin reinstated.
 2014-02-26 : Diagnostic mode reinstated to disable logging by default.
