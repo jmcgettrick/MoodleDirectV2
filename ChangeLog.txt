@@ -1,3 +1,4 @@
+2014-02-26 : Bug fixed with part dates in inbox when editing where timezone was not being accounted for.
 2014-02-26 : Generic CSS issues that were breaking some user’s themes fixed.
 2014-02-26 : Bug with updating of OR scores in Plagiarism Plugin depending on OR submissions capability fixed.
 2014-02-26 : Cut off date / late submission issues solved in Plagiarism Plugin (Thanks to Chris Wharton).
