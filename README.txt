@@ -15,6 +15,7 @@ Release:    v2014012402
 	> Updating of OR scores depending on OR submissions capability fixed in Plagiarism Plugin.
 	> Cut off date / late submission issues solved in Plagiarism Plugin (Thanks to Chris Wharton).
 	> Generic CSS issues fixed that were breaking some user’s themes.
+	> Timezone was not being accounted for when editing part dates in inbox.
 
 ####################################################################################
 
