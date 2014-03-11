@@ -45,4 +45,22 @@ Troubleshooting
 
 You may need to ensure that within your designated moodledata directory; the turnitintooltwo subdirectory and the subsequent logs subdirectory have the correct permissions to be able to create directories and files.
 
+--------------------------------------------------
+
+You may need to ensure that the turnitintooltwo directory within your designated data directory and it's logs subdirectory have the correct permissions to be able to create directories and files.
+
+--------------------------------------------------
+
 Pop-ups will need to be enabled on the browser being used if access to the Turnitin Document Viewer is required.
+
+--------------------------------------------------
+
+In order for the module to work correctly you must enable support for cURL in your php.ini file. To do this locate the following line in your php.ini file:
+
+;extension=php_curl.dll
+OR
+;extension=php_curl.so
+
+Remove the semi-colon at the start of the line to activate the php cURL extension. Once you have done this you will need to restart your web server service.
+
+More information on cURL and more detailed instructions for installing it can be found here: http://uk3.php.net/curl
