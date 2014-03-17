@@ -25,11 +25,10 @@
 function xmldb_plagiarism_turnitin_upgrade($oldversion) {
     global $DB;
 
+    $dbman = $DB->get_manager();
     $result = true;
 
     if ($oldversion < 2013081202) {
-
-        $dbman = $DB->get_manager();
 
         $table = new xmldb_table('plagiarism_turnitin_files');
         $field1 = new xmldb_field('transmatch', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'legacyteacher');
@@ -61,7 +60,6 @@ function xmldb_plagiarism_turnitin_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014012401) {
-        $dbman = $DB->get_manager();
 
         $table = new xmldb_table('plagiarism_turnitin_files');
         $field = new xmldb_field('orcapable', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'submissiontype');
@@ -69,6 +67,39 @@ function xmldb_plagiarism_turnitin_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         upgrade_plugin_savepoint(true, 2014012401, 'plagiarism', 'turnitin');
+    }
+
+    if ($oldversion < 2014031800) {
+
+        // Define field orcapable to be added to plagiarism_turnitin_files.
+        $table = new xmldb_table('plagiarism_turnitin_files');
+        $field = new xmldb_field('orcapable', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'submissiontype');
+
+        // Conditionally launch add field orcapable.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        } else {
+            // Launch change of default for field orcapable.
+            $dbman->change_field_default($table, $field);
+        }
+
+        // begin update of submission status
+        try {
+            $transaction = $DB->start_delegated_transaction();
+
+            // for all previous submissions that have a turnitin result, set orcapable = 1
+            $DB->set_field('plagiarism_turnitin_files', 'orcapable', '1', array('statuscode' => 'success'));
+
+            // for all other submissions, set orcapable = null
+            $DB->set_field_select('plagiarism_turnitin_files', 'orcapable', null, "statuscode != 'success'");
+
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+        }
+
+        // Turnitin savepoint reached.
+        upgrade_plugin_savepoint(true, 2014031800, 'plagiarism', 'turnitin');
     }
 
     return $result;
