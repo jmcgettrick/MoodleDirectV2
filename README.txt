@@ -1,3 +1,7 @@
+These are the release notes for Moodle Direct V2 which contains a new Turnitin Assignment tool, a Plagiarism plugin and a block to allow access to the new Class Migration Tool.
+
+For installation instructions and trouble shooting please see Installation Instructions.txt and Troubleshooting.txt or the relevant README files within each individual plugin element.
+
 Moodle Direct Release Notes
 ------------------------------------------------------------------------------------
 Date:       2014-February-26
