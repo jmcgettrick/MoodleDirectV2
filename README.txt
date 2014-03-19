@@ -10,6 +10,7 @@ Release:    v2014012402
 - Vietnamese Language pack added.
 - Option to send draft submissions to Turnitin in Plagiarism Plugin reinstated.
 - Diagnostic mode reinstated to disable logging by default.
+- Troubleshooting documentation expanded.
 - Fixes:
 	> Student’s who’d never submitted could not view rubric, they’re now enrolled at this point.
 	> Instructor now being enrolled in course when resetting to prevent errors in reading memberships.
