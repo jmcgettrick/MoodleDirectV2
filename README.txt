@@ -23,6 +23,7 @@ Release:    v2014012402
 	> Timezone was not being accounted for when editing part dates in inbox.
 	> Editing title in course context is now updated in Turnitin.
 	> Submit nothing link removed if submission has been made to Moodle but not yet processed by Turnitin
+	> Incorrect grade scale calculation.
 
 ####################################################################################
 
