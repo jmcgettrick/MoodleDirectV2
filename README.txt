@@ -24,6 +24,7 @@ Release:    v2014012402
 	> Editing title in course context is now updated in Turnitin.
 	> Submit nothing link removed if submission has been made to Moodle but not yet processed by Turnitin
 	> Incorrect grade scale calculation.
+	> Previous Turnitin users were not being joined to account on Plagiarism plugin.
 
 ####################################################################################
 
