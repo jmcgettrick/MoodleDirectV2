@@ -21,6 +21,8 @@ Release:    v2014012402
 	> Cut off date / late submission issues solved in Plagiarism Plugin (Thanks to Chris Wharton).
 	> Generic CSS issues fixed that were breaking some user’s themes.
 	> Timezone was not being accounted for when editing part dates in inbox.
+	> Editing title in course context is now updated in Turnitin.
+	> Submit nothing link removed if submission has been made to Moodle but not yet processed by Turnitin
 
 ####################################################################################
 
