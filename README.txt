@@ -1,3 +1,7 @@
+These are the release notes for Moodle Direct V2 which contains a new Turnitin Assignment tool, a Plagiarism plugin and a block to allow access to the new Class Migration Tool.
+
+For installation instructions and trouble shooting please see Installation Instructions.txt and Troubleshooting.txt or the relevant README files within each individual plugin element.
+
 Moodle Direct Release Notes
 ------------------------------------------------------------------------------------
 Date:       2014-February-26
@@ -6,6 +10,7 @@ Release:    v2014012402
 - Vietnamese Language pack added.
 - Option to send draft submissions to Turnitin in Plagiarism Plugin reinstated.
 - Diagnostic mode reinstated to disable logging by default.
+- Troubleshooting documentation expanded.
 - Fixes:
 	> Student’s who’d never submitted could not view rubric, they’re now enrolled at this point.
 	> Instructor now being enrolled in course when resetting to prevent errors in reading memberships.
@@ -16,6 +21,10 @@ Release:    v2014012402
 	> Cut off date / late submission issues solved in Plagiarism Plugin (Thanks to Chris Wharton).
 	> Generic CSS issues fixed that were breaking some user’s themes.
 	> Timezone was not being accounted for when editing part dates in inbox.
+	> Editing title in course context is now updated in Turnitin.
+	> Submit nothing link removed if submission has been made to Moodle but not yet processed by Turnitin
+	> Incorrect grade scale calculation.
+	> Previous Turnitin users were not being joined to account on Plagiarism plugin.
 
 ####################################################################################
 

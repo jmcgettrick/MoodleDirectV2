@@ -774,7 +774,7 @@ class turnitintooltwo_assignment {
     /**
      * Edit Assignment on Turnitin
      *
-     * @param object $assignment add assignment instance
+     * @param object $assignment edit assignment instance
      */
     public function edit_tii_assignment($assignment) {
         // Initialise Comms Object.
@@ -1512,8 +1512,8 @@ class turnitintooltwo_assignment {
                     $assignmentdetails->rubric = $readassignment->getRubricId();
                     $assignmentdetails->excludebiblio = $readassignment->getBibliographyExcluded();
                     $assignmentdetails->excludequoted = $readassignment->getQuotedExcluded();
-                    $assignmentdetails->excludevalue = $readassignment->getSmallMatchExclusionType();
-                    $assignmentdetails->excludetype = $readassignment->getSmallMatchExclusionThreshold();
+                    $assignmentdetails->excludetype = $readassignment->getSmallMatchExclusionType();
+                    $assignmentdetails->excludevalue = $readassignment->getSmallMatchExclusionThreshold();
                     $assignmentdetails->erater = $readassignment->getErater();
                     $assignmentdetails->erater_handbook = $readassignment->getEraterHandbook();
                     $assignmentdetails->erater_dictionary = $readassignment->getEraterSpellingDictionary();
@@ -1637,7 +1637,7 @@ class turnitintooltwo_assignment {
             if (is_null($overallgrade)) {
                 return "--";
             }
-            return (!is_nan($overallgrade) AND !is_null($overallgrade)) ? number_format($overallgrade, 1) : '--';
+            return (!is_nan($overallgrade) AND !is_null($overallgrade)) ? number_format($overallgrade, 2) : '--';
         }
     }
 
