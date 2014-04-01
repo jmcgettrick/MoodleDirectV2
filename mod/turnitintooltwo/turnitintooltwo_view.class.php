@@ -1091,7 +1091,7 @@ class turnitintooltwo_view {
                 $grade .= $OUTPUT->box('', 'launch_form', 'grademark_form_'.$submission->submission_objectid);
                 $rawgrade = ($submissiongrade == "--") ? -1 : $submissiongrade;
 
-            } else if ( !isset($submission->submission_objectid) && $istutor ) {
+            } else if (!isset($submission->submission_objectid) && empty($submission->id) && $istutor ) {
                 // Allow nothing submission if no submission has been made and this is a tutor
                 $grade = $OUTPUT->box(get_string('submitnothingwarning', 'turnitintooltwo'),'nothingsubmit_warning', '');
                 $grade .= $OUTPUT->box($OUTPUT->pix_icon('icon-edit-grey',
@@ -1119,10 +1119,7 @@ class turnitintooltwo_view {
                     } else if ($turnitintooltwoassignment->turnitintooltwo->grade < 0) { // Scale.
                         $scale = $DB->get_record('scale', array('id' => $turnitintooltwoassignment->turnitintooltwo->grade * -1));
                         $scalearray = explode(",", $scale->scale);
-
-                        $overallgrade = round($useroverallgrades[$submission->userid] /
-                                                    -$turnitintooltwoassignment->turnitintooltwo->grade);
-                        $overallgrade = $scalearray[$overallgrade - 1];
+                        $overallgrade = $scalearray[$useroverallgrades[$submission->userid] - 1];
                     } else {
                         $overallgrade = round($useroverallgrades[$submission->userid] /
                                                     $turnitintooltwoassignment->turnitintooltwo->grade * 100, 1).'%';

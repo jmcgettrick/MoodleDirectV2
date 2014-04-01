@@ -264,6 +264,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 // Course may existed in a previous incarnation of this plugin.
                 // Get this and save it in courses table if so.
                 if ($turnitincid = $this->get_previous_course_id($cm)) {
+                    $coursedata->turnitin_cid = $turnitincid;
                     $coursedata = $this->migrate_previous_course($coursedata, $turnitincid);
                 } else {
                     // Otherwise create new course in Turnitin.
@@ -495,7 +496,8 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 if ($plagiarismfile) {
                     if ($plagiarismfile->statuscode == 'success') {
                         // Show Originality Report score and link.
-                        if (($istutor || $plagiarismsettings["plagiarism_show_student_report"]) && $plagiarismfile->orcapable == 1) {
+                        if (($istutor || $plagiarismsettings["plagiarism_show_student_report"]) && 
+                            (is_null($plagiarismfile->orcapable) || $plagiarismfile->orcapable == 1)) {
                             $output .= $OUTPUT->box_start('row_score origreport_open origreport_'.
                                                             $plagiarismfile->externalid.'_'.$linkarray["cmid"], '');
                             // Show score.
@@ -929,6 +931,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         } else {
             $dtstart = $cm->added;
         }
+        $dtstart = ($dtstart <= strtotime('-1 year')) ? strtotime('-11 months') : $dtstart;
         $assignment->setStartDate(gmdate("Y-m-d\TH:i:s\Z", $dtstart));
 
         if (!empty($moduledata->duedate)) {
@@ -945,14 +948,14 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
             if ($cm->modname == "forum") {
                 $dtdue = strtotime('+1 year');
             } else {
-                // If the assignment has no submission from date we take the due date
-                // to be 1 year from when it was created.
-                $dtdue = (!empty($moduledata->allowsubmissionsfromdate)) ? 
-                                $moduledata->allowsubmissionsfromdate : ($cm->added + (365 * 24 * 60 * 60));
+                // If the assignment has no due date we make it a month from now.
+                $dtdue = strtotime('+1 month');
             }
         }
+        $dtpost = ($dtdue <= $dtstart) ? time() : $dtdue;
+        $dtdue = ($dtdue <= $dtstart) ? strtotime('+1 month') : $dtdue;
         $assignment->setDueDate(gmdate("Y-m-d\TH:i:s\Z", $dtdue));
-        $assignment->setFeedbackReleaseDate(gmdate("Y-m-d\TH:i:s\Z", $dtdue));
+        $assignment->setFeedbackReleaseDate(gmdate("Y-m-d\TH:i:s\Z", $dtpost));
 
         // Erater settings.
         $assignment->setErater((isset($modulepluginsettings["plagiarism_erater"])) ?
@@ -1009,11 +1012,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
             $moduledata = $DB->get_record($cm->modname, array('id' => $cm->instance));
             $lastsubmissiondate = $moduledata->duedate;
             if (empty($moduledata->duedate)) {
-                if (empty($moduledata->allowsubmissionsfromdate)) {
-                    $lastsubmissiondate = $cm->added + (365 * 24 * 60 * 60);
-                } else {
-                    $lastsubmissiondate = $moduledata->allowsubmissionsfromdate + (365 * 24 * 60 * 60);
-                }
+                $lastsubmissiondate = strtotime('+1 month');
             }
 
             if (isset($moduledata->cutoffdate)) {
