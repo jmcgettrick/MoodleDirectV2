@@ -289,13 +289,9 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         static $istutor;
         switch ($cm->modname) {
             case "forum":
-                if (empty($istutor)) {
-                    $istutor = has_capability('mod/'.$cm->modname.':rate', $context);
-                }
-                break;
             case "workshop":
                 if (empty($istutor)) {
-                    $istutor = has_capability('mod/'.$cm->modname.':switchphase', $context);
+                    $istutor = has_capability('plagiarism/turnitin:viewfullreport', $context);
                 }
                 break;
             default:
@@ -496,7 +492,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 if ($plagiarismfile) {
                     if ($plagiarismfile->statuscode == 'success') {
                         // Show Originality Report score and link.
-                        if (($istutor || $plagiarismsettings["plagiarism_show_student_report"]) && 
+                        if (($istutor || ($linkarray["userid"] == $USER->id && $plagiarismsettings["plagiarism_show_student_report"])) && 
                             (is_null($plagiarismfile->orcapable) || $plagiarismfile->orcapable == 1)) {
                             $output .= $OUTPUT->box_start('row_score origreport_open origreport_'.
                                                             $plagiarismfile->externalid.'_'.$linkarray["cmid"], '');
@@ -527,8 +523,9 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                         }
 
                         // Show link to open grademark.
-                        if (($istutor || ((!empty($currentgradequery) && (!empty($duedate) && $duedate <= time())))) 
-                            && $config->usegrademark) {
+                        if ((($istutor || ($linkarray["userid"] == $USER->id && !is_null($plagiarismfile->grade) && (!empty($duedate) && $duedate <= time()))) || 
+                                ((!empty($currentgradequery) && (!empty($duedate) && $duedate <= time()) && !is_null($plagiarismfile->grade)))) 
+                                    && $config->usegrademark) {
 
                             // Output grademark icon.
                             $output .= $OUTPUT->box_start('grade_icon', '');
@@ -766,10 +763,8 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         // Get 1st teacher and make them the owner.
         switch ($cm->modname) {
             case "forum":
-                $capability = 'mod/'.$cm->modname.':rate';
-                break;
             case "workshop":
-                $capability = 'mod/'.$cm->modname.':switchphase';
+                $istutor = has_capability('plagiarism/turnitin:viewfullreport', $context);
                 break;
             default:
                 $capability = 'mod/'.$cm->modname.':grade';
@@ -944,15 +939,14 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         } else if (!empty($moduledata->timedue)) {
             $dtdue = $moduledata->timedue;
         } else {
-            // Forums do not have a due date.
-            if ($cm->modname == "forum") {
-                $dtdue = strtotime('+1 year');
-            } else {
-                // If the assignment has no due date we make it a month from now.
-                $dtdue = strtotime('+1 month');
-            }
+            // If the assignment has no due date of is a forum we make it due date month from now.
+            $dtdue = strtotime('+1 month');
         }
-        $dtpost = ($dtdue <= $dtstart) ? time() : $dtdue;
+        if ($cm->modname == "forum") {
+            $dtpost = $dtstart;
+        } else {
+            $dtpost = ($dtdue <= $dtstart) ? time() : $dtdue;
+        }
         $dtdue = ($dtdue <= $dtstart) ? strtotime('+1 month') : $dtdue;
         $assignment->setDueDate(gmdate("Y-m-d\TH:i:s\Z", $dtdue));
         $assignment->setFeedbackReleaseDate(gmdate("Y-m-d\TH:i:s\Z", $dtpost));

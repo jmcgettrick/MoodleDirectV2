@@ -1,3 +1,6 @@
+2014-04-17 : Grademark link removed for student if a grade has not been set in plagiarism plugin.
+2014-04-17 : Incorrect links to GradeMark and Originality Report for students have been hidden.  
+2014-04-17 : Feedback release date changed on forum with plagiarism plugin to be the same as start date.
 2014-02-26 : Previous Turnitin users were not being joined to account on Plagiarism plugin.
 2014-02-26 : Incorrect grade scale calculation.
 2014-02-26 : Editing title in course context is now updated in Turnitin.
