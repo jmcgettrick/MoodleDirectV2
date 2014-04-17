@@ -2,8 +2,19 @@ These are the release notes for Moodle Direct V2 which contains a new Turnitin A
 
 For installation instructions and trouble shooting please see Installation Instructions.txt and Troubleshooting.txt or the relevant README files within each individual plugin element.
 
-Moodle Direct Release Notes
+Moodle Direct v2 Release Notes
 ------------------------------------------------------------------------------------
+
+Date:       2014-April-17
+Release:    v2014012403
+
+- Grademark link removed for student if a grade has not been set in Plagiarism Plugin.
+- Feedback release date changed on forum with plagiarism plugin to be the same as start date.
+- Fixes:
+	> Incorrect links to GradeMark and Originality Report for students have been hidden.  
+
+####################################################################################
+
 Date:       2014-February-26
 Release:    v2014012402
 
