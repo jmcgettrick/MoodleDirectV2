@@ -1,3 +1,6 @@
+2014-04-17 : Submissions in Plagiarism plugin stopped if there has been 5 unsuccessful attempts.
+2014-04-17 : Conflicts with Bootstrap theme for tooltips and fixed grademark link position fixed.
+2014-04-17 : Incorrect settings link in the Plagiarism plugin fixed.
 2014-04-17 : Grademark link removed for student if a grade has not been set in plagiarism plugin.
 2014-04-17 : Incorrect links to GradeMark and Originality Report for students have been hidden.  
 2014-04-17 : Feedback release date changed on forum with plagiarism plugin to be the same as start date.
