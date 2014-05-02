@@ -1,3 +1,4 @@
+2014-04-17 : Student is now enrolled on the class when checking EULA acceptance to ensure they are on account.
 2014-04-17 : Infinite loading of Document viewer stopped.
 2014-04-17 : Originality Report link removed if no score.
 2014-04-17 : Submissions in Plagiarism plugin stopped if there has been 5 unsuccessful attempts.

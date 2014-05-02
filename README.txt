@@ -17,6 +17,7 @@ Release:    v2014012403
 	> Incorrect links to GradeMark and Originality Report for students have been hidden. 
 	> Conflicts with Bootstrap theme for tooltips and fixed grademark link position.
 	> Incorrect settings link in the Plagiarism plugin.
+	> Student is now enrolled on the class when checking EULA acceptance to ensure they are on account.
 
 ####################################################################################
 
