@@ -1,3 +1,4 @@
+2014-04-17 : Full Catalan language pack added.
 2014-04-17 : Timestamp was being incorrectly set preventing more than 1 batch of submissions updating from Turnitin. 
 2014-04-17 : Student is now enrolled on the class when checking EULA acceptance to ensure they are on account.
 2014-04-17 : Infinite loading of Document viewer stopped.

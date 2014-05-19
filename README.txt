@@ -11,6 +11,7 @@ Release:    v2014012403
 - Grademark link removed for student if a grade has not been set in Plagiarism Plugin.
 - Feedback release date changed on forum with plagiarism plugin to be the same as start date.
 - Infinite loading of Document viewer stopped.
+- Full Catalan language pack added.
 - Submissions in Plagiarism plugin stopped if there has been 5 unsuccessful attempts.
 - Link removed for Originality Report if there is no score.
 - Fixes:
