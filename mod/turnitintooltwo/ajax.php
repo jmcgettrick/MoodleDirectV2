@@ -155,12 +155,17 @@ switch ($action) {
             $partid = required_param('part', PARAM_INT);
             $refreshrequested = required_param('refresh_requested', PARAM_INT);
             $start = required_param('start', PARAM_INT);
+            $total = required_param('total', PARAM_INT);
             $parts = $turnitintooltwoassignment->get_parts();
 
-            if (empty($_SESSION["TiiSubmissions"][$partid]) || $refreshrequested) {
+            if (empty($_SESSION["TiiSubmissions"][$partid]) || ($refreshrequested && $start == 0)) {
                 $turnitintooltwoassignment->get_submission_ids_from_tii($parts[$partid]);
-                $turnitintooltwoassignment->refresh_submissions($parts[$partid], $start);
+                $total = $_SESSION["TiiSubmissions"][$partid];
                 $_SESSION["TiiSubmissionsRefreshed"][$partid] = time();
+            }
+
+            if ($start < $total) {
+                $turnitintooltwoassignment->refresh_submissions($parts[$partid], $start);
             }
 
             $PAGE->set_context(context_module::instance($cm->id));

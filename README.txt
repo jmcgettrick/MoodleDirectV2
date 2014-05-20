@@ -11,12 +11,14 @@ Release:    v2014012403
 - Grademark link removed for student if a grade has not been set in Plagiarism Plugin.
 - Feedback release date changed on forum with plagiarism plugin to be the same as start date.
 - Infinite loading of Document viewer stopped.
+- Full Catalan language pack added.
 - Submissions in Plagiarism plugin stopped if there has been 5 unsuccessful attempts.
 - Link removed for Originality Report if there is no score.
 - Fixes:
 	> Incorrect links to GradeMark and Originality Report for students have been hidden. 
 	> Conflicts with Bootstrap theme for tooltips and fixed grademark link position.
 	> Incorrect settings link in the Plagiarism plugin.
+	> Timestamp was being incorrectly set preventing more than 1 batch of submissions updating from Turnitin. 
 	> Student is now enrolled on the class when checking EULA acceptance to ensure they are on account.
 
 ####################################################################################
