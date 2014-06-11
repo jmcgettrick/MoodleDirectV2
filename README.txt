@@ -5,6 +5,16 @@ For installation instructions and trouble shooting please see Installation Instr
 Moodle Direct v2 Release Notes
 ------------------------------------------------------------------------------------
 
+Date:       2014-June-11
+Release:    v2014012404
+
+- Ability added for instructors to refresh individual rows in a Turnitin Assignment.
+- Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments.
+- Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config. 
+- Erroneous debugging removed (Thanks to Skylar Kelty).
+
+####################################################################################
+
 Date:       2014-April-17
 Release:    v2014012403
 
