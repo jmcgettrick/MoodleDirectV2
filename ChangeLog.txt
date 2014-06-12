@@ -1,3 +1,5 @@
+2014-06-11 : Javascript cleaned up in block to use Moodle value
+2014-06-11 : EULA closing reworked to accomodate IE
 2014-06-11 : Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config. 
 2014-06-11 : Ability added for instructors to refresh individual rows in a Turnitin Assignment
 2014-06-11 : Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments
