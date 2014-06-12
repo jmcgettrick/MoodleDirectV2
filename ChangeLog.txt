@@ -1,3 +1,4 @@
+2014-06-11 : Font Awesome added to plugin
 2014-06-11 : Javascript cleaned up in block to use Moodle value
 2014-06-11 : EULA closing reworked to accomodate IE
 2014-06-11 : Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config. 
