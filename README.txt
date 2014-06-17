@@ -14,7 +14,11 @@ Release:    v2014012404
 - Font Awesome added to plugin
 - EULA closing reworked to accomodate IE
 - Javascript cleaned up in block to use Moodle value (Thanks to Skylar Kelty).
+- Version file updated for Moodle 2.7+ compatibility (Thanks to Skylar Kelty).
+- Javascript reorganised to fit better with Moodle guidelines
 - Erroneous debugging removed (Thanks to Skylar Kelty).
+- Fixes:
+	> Allow Non OR file type setting now being changed in Turnitin
 
 ####################################################################################
 

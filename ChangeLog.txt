@@ -1,3 +1,6 @@
+2014-06-11 : Bug fixed with Allow Non OR file type setting not being changed in Turnitin.
+2014-06-11 : Version file updated for Moodle 2.7+ compatibility
+2014-06-11 : Javascript reorganised to fit better with Moodle guidelines
 2014-06-11 : Font Awesome added to plugin
 2014-06-11 : Javascript cleaned up in block to use Moodle value
 2014-06-11 : EULA closing reworked to accomodate IE
