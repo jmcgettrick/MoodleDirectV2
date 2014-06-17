@@ -36,10 +36,6 @@ if ($ADMIN->fulltree) {
                     html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
                                                 "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/styles.css"));
 
-    $upgrade = turnitintooltwo_updateavailable($module);
-    $upgradeavailable = (is_null($upgrade)) ?
-                            '' : " - ".html_writer::link($upgrade, get_string("upgradeavailable", "turnitintooltwo"));
-
     $version = (empty($module->version)) ? $module->versiondisk : $module->version;
 
     // Test connection to turnitin link
@@ -57,7 +53,7 @@ if ($ADMIN->fulltree) {
     $testconnection .= $OUTPUT->box('', '', 'test_result');
     $testconnection .= html_writer::end_tag('div');
 
-    $desc = '('.get_string('moduleversion', 'turnitintooltwo').': '.$version.$upgradeavailable.')';
+    $desc = '('.get_string('moduleversion', 'turnitintooltwo').': '.$version.')';
 
     $settings->add(new admin_setting_heading('turnitintooltwo_header', $desc, $tabmenu));
 
