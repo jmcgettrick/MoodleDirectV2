@@ -1,3 +1,4 @@
+2014-06-11 : Automatic connection test and upgrade check in settings stopped and changed to buttons
 2014-06-11 : Bug fixed where new files with same filename displaying correct OR link
 2014-06-11 : Check for XMLWriter extension added to settings area
 2014-06-11 : Bug fixed with Allow Non OR file type setting not being changed in Turnitin.

@@ -18,6 +18,7 @@ Release:    v2014012404
 - Javascript reorganised to fit better with Moodle guidelines
 - Erroneous debugging removed (Thanks to Skylar Kelty).
 - Check for XMLWriter extension added to settings area.
+- Automatic connection test and upgrade check in settings stopped and changed to buttons.
 - Fixes:
 	> Allow Non OR file type setting now being changed in Turnitin
 	> New file submissions with same filename display correct OR link in PP.
