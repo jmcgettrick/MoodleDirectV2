@@ -1,3 +1,4 @@
+2014-06-21 : Config warning added if plugin has not been configured.
 2014-06-21 : Removed restriction in PP to allow submissions after the due date.
 2014-06-21 : Removed restriction on word count and content length if accepting any file type
 2014-06-21 : Ability added to enable/disable Turnitin in individual modules.

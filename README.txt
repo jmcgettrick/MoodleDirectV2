@@ -12,6 +12,7 @@ Release:    v2014012405
 - Ability added for instructors to refresh individual rows in a Turnitin Assignment.
 - Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments.
 - Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config.
+- Config warning added if plugin has not been configured.
 - Anonymous marking option is locked once a submission is made to any assignment part.
 - Font Awesome added to plugin
 - EULA closing reworked to accomodate IE
