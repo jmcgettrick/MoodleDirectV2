@@ -8,6 +8,7 @@ Moodle Direct v2 Release Notes
 Date:       2014-June-11
 Release:    v2014012405
 
+- Ability added to enable/disable Turnitin in individual modules.
 - Ability added for instructors to refresh individual rows in a Turnitin Assignment.
 - Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments.
 - Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config.

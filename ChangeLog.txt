@@ -1,3 +1,4 @@
+2014-06-21 : Ability added to enable/disable Turnitin in individual modules.
 2014-06-21 : Anonymous marking option is locked once a submission is made to any assignment part
 2014-06-21 : Automatic connection test and upgrade check in settings stopped and changed to buttons
 2014-06-21 : Bug fixed where new files with same filename displaying correct OR link
