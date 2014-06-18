@@ -24,6 +24,7 @@ Release:    v2014012405
 - Fixes:
 	> Allow Non OR file type setting now being changed in Turnitin
 	> New file submissions with same filename display correct OR link in PP.
+	> Removed restriction on word count and content length if accepting any file type in PP.
 
 ####################################################################################
 
