@@ -6,11 +6,12 @@ Moodle Direct v2 Release Notes
 ------------------------------------------------------------------------------------
 
 Date:       2014-June-11
-Release:    v2014012404
+Release:    v2014012405
 
 - Ability added for instructors to refresh individual rows in a Turnitin Assignment.
 - Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments.
 - Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config.
+- Anonymous marking option is locked once a submission is made to any assignment part.
 - Font Awesome added to plugin
 - EULA closing reworked to accomodate IE
 - Javascript cleaned up in block to use Moodle value (Thanks to Skylar Kelty).
@@ -22,6 +23,13 @@ Release:    v2014012404
 - Fixes:
 	> Allow Non OR file type setting now being changed in Turnitin
 	> New file submissions with same filename display correct OR link in PP.
+
+####################################################################################
+
+Date:       2014-June-11
+Release:    v2014012404
+
+- EULA acceptance is now stored locally for submissions.
 
 ####################################################################################
 

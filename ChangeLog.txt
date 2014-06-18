@@ -1,16 +1,18 @@
-2014-06-11 : Automatic connection test and upgrade check in settings stopped and changed to buttons
-2014-06-11 : Bug fixed where new files with same filename displaying correct OR link
-2014-06-11 : Check for XMLWriter extension added to settings area
-2014-06-11 : Bug fixed with Allow Non OR file type setting not being changed in Turnitin.
-2014-06-11 : Version file updated for Moodle 2.7+ compatibility
-2014-06-11 : Javascript reorganised to fit better with Moodle guidelines
-2014-06-11 : Font Awesome added to plugin
-2014-06-11 : Javascript cleaned up in block to use Moodle value
-2014-06-11 : EULA closing reworked to accomodate IE
-2014-06-11 : Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config. 
-2014-06-11 : Ability added for instructors to refresh individual rows in a Turnitin Assignment
-2014-06-11 : Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments
-2014-06-11 : Erroneous debugging removed
+2014-06-21 : Anonymous marking option is locked once a submission is made to any assignment part
+2014-06-21 : Automatic connection test and upgrade check in settings stopped and changed to buttons
+2014-06-21 : Bug fixed where new files with same filename displaying correct OR link
+2014-06-21 : Check for XMLWriter extension added to settings area
+2014-06-21 : Bug fixed with Allow Non OR file type setting not being changed in Turnitin.
+2014-06-21 : Version file updated for Moodle 2.7+ compatibility
+2014-06-21 : Javascript reorganised to fit better with Moodle guidelines
+2014-06-21 : Font Awesome added to plugin
+2014-06-21 : Javascript cleaned up in block to use Moodle value
+2014-06-21 : EULA closing reworked to accomodate IE
+2014-06-21 : Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config. 
+2014-06-21 : Ability added for instructors to refresh individual rows in a Turnitin Assignment
+2014-06-21 : Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments
+2014-06-21 : Erroneous debugging removed
+2014-06-11 : EULA acceptance is now stored locally for submissions.
 2014-04-17 : Full Catalan language pack added.
 2014-04-17 : Timestamp was being incorrectly set preventing more than 1 batch of submissions updating from Turnitin. 
 2014-04-17 : Student is now enrolled on the class when checking EULA acceptance to ensure they are on account.
