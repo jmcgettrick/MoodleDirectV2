@@ -1,3 +1,4 @@
+2014-06-21 : Course reset functionality added to remove Turnitin data when a class/module is reset.
 2014-06-21 : Config warning added if plugin has not been configured.
 2014-06-21 : Removed restriction in PP to allow submissions after the due date.
 2014-06-21 : Removed restriction on word count and content length if accepting any file type

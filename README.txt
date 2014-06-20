@@ -8,6 +8,7 @@ Moodle Direct v2 Release Notes
 Date:       2014-June-11
 Release:    v2014012405
 
+- Course reset functionality added to remove Turnitin data when a class/module is reset.
 - Ability added to enable/disable Turnitin in individual modules.
 - Ability added for instructors to refresh individual rows in a Turnitin Assignment.
 - Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments.
