@@ -26,6 +26,7 @@ Release:    v2014012405
 - Removed restriction in PP to allow submissions after the due date.
 - Automatic connection test and upgrade check in settings stopped and changed to buttons.
 - Fixes:
+	> A grade set to 0 in GradeMark was showing as — in Turnitin Assignment
 	> Allow Non OR file type setting now being changed in Turnitin
 	> New file submissions with same filename display correct OR link in PP.
 
