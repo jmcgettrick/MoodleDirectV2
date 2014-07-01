@@ -1,3 +1,4 @@
+2014-06-21 : Postgres bug fixed when searching unlinked users table
 2014-06-21 : Bug fixed where a grade set to 0 in GradeMark was showing as — in Turnitin Assignment
 2014-06-21 : Course reset functionality added to remove Turnitin data when a class/module is reset.
 2014-06-21 : Config warning added if plugin has not been configured.
