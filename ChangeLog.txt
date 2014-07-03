@@ -1,3 +1,4 @@
+2014-06-21 : User creation removed from restore procedure
 2014-06-21 : Bug fixed where user could submit without accepting Moodle disclaimer
 2014-06-21 : Postgres bug fixed when searching unlinked users table
 2014-06-21 : Bug fixed where a grade set to 0 in GradeMark was showing as — in Turnitin Assignment
