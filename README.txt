@@ -26,6 +26,7 @@ Release:    v2014012405
 - Removed restriction in PP to allow submissions after the due date.
 - Automatic connection test and upgrade check in settings stopped and changed to buttons.
 - User creation removed from restore procedure.
+- Additonal indexes added to database tables
 - Fixes:
 	> User could submit to Turnitin Assignment without accepting Moodle disclaimer
 	> Postgres type error when searching unlinked users query
