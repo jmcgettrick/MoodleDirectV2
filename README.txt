@@ -30,6 +30,7 @@ Release:    v2014012405
 - Extra permission checks added for migration tool
 - Improved CSS to scope only to plugins
 - Added CSS files to jQuery plugin organisation
+- Forum posts are now submitted to Turnitin when posted
 - Code changes as required by Moodlerooms to better fit Moodle guidelines
 - Fixes:
 	> User could submit to Turnitin Assignment without accepting Moodle disclaimer

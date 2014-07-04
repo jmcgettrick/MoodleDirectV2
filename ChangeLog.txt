@@ -1,3 +1,4 @@
+2014-06-21 : Forum posts are now submitted to Turnitin when posted
 2014-06-21 : Code changes as required by Moodlerooms to better fit Moodle guidelines
 2014-06-21 : Peermark Manager now accessible to any instructor in PP
 2014-06-21 : Extra permission checks added for migration tool
