@@ -27,12 +27,17 @@ Release:    v2014012405
 - Automatic connection test and upgrade check in settings stopped and changed to buttons.
 - User creation removed from restore procedure.
 - Additonal indexes added to database tables
+- Extra permission checks added for migration tool
+- Improved CSS to scope only to plugins
+- Added CSS files to jQuery plugin organisation
+- Code changes as required by Moodlerooms to better fit Moodle guidelines
 - Fixes:
 	> User could submit to Turnitin Assignment without accepting Moodle disclaimer
 	> Postgres type error when searching unlinked users query
 	> A grade set to 0 in GradeMark was showing as — in Turnitin Assignment
 	> Allow Non OR file type setting now being changed in Turnitin
 	> New file submissions with same filename display correct OR link in PP.
+	> Peermark Manager now accessible to any instructor in PP
 
 ####################################################################################
 

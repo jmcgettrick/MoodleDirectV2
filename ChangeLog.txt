@@ -1,4 +1,10 @@
+2014-06-21 : Code changes as required by Moodlerooms to better fit Moodle guidelines
+2014-06-21 : Peermark Manager now accessible to any instructor in PP
+2014-06-21 : Extra permission checks added for migration tool
+2014-06-21 : Improved CSS to scope only to plugins
+2014-06-21 : Added css files to jQuery plugin organisation
 2014-06-21 : User creation removed from restore procedure
+2014-06-21 : Additonal indexes added to database tables
 2014-06-21 : Bug fixed where user could submit without accepting Moodle disclaimer
 2014-06-21 : Postgres bug fixed when searching unlinked users table
 2014-06-21 : Bug fixed where a grade set to 0 in GradeMark was showing as — in Turnitin Assignment
