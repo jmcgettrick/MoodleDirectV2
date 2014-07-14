@@ -39,6 +39,7 @@ Release:    v2014012405
 	> Allow Non OR file type setting now being changed in Turnitin
 	> New file submissions with same filename display correct OR link in PP.
 	> Peermark Manager now accessible to any instructor in PP
+	> Turnitin Messages Inbox now accessible to any instructor
 
 ####################################################################################
 

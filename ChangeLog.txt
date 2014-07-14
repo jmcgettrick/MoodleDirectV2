@@ -1,3 +1,4 @@
+2014-06-21 : Bug fixed where instructors can not access Turnitin Messages Inbox
 2014-06-21 : Forum posts are now submitted to Turnitin when posted
 2014-06-21 : Code changes as required by Moodlerooms to better fit Moodle guidelines
 2014-06-21 : Peermark Manager now accessible to any instructor in PP
