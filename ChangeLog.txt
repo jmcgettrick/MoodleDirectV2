@@ -1,10 +1,10 @@
+2014-06-21 : Error message now shown if ajax request to get submissions times out
 2014-06-21 : Bug fixed where instructors can not access Turnitin Messages Inbox
 2014-06-21 : Forum posts are now submitted to Turnitin when posted
 2014-06-21 : Code changes as required by Moodlerooms to better fit Moodle guidelines
 2014-06-21 : Peermark Manager now accessible to any instructor in PP
 2014-06-21 : Extra permission checks added for migration tool
-2014-06-21 : Improved CSS to scope only to plugins
-2014-06-21 : Added css files to jQuery plugin organisation
+2014-06-21 : Improved CSS to scope only to plugins and files added to jQuery plugin organisation
 2014-06-21 : User creation removed from restore procedure
 2014-06-21 : Additonal indexes added to database tables
 2014-06-21 : Bug fixed where user could submit without accepting Moodle disclaimer

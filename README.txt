@@ -28,8 +28,8 @@ Release:    v2014012405
 - User creation removed from restore procedure.
 - Additonal indexes added to database tables
 - Extra permission checks added for migration tool
-- Improved CSS to scope only to plugins
-- Added CSS files to jQuery plugin organisation
+- Error message now shown if ajax request to get submissions times out 
+- Improved CSS to scope only to plugins and files added to jQuery plugin organisation
 - Forum posts are now submitted to Turnitin when posted
 - Code changes as required by Moodlerooms to better fit Moodle guidelines
 - Fixes:
