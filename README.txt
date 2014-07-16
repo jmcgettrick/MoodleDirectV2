@@ -41,6 +41,7 @@ Release:    v2014012405
 	> Peermark Manager now accessible to any instructor in PP
 	> Turnitin Messages Inbox now accessible to any instructor
 	> Gradebook now updates when post date is changed on the inbox screen.
+	> Grademark null grades no longer overwrite grades previously set in Moodle via PP.
 
 ####################################################################################
 
