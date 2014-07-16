@@ -1,3 +1,4 @@
+2014-06-21 : Gradebook now updates when post date is changed on the inbox screen.
 2014-06-21 : Error message now shown if ajax request to get submissions times out
 2014-06-21 : Bug fixed where instructors can not access Turnitin Messages Inbox
 2014-06-21 : Forum posts are now submitted to Turnitin when posted

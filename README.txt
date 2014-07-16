@@ -40,6 +40,7 @@ Release:    v2014012405
 	> New file submissions with same filename display correct OR link in PP.
 	> Peermark Manager now accessible to any instructor in PP
 	> Turnitin Messages Inbox now accessible to any instructor
+	> Gradebook now updates when post date is changed on the inbox screen.
 
 ####################################################################################
 
