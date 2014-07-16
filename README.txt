@@ -42,6 +42,7 @@ Release:    v2014012405
 	> Turnitin Messages Inbox now accessible to any instructor
 	> Gradebook now updates when post date is changed on the inbox screen.
 	> Grademark null grades no longer overwrite grades previously set in Moodle via PP.
+	> Accept anything setting is now passed to recreated assignment in Course migration
 
 ####################################################################################
 
