@@ -44,6 +44,7 @@ Release:    v2014012405
 	> Grademark null grades no longer overwrite grades previously set in Moodle via PP.
 	> Accept anything setting is now passed to recreated assignment in Course migration
 	> Feedback files no longer sent to Turnitin in PP
+	> Admin now enrolled on class when migrating incase they are not on the account.
 
 ####################################################################################
 

@@ -1,3 +1,4 @@
+2014-06-21 : Enrol admin as an instructor when migrating incase they are not on the account.
 2014-06-21 : Feedback files no longer sent to Turnitin in PP
 2014-06-21 : Bug fixed with course migration where accept anything setting was not being passed to recreated assignment
 2014-06-21 : Bug fixed where Grademark null grades were overwriting grades previously set in Moodle in the Plagiarism plugin.
