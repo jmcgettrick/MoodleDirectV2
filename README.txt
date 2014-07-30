@@ -32,6 +32,7 @@ Release:    v2014012405
 - Improved CSS to scope only to plugins and files added to jQuery plugin organisation
 - Forum posts are now submitted to Turnitin when posted
 - Database dump added to PP settings page
+- WSDL files are now stored locally.
 - Code changes as required by Moodlerooms to better fit Moodle guidelines
 - Fixes:
 	> User could submit to Turnitin Assignment without accepting Moodle disclaimer

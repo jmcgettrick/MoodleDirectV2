@@ -1,3 +1,4 @@
+2014-06-21 : WSDL files are now stored locally.
 2014-06-21 : Database dump added to PP settings page.
 2014-06-21 : Enrol admin as an instructor when migrating incase they are not on the account.
 2014-06-21 : Feedback files no longer sent to Turnitin in PP
