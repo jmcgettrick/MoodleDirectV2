@@ -1,5 +1,5 @@
-2014-06-21 : Configuration setting added to use Moodle SSL certificate
-2014-06-21 : WSDL files are now stored locally.
+2014-06-21 : SDK setting added to use Moodle SSL certificate if it is present.
+2014-06-21 : WSDL files used by SDK are now stored locally.
 2014-06-21 : Database dump added to PP settings page.
 2014-06-21 : Enrol admin as an instructor when migrating incase they are not on the account.
 2014-06-21 : Feedback files no longer sent to Turnitin in PP
