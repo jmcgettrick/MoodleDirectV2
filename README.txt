@@ -48,6 +48,7 @@ Release:    v2014012405
 	> Accept anything setting is now passed to recreated assignment in Course migration
 	> Feedback files no longer sent to Turnitin in PP
 	> Admin now enrolled on class when migrating incase they are not on the account.
+	> PP cron now ignores files with no OR score when cron attempts to refresh scores.
 
 ####################################################################################
 
