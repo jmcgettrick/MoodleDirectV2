@@ -33,6 +33,7 @@ Release:    v2014012405
 - Forum posts are now submitted to Turnitin when posted
 - Database dump added to PP settings page
 - WSDL files are now stored locally.
+- Configuration setting added to use Moodle SSL certificate.
 - Code changes as required by Moodlerooms to better fit Moodle guidelines
 - Fixes:
 	> User could submit to Turnitin Assignment without accepting Moodle disclaimer
