@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: fr
 
 $string['addsubmission'] = 'Ajouter un envoi';
@@ -140,7 +140,7 @@ $string['turnitinaccountid_desc'] = '<b>[Nécessaire]</b><br />Entrez le numéro
 $string['turnitinanon'] = 'Annotations anonymes';
 $string['turnitinanon_help'] = 'Vous pouvez configurer l’anonymat des annotations des exercices en sélectionnant Oui. Une fois l’option de l’anonymat activée pour un exercice, elle ne peut plus être annulée.';
 $string['turnitinapiurl'] = 'L’URL de L’API Turnitin';
-$string['turnitinapiurl_desc'] = '<b>[Demandé]</b><br />Entrer l’ URL de l’API de Turnitin<br /><i>(par exemple https://www.turnitin.com)<br />(par exemple https://submit.ac.uk)</i>';
+$string['turnitinapiurl_desc'] = '<b>[Demandé]</b><br />Entrer l’ URL de l’API de Turnitin<br /><i>(par exemple https://api.turnitin.com)<br />(par exemple https://submit.ac.uk)</i>';
 $string['turnitindeleteconfirm'] = 'La suppression des copies les efface de votre boite de réception et de votre liste des copies soumises mais ne les supprime pas complètement de la base de données.\n\nÊtes vous sûr de vouloir supprimer ce travail? Cette opération ne peut pas être annulée.';
 $string['turnitindeletionerror'] = 'La suppression de la soumission a échouée. La copie locale de Moodle a été supprimée mais pas la transmission à Turnitin.';
 $string['turnitinenrolstudents'] = 'Inscrire tous les étudiants';
@@ -405,7 +405,7 @@ $string['nonenrolledstudent'] = 'Étudiant non-inscrit';
 $string['startdatenotyearago'] = 'La date de début ne peut pas être il y a plus d&#39;un an';
 $string['searchcourses'] = 'Rechercher les cours';
 $string['errorsdesc'] = 'Un problème est survenu en chargeant les fichiers suivant dans Turnitin';
-$string['tiiexplain'] = 'Turnitin est un produit commercial; pour utiliser ce service vous devez l&#39;acheter. Pour plus d&#39;information veuillez voir Turnitin is a commercial product and you must have a paid subscription to use this service for more information see <a href=http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>&#34;';
+$string['tiiexplain'] = 'Turnitin est un produit commercial; pour utiliser ce service vous devez l&#39;acheter. Pour plus d&#39;information veuillez voir Turnitin is a commercial product and you must have a paid subscription to use this service for more information see <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>&#34;';
 $string['useturnitin'] = 'Activer Turnitin';
 $string['turnitinconfig'] = 'Configuration du plugin de plagiat Turnitin';
 $string['studentdisclosuredefault'] = 'L&#39;ensemble des fichiers envoyés seront soumis au service de détection du plagiat Turnitin.com';
@@ -425,7 +425,7 @@ $string['defaultupdated'] = 'Mise à jour de Turnitin par défaut';
 $string['pp_createsubmissionerror'] = 'Une erreur est survenue dans le plugin du plagiat lors de la création de la transmission';
 $string['pp_updatesubmissionerror'] = 'Une erreur est survenue dans le plugin du plagiat lors de la mise à jour de la transmission';
 $string['pp_submission_error'] = 'Une erreur est survenu lors de la soumission:';
-$string['pp_configuredesc'] = 'Vous devez configurer ce module depuis le module turnitintooltwo. Veuillez cliquer sur <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>ici</a> pour configurer ce plugin';
+$string['pp_configuredesc'] = 'Vous devez configurer ce module depuis le module turnitintooltwo. Veuillez cliquer sur <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>ici</a> pour configurer ce plugin';
 $string['coursestomigrate'] = 'Vous avez {$a} cours disponibles pour migrer depuis Turnitin';
 $string['migrationheader'] = 'Migration du cours Turnitin';
 $string['gradingtemplate'] = 'Modèle d&#39;évaluation';
@@ -438,3 +438,13 @@ $string['submitondraft'] = 'Soumettre le document une fois qu&#39;il est chargé
 $string['submitonfinal'] = 'Soumettre le document lorsque l&#39;étudiant l&#39;envoie pour l&#39;évaluation ';
 $string['turnitindiagnostic'] = 'Activer le mode diagnostique';
 $string['turnitindiagnostic_desc'] = '<b>[Attention]</b><br />Activez le mode diagnostique seulement pour détecter des problèmes liés à l’API de Turnitin.';
+$string['autorefreshgrades'] = 'Actualiser les résultats /notes automatiquement';
+$string['autorefreshgrades_help'] = 'Après chaque appel à Turnitin l’intégration de Moodle va essayer de synchroniser automatiquement les changements crées dans Turnitin par défaut. Vous pouvez utiliser cette option pour arrêter ce processus. En revanche, pour garder la synchronisation entre les deux systèmes, il faut rafraîchir régulièrement et manuellement les résultats ainsi que les rapports de similitude à partir de Moodle.';
+$string['yesgrades'] = 'Oui, actualiser automatiquement les résultats des correspondances et les notes.';
+$string['nogrades'] = 'Non, j&#39;actualiserai moi-même les résultats de similitude et les notes manuellement ';
+$string['submissionagreementerror'] = 'Vous devez accepter cet accord pour soumettre ce document';
+$string['noxmlwriterlibrary'] = 'Pour utiliser le plugin vous devez avoir l&#39;extension PHP XMLWriter installée sur votre';
+$string['checkupgrade'] = 'Vérifier les actualisations disponibles';
+$string['checkingupgrade'] = 'Vérification des actualisations disponibles en cours';
+$string['usinglatest'] = 'Vous utilisez la dernière version!';
+$string['useturnitin_mod'] = 'Activer Turnitin pour {a}';

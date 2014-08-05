@@ -166,6 +166,7 @@ if (!empty($action)) {
             $post['studentsname'] = optional_param('studentsname', $USER->id, PARAM_INT);
             $post['studentsname'] = ($istutor) ? $post['studentsname'] : $USER->id;
             $post['submissionpart'] = required_param('submissionpart', PARAM_INT);
+            $post['submissionagreement'] = required_param('submissionagreement', PARAM_INT);
 
             // Default params for redirecting if there is a problem.
             $extraparams = "&part=".$post['submissionpart']."&user=".$post['studentsname'];
@@ -181,6 +182,13 @@ if (!empty($action)) {
             // Check that title for submission has been entered.
             if (empty($post['submissiontitle'])) {
                 $_SESSION["notice"]["message"] = get_string('submissiontitleerror', 'turnitintooltwo');
+                $error = true;
+                $do = "submitpaper";
+            }
+
+            // Check that student has accepted disclaimer if applicable.
+            if (empty($post['submissionagreement'])) {
+                $_SESSION["notice"]["message"] = get_string('copyrightagreementerror', 'turnitintooltwo');
                 $error = true;
                 $do = "submitpaper";
             }
@@ -216,6 +224,12 @@ if (!empty($action)) {
                             $turnitintooltwosubmission->delete_submission();
                             $_SESSION["notice"]["message"] = $doupload["message"];
                             $do = "submitpaper";
+                        } else {
+                            // Lock the assignment setting for anon marking.
+                            $locked_assignment = new object();
+                            $locked_assignment->id = $turnitintooltwoassignment->turnitintooltwo->id;
+                            $locked_assignment->submitted = 1;
+                            $DB->update_record('turnitintooltwo', $locked_assignment);
                         }
                     } else if ($post['submissiontype'] == 2) {
                         $turnitintooltwosubmission->prepare_text_submission($cm, $post);
@@ -266,13 +280,6 @@ if (!empty($action)) {
     }
 }
 
-// Include the css for if javascript isn't enabled when a student is logged in.
-if (!$istutor) {
-    $noscriptcss = html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
-                                                        "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/student_noscript.css"));
-    echo html_writer::tag('noscript', $noscriptcss);
-}
-
 // Show header and navigation
 if ($viewcontext == "box" || $viewcontext == "box_solid") {
     $turnitintooltwoview->output_header($cm,
@@ -316,6 +323,15 @@ if ($viewcontext == "box" || $viewcontext == "box_solid") {
     $turnitintooltwoview->draw_tool_tab_menu($cm, $do);
 }
 
+echo html_writer::start_tag('div', array('class' => 'mod_turnitintooltwo'));
+
+// Include the css for if javascript isn't enabled when a student is logged in.
+if (!$istutor) {
+    $noscriptcss = html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
+                                                        "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/student_noscript.css"));
+    echo html_writer::tag('noscript', $noscriptcss);
+}
+
 if (!is_null($notice)) {
     echo $turnitintooltwoview->show_notice($notice);
 }
@@ -347,12 +363,19 @@ switch ($do) {
                                                             $turnitintooltwofileuploadoptions, "box_solid", $user);
             unset($_SESSION['form_data']);
 
+            // Add loader icon for when iframe refreshes.
+            $loadericon = html_writer::tag('i', '', array('class' => 'fa fa-spinner fa-spin fa-5x'));
+            $output = html_writer::tag('div', $loadericon, array('id' => 'refresh_loading'));
+
             // Create div for submitting text.
             $icon = $OUTPUT->pix_icon('icon', get_string('uploadingsubtoturnitin', 'turnitintooltwo'), 'mod_turnitintooltwo');
             $text = html_writer::tag('p', get_string('uploadingsubtoturnitin', 'turnitintooltwo'));
             $loadericon = $OUTPUT->pix_icon('loader-lrg', get_string('uploadingsubtoturnitin', 'turnitintooltwo'),
                                                     'mod_turnitintooltwo');
-            $output = html_writer::tag('div', $icon.$text.$loadericon, array('id' => 'submitting_loader'));
+
+            // Add loader icon and text for submission.
+            $output .= html_writer::tag('div', $icon.$text.$loadericon, array('id' => 'submitting_loader'));
+
         } else {
             $output = html_writer::tag("div", get_string('permissiondeniederror', 'turnitintooltwo'), array("id" => "box_receipt"));
         }
@@ -382,14 +405,14 @@ switch ($do) {
             $user = new turnitintooltwo_user($USER->id, "Learner");
             $course = $turnitintooltwoassignment->get_course_data($turnitintooltwoassignment->turnitintooltwo->course);
             $user->join_user_to_class($course->turnitin_cid);
-            
+
             echo html_writer::tag("div", $turnitintooltwoview->output_lti_form_launch('rubric_view', 'Learner',
                                                     $parts[$part]->tiiassignid), array("class" => "launch_form"));
         }
         break;
 
     case "loadmessages":
-        if ($istutor && has_capability('mod/turnitintooltwo:submit', context_module::instance($cm->id))) {
+        if ($istutor || has_capability('mod/turnitintooltwo:submit', context_module::instance($cm->id))) {
             echo html_writer::tag("div", $turnitintooltwoview->output_lti_form_launch('messages_inbox', $userrole),
                                                     array("id" => "inbox_form"));
         }
@@ -477,6 +500,7 @@ switch ($do) {
         }
         break;
 }
+echo html_writer::end_tag("div");
 echo html_writer::end_tag("div");
 echo $OUTPUT->footer();
 

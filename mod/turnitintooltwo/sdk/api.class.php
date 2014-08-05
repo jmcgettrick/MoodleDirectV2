@@ -28,6 +28,7 @@ class TurnitinAPI {
     private $proxyuser;
     private $proxypassword;
     private $proxybypass;
+    private $sslcertificate;
 
     private $personwsdl;
     private $coursesectionwsdl;
@@ -64,11 +65,11 @@ class TurnitinAPI {
         $this->integrationid = $integrationid;
         $this->language   = $language;
 
-        $this->personwsdl = 'https://www.turnitin.com/static/resources/files/lis-person.wsdl';
-        $this->coursesectionwsdl = 'https://www.turnitin.com/static/resources/files/lis-coursesection.wsdl';
-        $this->lineitemwsdl = 'https://www.turnitin.com/static/resources/files/lis-lineitem.wsdl';
-        $this->membershipwsdl = 'https://www.turnitin.com/static/resources/files/lis-membership.wsdl';
-        $this->resultwsdl = 'https://www.turnitin.com/static/resources/files/lis-result.wsdl';
+        $this->personwsdl = dirname(__FILE__).'/wsdl/lis-person.wsdl';
+        $this->coursesectionwsdl = dirname(__FILE__).'/wsdl/lis-coursesection.wsdl';
+        $this->lineitemwsdl = dirname(__FILE__).'/wsdl/lis-lineitem.wsdl';
+        $this->membershipwsdl = dirname(__FILE__).'/wsdl/lis-membership.wsdl';
+        $this->resultwsdl = dirname(__FILE__).'/wsdl/lis-result.wsdl';
     }
 
     /**
@@ -170,8 +171,31 @@ class TurnitinAPI {
         return $this->proxybypass;
     }
 
+    /**
+     * Get the proxy bypass
+     *
+     * @return string $proxybypass
+     */
     public function setProxyBypass($proxybypass) {
         $this->proxybypass = $proxybypass;
+    }
+
+    /**
+     * Get the SSL certificate
+     *
+     * @return string
+     */
+    public function getSSLCertificate() {
+        return $this->sslcertificate;
+    }
+
+    /**
+     * Set the SSL certificate
+     *
+     * @param string $sslcertificate
+     */
+    public function setSSLCertificate($sslcertificate) {
+        $this->sslcertificate = $sslcertificate;
     }
 
     /**
@@ -261,6 +285,10 @@ class TurnitinAPI {
 
         if ((isset($this->proxybypass)) AND ($this->proxybypass != '')) {
             $service->setProxyBypass( $this->proxybypass );
+        }
+
+        if ((isset($this->sslcertificate)) AND ($this->sslcertificate != '')) {
+            $service->setSSLCertificate( $this->sslcertificate );
         }
         return $service;
     }

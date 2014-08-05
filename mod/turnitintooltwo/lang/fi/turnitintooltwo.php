@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: fi
 
 $string['addsubmission'] = 'Lisää Palautus';
@@ -137,7 +137,7 @@ $string['turnitinaccountid_desc'] = '<b>[Pakollinen]</b><br />Syötä Ensisijais
 $string['turnitinanon'] = 'Nimetön Merkintä';
 $string['turnitinanon_help'] = 'Turnitin-tehtävän voi konfiguroida käyttämään Nimetöntä Merkintää asettamalla arvoksi Kyllä. Kun nimetön merkintä on tehtävässä kerran otettu käyttöön, ei sitä enää voi poistaa.';
 $string['turnitinapiurl'] = 'Turnitin API-URL';
-$string['turnitinapiurl_desc'] = '<b>[Pakollinen]</b><br />Syötä Turnitinin API-URL<br /><i>(esim. https://www.turnitin.com)<br />(esim. https://submit.ac.uk)</i>';
+$string['turnitinapiurl_desc'] = '<b>[Pakollinen]</b><br />Syötä Turnitinin API-URL<br /><i>(esim. https://api.turnitin.com)<br />(esim. https://submit.ac.uk)</i>';
 $string['turnitindeleteconfirm'] = 'Töiden poistaminen poistaa ne sekä palautettujen töiden luettelostasi että palautuslokerosta, mutta ei täysin /nTurnitinin tietokannasta. \n\nOletko varma, että haluat poistaa palautuksen? Tätä toimintoa ei voi perua.';
 $string['turnitindeletionerror'] = 'Turnitiniin tehdyn palautuksen poisto epäonnistui. Paikallinen Moodle-kopio poistettiin, mutta Turnitiniin tehdyn palautuksen poisto ei onnistunut.';
 $string['turnitinenrolstudents'] = 'Ilmoita Kaikki Opiskelijat';
@@ -402,7 +402,7 @@ $string['nonenrolledstudent'] = 'Ei-Rekisteröitynyt Opiskelija';
 $string['startdatenotyearago'] = 'Aloituspäivämäärästä voi korkeintaan olla 1 vuosi';
 $string['searchcourses'] = 'Hae Kursseja';
 $string['errorsdesc'] = 'Seuraavien tiedostojen siirrossa Turnitiniin, ilmeni pulma';
-$string['tiiexplain'] = 'Turnitin on kaupallinen tuote, ja sinulla pitää olla maksettu tilaus voidaksesi käyttää tätä palvelua. Saadaksesi enemmän tietoa, katso <a href=&#34;http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>';
+$string['tiiexplain'] = 'Turnitin on kaupallinen tuote, ja sinulla pitää olla maksettu tilaus voidaksesi käyttää tätä palvelua. Saadaksesi enemmän tietoa, katso <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>';
 $string['useturnitin'] = 'Aktivoi Turnitin';
 $string['turnitinconfig'] = 'Turnitin Plagiointi Plugin-lisäosan konfigurointi';
 $string['studentdisclosuredefault'] = 'Kaikki ladatut tiedostot toimitetaan plagioinninhavaitsemispalveluun Turnitin.com';
@@ -422,7 +422,7 @@ $string['defaultupdated'] = 'Turnitin oletusarvot päivitetty';
 $string['pp_createsubmissionerror'] = 'Palautusta luodessa esiintyi plagiarismi plugin-lisäosassa virhe ';
 $string['pp_updatesubmissionerror'] = 'Palautusta päivitettäessä esiintyi plagiarismi plugin-lisäosassa virhe ';
 $string['pp_submission_error'] = 'Palautuksessasi: kohdattiin virhe';
-$string['pp_configuredesc'] = 'Sinun pitää konfiguroida tämä moduuli turnitintyökalukaksi-moduulin sisällä. Näpäytä <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>tässä</a> kun haluat konfiguroida tämän plugin-laajennuksen';
+$string['pp_configuredesc'] = 'Sinun pitää konfiguroida tämä moduuli turnitintyökalukaksi-moduulin sisällä. Näpäytä <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>tässä</a> kun haluat konfiguroida tämän plugin-laajennuksen';
 $string['coursestomigrate'] = 'Sinulla on {$a} luokkaa saatavilla Turnitinistä siirettäväksi';
 $string['migrationheader'] = 'Turnitin Luokan Siirto';
 $string['gradingtemplate'] = 'Arvostelumalline';
@@ -435,3 +435,13 @@ $string['submitondraft'] = 'Palauta tiedosto ensimmäisen siirron yhteydessä';
 $string['submitonfinal'] = 'Palauta tiedosto, kun opiskelija lähettää sen merkintää varten';
 $string['turnitindiagnostic'] = 'Aktivoi Diagnoosi-tila';
 $string['turnitindiagnostic_desc'] = '<b>[Varoitus]</b><br />Aktivoi Diagnoosi-tila ainoastaan löytääksesi ongelmia Turnitin API:ssä.';
+$string['autorefreshgrades'] = 'Päivitä Automaattisesti Arvosanat/Pisteet';
+$string['autorefreshgrades_help'] = 'Jokaisen Turnitiniin tehdyn kutsun jälkeen tulee Moodle-plugin oletusarvoisesti yrittämään automaattisesti Turnitin-istunnon aikana tehtyjen muutosten lataamista. Voit käyttää tätä vaihtoehtoa toiminnon pois päältä kääntämiseen, mutta ylläpitääksesi molempien systeemien välisen synkronoinnin, sinun pitää jatkuvasti päivittää arvosanat ja alkuperäisyyspisteytykset manuaalisesti, Moodlesta käsin.';
+$string['yesgrades'] = 'Kyllä, päivitä automaattisesti alkuperäisyyspisteet ja arvosanat';
+$string['nogrades'] = 'Ei, päivitän alkuperäisyyspisteytyksen ja arvosanat manuaalisesti';
+$string['submissionagreementerror'] = 'Sinun täytyy hyväksyä sopimus, jotta voit palauttaa';
+$string['noxmlwriterlibrary'] = 'Käyttääksesi tätä plugin-laajennusta pitää PHP XMLWriter -modulin olla asennettuna palvelimellasi.';
+$string['checkupgrade'] = 'Tarkista päivityksen saatavuus';
+$string['checkingupgrade'] = 'Tarkistamassa päivityksen saatavuutta';
+$string['usinglatest'] = 'Käytät uusinta versiota!';
+$string['useturnitin_mod'] = 'Aktivoi Turnitin {a}a varten';

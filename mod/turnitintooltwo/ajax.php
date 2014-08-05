@@ -145,13 +145,14 @@ switch ($action) {
         break;
 
     case "get_users":
+        $PAGE->set_context(context_system::instance());
         if (is_siteadmin()) {
             echo json_encode(turnitintooltwo_getusers());
         }
         break;
 
     case "initialise_redraw":
-        $return["aaData"] = '';
+        $return["aaData"] = array();
 
         echo json_encode($return);
         break;
@@ -173,14 +174,15 @@ switch ($action) {
             $start = required_param('start', PARAM_INT);
             $total = required_param('total', PARAM_INT);
             $parts = $turnitintooltwoassignment->get_parts();
+            $updatefromtii = ($refreshrequested || $turnitintooltwoassignment->turnitintooltwo->autoupdates == 1) ? 1 : 0;
 
-            if (empty($_SESSION["TiiSubmissions"][$partid]) || ($refreshrequested && $start == 0)) {
+            if ($updatefromtii && $start == 0) {
                 $turnitintooltwoassignment->get_submission_ids_from_tii($parts[$partid]);
                 $total = $_SESSION["TiiSubmissions"][$partid];
                 $_SESSION["TiiSubmissionsRefreshed"][$partid] = time();
             }
 
-            if ($start < $total) {
+            if ($start < $total && $updatefromtii) {
                 $turnitintooltwoassignment->refresh_submissions($parts[$partid], $start);
             }
 
@@ -277,7 +279,7 @@ switch ($action) {
                 $submission->lastname = $user->lastname;
                 $submission->userid = $user->id;
             } else {
-                $submission->update_submission_from_tii();
+                $submission->update_submission_from_tii(true);
             }
             $useroverallgrades = array();
 
@@ -396,10 +398,11 @@ switch ($action) {
             $turnitintooltwosubmission = new turnitintooltwo_submission($submissionid, "turnitin");
             if ($turnitintooltwosubmission->unanonymise_submission($reason)) {
                 if ($turnitintooltwosubmission->userid == 0) {
-                    $return["name"] = $turnitintooltwosubmission->nmlastname.", ".$turnitintooltwosubmission->nmfirstname;
+                    $return["name"] = format_string($turnitintooltwosubmission->nmlastname).", ".
+                                        format_string($turnitintooltwosubmission->nmfirstname);
                 } else {
                     $user = new turnitintooltwo_user($turnitintooltwosubmission->userid);
-                    $return["name"] = $user->lastname.", ".$user->firstname;
+                    $return["name"] = format_string($user->lastname).", ".format_string($user->firstname);
                 }
                 $return["status"] = "success";
             }
@@ -433,32 +436,37 @@ switch ($action) {
         if (!confirm_sesskey()) {
             throw new moodle_exception('invalidsesskey', 'error');
         }
-        $coursecategory = optional_param('course_category', 0, PARAM_INT);
-        $createassignments = optional_param('create_assignments', 0, PARAM_INT);
-        $classids = required_param('class_ids', PARAM_SEQUENCE);
-        $classids = explode(",", $classids);
 
-        $i = 0;
-        foreach ($classids as $tiiclassid) {
-            $tiicoursename = $_SESSION['tii_classes'][$tiiclassid];
-            $coursename = $tiicoursename;
+        if (has_capability('moodle/course:create', context_system::instance())) {
+            $coursecategory = optional_param('course_category', 0, PARAM_INT);
+            $createassignments = optional_param('create_assignments', 0, PARAM_INT);
+            $classids = required_param('class_ids', PARAM_SEQUENCE);
+            $classids = explode(",", $classids);
 
-            $course = turnitintooltwo_assignment::create_moodle_course($tiiclassid, $tiicoursename, $coursename, $coursecategory);
-            if ($createassignments == 1 && !empty($course)) {
-                $return = turnitintooltwo_get_assignments_from_tii($tiiclassid, "raw");
+            $i = 0;
+            foreach ($classids as $tiiclassid) {
+                $tiicoursename = $_SESSION['tii_classes'][$tiiclassid];
+                $coursename = $tiicoursename;
 
-                foreach ($return as $assignment) {
-                    turnitintooltwo_assignment::create_migration_assignment(array($assignment["tii_id"]),
-                                                                            $course->id, $assignment["tii_title"]);
+                $course = turnitintooltwo_assignment::create_moodle_course($tiiclassid, $tiicoursename, $coursename, $coursecategory);
+                if ($createassignments == 1 && !empty($course)) {
+                    $return = turnitintooltwo_get_assignments_from_tii($tiiclassid, "raw");
+
+                    foreach ($return as $assignment) {
+                        turnitintooltwo_assignment::create_migration_assignment(array($assignment["tii_id"]),
+                                                                                $course->id, $assignment["tii_title"]);
+                    }
                 }
+                $i++;
             }
-            $i++;
-        }
 
-        $result = new object();
-        $result->completed = $i;
-        $result->total = count($classids);
-        $msg = get_string('recreatemulticlassescomplete', 'turnitintooltwo', $result);
+            $result = new object();
+            $result->completed = $i;
+            $result->total = count($classids);
+            $msg = get_string('recreatemulticlassescomplete', 'turnitintooltwo', $result);
+        } else {
+            $msg = get_string('nopermissions', 'error', get_string('course:create', 'role'));
+        }
 
         echo $msg;
         break;
@@ -468,19 +476,23 @@ switch ($action) {
             throw new moodle_exception('invalidsesskey', 'error');
         }
 
-        $tiicoursename = optional_param('tii_course_name', get_string('defaultcoursetiititle', 'turnitintooltwo'), PARAM_TEXT);
-        $coursecategory = optional_param('course_category', 0, PARAM_INT);
-        $tiicourseid = optional_param('tii_course_id', 0, PARAM_INT);
-        $coursename = urldecode(optional_param('course_name', '', PARAM_TEXT));
-        if (empty($coursename)) {
-            $coursename = get_string('defaultcoursetiititle', 'turnitintooltwo')." (".$tiicourseid.")";
+        if (has_capability('moodle/course:create', context_system::instance())) {
+            $tiicoursename = optional_param('tii_course_name', get_string('defaultcoursetiititle', 'turnitintooltwo'), PARAM_TEXT);
+            $coursecategory = optional_param('course_category', 0, PARAM_INT);
+            $tiicourseid = optional_param('tii_course_id', 0, PARAM_INT);
+            $coursename = urldecode(optional_param('course_name', '', PARAM_TEXT));
+            if (empty($coursename)) {
+                $coursename = get_string('defaultcoursetiititle', 'turnitintooltwo')." (".$tiicourseid.")";
+            }
+
+            $course = turnitintooltwo_assignment::create_moodle_course($tiicourseid, urldecode($tiicoursename),
+                                                                        $coursename, $coursecategory);
+
+            $newcourse = array('courseid' => $course->id, 'coursename' => $course->fullname);
+            echo json_encode($newcourse);
+        } else {
+            throw new moodle_exception('nopermissions', 'error', '', get_string('course:create', 'role'));
         }
-
-        $course = turnitintooltwo_assignment::create_moodle_course($tiicourseid, urldecode($tiicoursename),
-                                                                    $coursename, $coursecategory);
-
-        $newcourse = array('courseid' => $course->id, 'coursename' => $course->fullname);
-        echo json_encode($newcourse);
         break;
 
     case "link_course":
@@ -488,24 +500,28 @@ switch ($action) {
             throw new moodle_exception('invalidsesskey', 'error');
         }
 
-        $tiicoursename = optional_param('tii_course_name', get_string('defaultcoursetiititle', 'turnitintooltwo'), PARAM_TEXT);
-        $tiicourseid = optional_param('tii_course_id', 0, PARAM_INT);
-        $coursetolink = optional_param('course_to_link', 0, PARAM_INT);
+        if (has_capability('moodle/course:update', context_system::instance())) {
+            $tiicoursename = optional_param('tii_course_name', get_string('defaultcoursetiititle', 'turnitintooltwo'), PARAM_TEXT);
+            $tiicourseid = optional_param('tii_course_id', 0, PARAM_INT);
+            $coursetolink = optional_param('course_to_link', 0, PARAM_INT);
 
-        $turnitincourse = new object();
-        $turnitincourse->courseid = $coursetolink;
-        $turnitincourse->ownerid = $USER->id;
-        $turnitincourse->turnitin_cid = $tiicourseid;
-        $turnitincourse->turnitin_ctl = urldecode($tiicoursename);
-        $turnitincourse->course_type = 'TT';
+            $turnitincourse = new object();
+            $turnitincourse->courseid = $coursetolink;
+            $turnitincourse->ownerid = $USER->id;
+            $turnitincourse->turnitin_cid = $tiicourseid;
+            $turnitincourse->turnitin_ctl = urldecode($tiicoursename);
+            $turnitincourse->course_type = 'TT';
 
-        if (!$insertid = $DB->insert_record('turnitintooltwo_courses', $turnitincourse)) {
-            echo "0";
+            if (!$insertid = $DB->insert_record('turnitintooltwo_courses', $turnitincourse)) {
+                echo "0";
+            } else {
+                $course = $DB->get_record("course", array("id" => $coursetolink), 'fullname');
+                $newcourse = array('courseid' => $coursetolink, 'coursename' => $course->fullname);
+
+                echo json_encode($newcourse);
+            }
         } else {
-            $course = $DB->get_record("course", array("id" => $coursetolink), 'fullname');
-            $newcourse = array('courseid' => $coursetolink, 'coursename' => $course->fullname);
-
-            echo json_encode($newcourse);
+            throw new moodle_exception('nopermissions', 'error', '', get_string('course:update', 'role'));
         }
         break;
 
@@ -515,9 +531,13 @@ switch ($action) {
             throw new moodle_exception('invalidsesskey', 'error');
         }
 
-        $tiicourseid = required_param('tii_course_id', PARAM_INT);
-        $return = turnitintooltwo_get_assignments_from_tii($tiicourseid, "json");
-        $return["number_of_assignments"] = count($return["aaData"]);
+        if (has_capability('moodle/course:update', context_system::instance())) {
+            $tiicourseid = required_param('tii_course_id', PARAM_INT);
+            $return = turnitintooltwo_get_assignments_from_tii($tiicourseid, "json");
+            $return["number_of_assignments"] = count($return["aaData"]);
+        } else {
+            $return["number_of_assignments"] = 0;
+        }
         echo json_encode($return);
         break;
 
@@ -526,15 +546,18 @@ switch ($action) {
         if (!confirm_sesskey()) {
             throw new moodle_exception('invalidsesskey', 'error');
         }
-        $partids = required_param('parts', PARAM_SEQUENCE);
-        $courseid = optional_param('course_id', 0, PARAM_INT);
-        $assignmentname = optional_param('assignment_name', '', PARAM_TEXT);
-        $assignmentname = (empty($assignmentname)) ? get_string('defaultassignmenttiititle', 'turnitintooltwo') :
-                                                            urldecode($assignmentname);
 
-        $partids = explode(',', $partids);
-        if (is_array($partids)) {
-            turnitintooltwo_assignment::create_migration_assignment($partids, $courseid, $assignmentname);
+        if (has_capability('mod/turnitintooltwo:addinstance', context_system::instance())) {
+            $partids = required_param('parts', PARAM_SEQUENCE);
+            $courseid = optional_param('course_id', 0, PARAM_INT);
+            $assignmentname = optional_param('assignment_name', '', PARAM_TEXT);
+            $assignmentname = (empty($assignmentname)) ? get_string('defaultassignmenttiititle', 'turnitintooltwo') :
+                                                                urldecode($assignmentname);
+
+            $partids = explode(',', $partids);
+            if (is_array($partids)) {
+                turnitintooltwo_assignment::create_migration_assignment($partids, $courseid, $assignmentname);
+            }
         }
         break;
 
@@ -543,22 +566,41 @@ switch ($action) {
             throw new moodle_exception('invalidsesskey', 'error');
         }
 
-        $tiicourseid = required_param('tii_course_id', PARAM_INT);
-        $tiicoursetitle = required_param('tii_course_title', PARAM_TEXT);
-        $enddated = required_param('end_date_d', PARAM_INT);
-        $enddatem = required_param('end_date_m', PARAM_INT);
-        $enddatey = required_param('end_date_y', PARAM_INT);
+        if (has_capability('moodle/course:update', context_system::instance())) {
+            $tiicourseid = required_param('tii_course_id', PARAM_INT);
+            $tiicoursetitle = required_param('tii_course_title', PARAM_TEXT);
+            $enddated = required_param('end_date_d', PARAM_INT);
+            $enddatem = required_param('end_date_m', PARAM_INT);
+            $enddatey = required_param('end_date_y', PARAM_INT);
 
-        $enddate = mktime(00, 00, 00, $enddatem, $enddated, $enddatey);
+            $enddate = mktime(00, 00, 00, $enddatem, $enddated, $enddatey);
 
-        if (turnitintooltwo_assignment::edit_tii_course_end_date($tiicourseid, $tiicoursetitle, $enddate)) {
-            $return["status"] = "success";
-            $return["end_date"] = userdate($enddate, get_string('strftimedate', 'langconfig'));
+            if (turnitintooltwo_assignment::edit_tii_course_end_date($tiicourseid, $tiicoursetitle, $enddate)) {
+                $return["status"] = "success";
+                $return["end_date"] = userdate($enddate, get_string('strftimedate', 'langconfig'));
+            } else {
+                $return["status"] = "fail";
+                $return["msg"] = get_string('unanonymiseerror', 'turnitintooltwo');
+            }
         } else {
             $return["status"] = "fail";
-            $return["msg"] = get_string('unanonymiseerror', 'turnitintooltwo');
+            $return["msg"] = get_string('nopermissions', 'error', get_string('course:update', 'role'));
         }
         echo json_encode($return);
+        break;
+
+    case "check_upgrade":
+        if (!confirm_sesskey()) {
+            throw new moodle_exception('invalidsesskey', 'error');
+        }
+        $data = '';
+        $current_version = required_param('current_version', PARAM_INT);
+
+        if (is_siteadmin()) {
+            $data = turnitintooltwo_updateavailable($current_version);
+        }
+
+        echo $data;
         break;
 
     case "test_connection":
@@ -585,6 +627,7 @@ switch ($action) {
             echo json_encode($data);
         }
         break;
+
     case "submit_nothing":
 
         if (!confirm_sesskey()) {
@@ -613,4 +656,3 @@ switch ($action) {
         }
     break;
 }
-

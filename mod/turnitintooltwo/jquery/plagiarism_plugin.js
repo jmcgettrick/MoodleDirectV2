@@ -4,12 +4,12 @@
  */
 
 jQuery(document).ready(function($) {
-    $('.tii_links_container .tii_tooltip').live('mouseover', function(e) {
+    $(document).on('mouseover', '.tii_links_container .tii_tooltip', function() {
         $(this).tooltipster();
         return false;
     });
 
-    $('.origreport_open').live('click', function() {
+    $(document).on('click', '.origreport_open', function() {
         var classList = $(this).attr('class').replace(/\s+/,' ').split(' ');
 
         for (var i = 0; i < classList.length; i++) {
@@ -20,7 +20,7 @@ jQuery(document).ready(function($) {
         }
     });
 
-    $('.grademark_open').live('click', function() {
+    $(document).on('click', '.grademark_open', function() {
         var classList = $(this).attr('class').replace(/\s+/,' ').split(' ');
 
         for (var i = 0; i < classList.length; i++) {
@@ -32,8 +32,8 @@ jQuery(document).ready(function($) {
     });
 
     // Open an iframe light box containing the Peermark Manager
-    if ($('.peermark_manager_pp_launch').length > 0) {
-        $('.peermark_manager_pp_launch').colorbox({
+    if ($('.plagiarism_turnitin_peermark_manager_pp_launch').length > 0) {
+        $('.plagiarism_turnitin_peermark_manager_pp_launch').colorbox({
             iframe:true, width:"802px", height:"772px", opacity: "0.7", className: "peermark_manager",
             onLoad: function() { getLoadingGif(); },
             onCleanup: function() { hideLoadingGif(); },
@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
     }
 
     // Open an iframe light box containing the Peermark reviews
-    $('.peermark_reviews_pp_launch').live('click', function(e) {
+    $(document).on('click', '.peermark_reviews_pp_launch', function() {
         $('.peermark_reviews_pp_launch').colorbox({
             open:true,iframe:true, width:"802px", height:"772px", opacity: "0.7", className: "peermark_reviews",
             onLoad: function() { getLoadingGif(); },
@@ -54,7 +54,7 @@ jQuery(document).ready(function($) {
     });
 
     // Open an iframe light box containing the Rubric View
-    $('.rubric_view_pp_launch').live('click', function(e) {
+    $(document).on('click', '.rubric_view_pp_launch', function() {
         $(this).colorbox({
             open:true,iframe:true, width:"832px", height:"682px", opacity: "0.7", className: "rubric_view",
             onLoad: function() { getLoadingGif(); },
@@ -65,7 +65,7 @@ jQuery(document).ready(function($) {
 
     // Launch the Turnitin EULA
     if ($(".pp_turnitin_ula").length > 0) {
-        $(".pp_turnitin_ula").live('click', function(e) {
+        $(document).on('click', '.pp_turnitin_ula', function() {
             launchEULA('#useragreement_form form');
         });
     }
@@ -75,7 +75,7 @@ jQuery(document).ready(function($) {
 
         // Remove the a tag and replace with form and message
         var spanClick = '<span>'+$('.forum_eula_launch_noscript').html()+'</span>';
-        $(".forum_eula_launch").html(spanClick+'<form class="useragreement_form" action="'+$('span.turnitin_eula_link').html()+'" method="POST" accept-charset="utf-8" target="_blank"></form>')
+        $(".forum_eula_launch").html(spanClick+'<form class="useragreement_form" action="'+$('span.turnitin_eula_link').html()+'" method="POST" accept-charset="utf-8" target="eulaWindow"></form>')
         $('.forum_eula_launch_noscript').remove();
 
         $(".forum_eula_launch span").on('click', function(e) {
@@ -95,24 +95,20 @@ jQuery(document).ready(function($) {
                     $(identifier).append('<input name="'+key+'" value="'+val+'" type="hidden" />');
                 });
                 $(identifier).append('<input type="submit" value="Submit" />');
-                $(identifier).submit();
 
-                $(window).on("message", function(ev) {
-                    if (ev.originalEvent.data == 'turnitin_eula_accepted') {
-                        var userid = 0;
-                        if($('.turnitin_ula').length){
-                            // Turnitin activity module
-                            userid = ($(".turnitin_ula").attr('data-userid'));
-                        } else if($('.pp_turnitin_ula').length) {
-                            // Plagiarism plugin
-                            userid = ($(".pp_turnitin_ula").attr('data-userid'));
-                        } else {
-                            // Forum
-                            userid += ($(".userid").html());
-                        }
-                        userAgreementAccepted( userid );
-                    }
+                $(identifier).on("submit", function(event) {
+                    eulaWindow = window.open('', 'eula');
+                    eulaWindow.document.write('<frameset><frame id="eulaWindow" name="eulaWindow"></frame></frameset>');
+                    $(eulaWindow).on("message", function(ev) {
+                        eulaWindow.close();
+                        window.location.reload();
+                    });
+                    eulaWindow.addEventListener("beforeunload", function (e) {
+                        window.location.href = window.location.href;
+                    });
                 });
+
+                $(identifier).submit();
             }
         });
     }

@@ -5,6 +5,61 @@ For installation instructions and trouble shooting please see Installation Instr
 Moodle Direct v2 Release Notes
 ------------------------------------------------------------------------------------
 
+Date:       2014-June-11
+Release:    v2014012405
+
+- Course reset functionality added to remove Turnitin data when a class/module is reset.
+- Ability added to enable/disable Turnitin in individual modules.
+- Ability added for instructors to refresh individual rows in a Turnitin Assignment.
+- Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments.
+- Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config.
+- Config warning added if plugin has not been configured.
+- Anonymous marking option is locked once a submission is made to any assignment part.
+- Font Awesome added to plugin
+- EULA closing reworked to accomodate IE
+- Javascript cleaned up in block to use Moodle value (Thanks to Skylar Kelty).
+- Version file updated for Moodle 2.7+ compatibility (Thanks to Skylar Kelty).
+- Javascript reorganised to fit better with Moodle guidelines
+- Erroneous debugging removed (Thanks to Skylar Kelty).
+- Check for XMLWriter extension added to settings area.
+- Removed restriction on word count and content length if accepting any file type in PP.
+- Removed restriction in PP to allow submissions after the due date.
+- Automatic connection test and upgrade check in settings stopped and changed to buttons.
+- User creation removed from restore procedure.
+- Additonal indexes added to database tables
+- Extra permission checks added for migration tool
+- Error message now shown if ajax request to get submissions times out 
+- Improved CSS to scope only to plugins and files added to jQuery plugin organisation
+- Forum posts are now submitted to Turnitin when posted
+- Database dump added to PP settings page
+- WSDL files used by SDK are now stored locally.
+- SDK setting added to use Moodle SSL certificate if it is present.
+- Code changes as required by Moodlerooms to better fit Moodle guidelines
+- Fixes:
+	> User could submit to Turnitin Assignment without accepting Moodle disclaimer
+	> Postgres type error when searching unlinked users query
+	> A grade set to 0 in GradeMark was showing as — in Turnitin Assignment
+	> Allow Non OR file type setting now being changed in Turnitin
+	> New file submissions with same filename display correct OR link in PP.
+	> Peermark Manager now accessible to any instructor in PP
+	> Turnitin Messages Inbox now accessible to any instructor
+	> Gradebook now updates when post date is changed on the inbox screen.
+	> Grademark null grades no longer overwrite grades previously set in Moodle via PP.
+	> Accept anything setting is now passed to recreated assignment in Course migration
+	> Feedback files no longer sent to Turnitin in PP
+	> Admin now enrolled on class when migrating incase they are not on the account.
+	> PP cron now ignores files with no OR score when cron attempts to refresh scores.
+	> Grades now removed from Gradebook when submission is deleted.
+
+####################################################################################
+
+Date:       2014-June-11
+Release:    v2014012404
+
+- EULA acceptance is now stored locally for submissions.
+
+####################################################################################
+
 Date:       2014-April-17
 Release:    v2014012403
 

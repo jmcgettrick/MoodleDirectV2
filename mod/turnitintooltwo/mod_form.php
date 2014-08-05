@@ -110,23 +110,39 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
 
         $mform =& $this->_form;
 
+        $script = '';
         // Add in custom Javascript and CSS.
-        $script = html_writer::tag('script', '', array("type" => "text/javascript",
-                                            "src" => $CFG->wwwroot."/mod/turnitintooltwo/scripts/jquery-1.8.2.min.js"));
-        $script .= html_writer::tag('script', '', array("id" => "plugin_turnitin_script", "type" => "text/javascript",
-                                        "src" => $CFG->wwwroot."/mod/turnitintooltwo/scripts/turnitintooltwo.js"));
-        $script .= html_writer::tag('script', '',
-                                        array("type" => "text/javascript",
-                                                "src" => $CFG->wwwroot."/mod/turnitintooltwo/scripts/jquery.dataTables.min.js"));
-        $script .= html_writer::tag('script', '', array("type" => "text/javascript",
-                                        "src" => $CFG->wwwroot."/mod/turnitintooltwo/scripts/jquery-ui-1.10.2.custom.min.js"));
-        $script .= html_writer::tag('script', '', array("type" => "text/javascript",
-                                        "src" => $CFG->wwwroot."/mod/turnitintooltwo/scripts/jquery.colorbox-min.js"));
+        if ($CFG->branch <= 25) {
+            $script .= html_writer::tag('script', '', array("type" => "text/javascript",
+                                                "src" => $CFG->wwwroot."/mod/turnitintooltwo/jquery/jquery-1.8.2.min.js"));
+            $script .= html_writer::tag('script', '', array("id" => "plugin_turnitin_script", "type" => "text/javascript",
+                                            "src" => $CFG->wwwroot."/mod/turnitintooltwo/jquery/turnitintooltwo.js"));
+            $script .= html_writer::tag('script', '', array("type" => "text/javascript",
+                                            "src" => $CFG->wwwroot."/mod/turnitintooltwo/jquery/jquery-ui-1.10.4.custom.min.js"));
+            $script .= html_writer::tag('script', '', array("type" => "text/javascript",
+                                            "src" => $CFG->wwwroot."/mod/turnitintooltwo/jquery/jquery.colorbox.js"));
+        } else {
+            $PAGE->requires->jquery();
+            $PAGE->requires->jquery_plugin('ui');
+            $PAGE->requires->jquery_plugin('turnitintooltwo-turnitintooltwo', 'mod_turnitintooltwo');
+            $PAGE->requires->jquery_plugin('turnitintooltwo-colorbox', 'mod_turnitintooltwo');
+        }
+
         $script .= html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
                                                             "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/styles.css"));
         $script .= html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
                                                             "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/colorbox.css"));
         $mform->addElement('html', $script);
+
+        $config_warning = '';
+        if (empty($config->accountid) || empty($config->secretkey) || empty($config->apiurl)) {
+            $config_warning = html_writer::tag('div', get_string('configureerror', 'turnitintooltwo'), 
+                                                array('class' => 'library_not_present_warning'));
+        }
+
+        if ($config_warning != '') {
+            $mform->addElement('html', $config_warning);
+        }
 
         $noscript = html_writer::tag('noscript', get_string('noscript', 'turnitintooltwo'), array("class" => "warning"));
         $mform->addElement('html', $noscript);
@@ -201,7 +217,7 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
 
-        if ($this->updating AND $config->useanon AND isset($this->turnitintooltwo->anon) AND $this->numsubs > 0) {
+        if ($this->updating AND $config->useanon AND isset($this->turnitintooltwo->anon) AND $this->turnitintooltwo->submitted == 1) {
             $staticout = (isset($this->turnitintooltwo->anon) AND $this->turnitintooltwo->anon) ?
                             get_string('yes') : get_string('no');
             $mform->addElement('static', 'static', get_string('turnitinanon', 'turnitintooltwo'), $staticout);
@@ -224,6 +240,12 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
         $mform->addElement('select', 'studentreports', get_string('studentreports', 'turnitintooltwo'), $ynoptions);
         $mform->addHelpButton('studentreports', 'studentreports', 'turnitintooltwo');
         $mform->setDefault('studentreports', $config->default_studentreports);
+
+        $refreshoptions = array(1 => get_string('yesgrades', 'turnitintooltwo'), 0 => get_string('nogrades', 'turnitintooltwo'));
+
+        $mform->addElement('select', 'autoupdates', get_string('autorefreshgrades', 'turnitintooltwo'), $refreshoptions);
+        $mform->addHelpButton('autoupdates', 'autorefreshgrades', 'turnitintooltwo');
+        $mform->setDefault('autoupdates', 1);
 
         $mform->addElement('checkbox', 'set_instructor_defaults', '', " ".get_string('setinstructordefaults', 'turnitintooltwo'));
         $mform->setDefault('set_instructor_defaults', false);

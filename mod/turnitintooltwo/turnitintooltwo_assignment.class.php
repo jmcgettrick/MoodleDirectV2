@@ -286,7 +286,7 @@ class turnitintooltwo_assignment {
             $turnitincourse->ownerid = $USER->id;
             $turnitincourse->course_type = 'TT';
 
-            // Enrol user as instructor on course if they are not a site admin.
+            // Enrol user as instructor on course in moodle if they are not a site admin.
             if (!is_siteadmin()) {
                 // Get the role id for a teacher.
                 $roles1 = get_roles_with_capability('mod/turnitintooltwo:grade');
@@ -305,6 +305,10 @@ class turnitintooltwo_assignment {
                     }
                 }
                 $enrol->enrol_user($instance, $USER->id, $role->id);
+            } else {
+                // Enrol admin as an instructor incase they are not on the account.
+                $turnitintooltwouser = new turnitintooltwo_user($USER->id, "Instructor");
+                $turnitintooltwouser->join_user_to_class($tiicourseid);
             }
 
             if (!$insertid = $DB->insert_record('turnitintooltwo_courses', $turnitincourse)) {
@@ -606,7 +610,6 @@ class turnitintooltwo_assignment {
         // Insert the default options for the assignment.
         $this->turnitintooltwo->timecreated = time();
         $this->turnitintooltwo->dateformat = "d/m/Y";
-        $this->turnitintooltwo->autoupdates = 1;
         $this->turnitintooltwo->gradedisplay = 1;
         $this->turnitintooltwo->commentedittime = 1800;
         $this->turnitintooltwo->commentmaxsize = 800;
@@ -1090,6 +1093,9 @@ class turnitintooltwo_assignment {
             $DB->update_record('event', $event);
         }
 
+        // Update grade settings.
+        turnitintooltwo_grade_item_update($this->turnitintooltwo);
+
         return $return;
     }
 
@@ -1178,6 +1184,7 @@ class turnitintooltwo_assignment {
             $assignment->setInternetCheck($this->turnitintooltwo->internetcheck);
             $assignment->setPublicationsCheck($this->turnitintooltwo->journalcheck);
             $assignment->setTranslatedMatching($this->turnitintooltwo->transmatch);
+            $assignment->setAllowNonOrSubmissions($this->turnitintooltwo->allownonor);
 
             // Erater settings.
             $assignment->setErater((isset($this->turnitintooltwo->erater)) ? $this->turnitintooltwo->erater : 0);
@@ -1523,6 +1530,7 @@ class turnitintooltwo_assignment {
                     $assignmentdetails->erater_mechanics = (int)$readassignment->getEraterMechanics();
                     $assignmentdetails->erater_style = (int)$readassignment->getEraterStyle();
                     $assignmentdetails->transmatch = (int)$readassignment->getTranslatedMatching();
+                    $assignmentdetails->allownonor = (int)$readassignment->getAllowNonOrSubmissions();
                 }
 
                 // Get Peermark Assignments.

@@ -29,7 +29,7 @@ class turnitintooltwo_comms {
     private $tiiintegrationid;
     private $diagnostic;
     private $langcode;
-
+    
     public function __construct() {
         $config = turnitintooltwo_admin_config();
 
@@ -37,7 +37,7 @@ class turnitintooltwo_comms {
         $this->tiiaccountid = $config->accountid;
         $this->tiiapiurl = (substr($config->apiurl, -1) == '/') ? substr($config->apiurl, 0, -1) : $config->apiurl;
         $this->tiisecretkey = $config->secretkey;
-
+        
         if (empty($this->tiiaccountid) || empty($this->tiiapiurl) || empty($this->tiisecretkey)) {
             turnitintooltwo_print_error( 'configureerror', 'turnitintooltwo' );
         }
@@ -86,6 +86,11 @@ class turnitintooltwo_comms {
             $api->setProxyBypass($CFG->proxybypass);
         }
 
+        if (is_readable("$CFG->dataroot/moodleorgca.crt")) {
+            $certificate = realpath("$CFG->dataroot/moodleorgca.crt");
+            $api->setSSLCertificate($certificate);
+        }
+
         return $api;
     }
 
@@ -96,7 +101,7 @@ class turnitintooltwo_comms {
      * @param string $tterrorstr
      * @param boolean $toscreen
      */
-    public function handle_exceptions($e, $tterrorstr = "", $toscreen = true) {
+    public static function handle_exceptions($e, $tterrorstr = "", $toscreen = true) {
         $errorstr = "";
         if (!empty($tterrorstr)) {
             $errorstr = get_string($tterrorstr, 'turnitintooltwo')."<br/><br/>";

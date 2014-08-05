@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: en
 
 $string['addsubmission'] = 'Add Submission';
@@ -140,7 +140,7 @@ $string['turnitinaccountid_desc'] = '<b>[Required]</b><br />Enter your Turnitin 
 $string['turnitinanon'] = 'Anonymous Marking';
 $string['turnitinanon_help'] = 'You can configure your Turnitin assignment to use Anonymous Marking by setting this value to Yes. Once anonymous marking has been enabled on an assignment it can not be disabled.';
 $string['turnitinapiurl'] = 'Turnitin API URL';
-$string['turnitinapiurl_desc'] = '<b>[Required]</b><br />Enter the Turnitin API URL<br /><i>(e.g. https://www.turnitin.com)<br />(e.g. https://submit.ac.uk)</i>';
+$string['turnitinapiurl_desc'] = '<b>[Required]</b><br />Enter the Turnitin API URL<br /><i>(e.g. https://api.turnitin.com)<br />(e.g. https://submit.ac.uk)</i>';
 $string['turnitindeleteconfirm'] = 'Deleting papers removes them from your submissions list and inbox but does not completely\nremove them from the Turnitin database.\n\nAre you sure you want to delete this submission? This action cannot be undone.';
 $string['turnitindeletionerror'] = 'Turnitin submission deletion failed. The local Moodle copy was removed but the submission in Turnitin could not be deleted.';
 $string['turnitinenrolstudents'] = 'Enrol All Students';
@@ -405,7 +405,7 @@ $string['nonenrolledstudent'] = 'Non Enrolled Student';
 $string['startdatenotyearago'] = 'Start date can not be more than 1 year ago';
 $string['searchcourses'] = 'Search Courses';
 $string['errorsdesc'] = 'There has been a problem in trying to upload the following files to Turnitin.';
-$string['tiiexplain'] = 'Turnitin is a commercial product and you must have a paid subscription to use this service for more information see <a href=&#34;http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>';
+$string['tiiexplain'] = 'Turnitin is a commercial product and you must have a paid subscription to use this service for more information see <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>';
 $string['useturnitin'] = 'Enable Turnitin';
 $string['turnitinconfig'] = 'Turnitin Plagiarism Plugin Configuration';
 $string['studentdisclosuredefault'] = 'All files uploaded will be submitted to the plagiarism detection service Turnitin.com';
@@ -425,7 +425,7 @@ $string['defaultupdated'] = 'Turnitin defaults updated';
 $string['pp_createsubmissionerror'] = 'There was an error in the plagiarism plugin when creating a submission';
 $string['pp_updatesubmissionerror'] = 'There was an error in the plagiarism plugin when updating a submission';
 $string['pp_submission_error'] = 'There has been an error with your submission:';
-$string['pp_configuredesc'] = 'You must configure this module within the turnitintooltwo module. Please click <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>here</a> to configure this plugin';
+$string['pp_configuredesc'] = 'You must configure this module within the turnitintooltwo module. Please click <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>here</a> to configure this plugin';
 $string['coursestomigrate'] = 'You have {$a} classes available to migrate from Turnitin';
 $string['migrationheader'] = 'Turnitin Class Migration';
 $string['gradingtemplate'] = 'Grading Template';
@@ -438,3 +438,13 @@ $string['submitondraft'] = 'Submit file when first uploaded';
 $string['submitonfinal'] = 'Submit file when student sends for marking';
 $string['turnitindiagnostic'] = 'Enable Diagnostic Mode';
 $string['turnitindiagnostic_desc'] = '<b>[Caution]</b><br />Enable Diagnostic mode only to track down problems with the Turnitin API.';
+$string['autorefreshgrades'] = 'Auto Refresh Grades / Scores';
+$string['autorefreshgrades_help'] = 'By default after each call to Turnitin the Moodle integration plug in will attempt to automatically pull down changes made while in within Turnitin. You can use this option to turn off this feature, however in order to maintain synchronisation between both systems you will need to frequently manually refresh grades and originality scores from within Moodle.';
+$string['yesgrades'] = 'Yes, automatically refresh originality scores and grades';
+$string['nogrades'] = 'No, I will refresh originality scores and grades manually';
+$string['submissionagreementerror'] = 'You must accept the agreement for this submission';
+$string['noxmlwriterlibrary'] = 'To use this plugin you will need to have the PHP XMLWriter extension installed on your server.';
+$string['checkupgrade'] = 'Check for available upgrade';
+$string['checkingupgrade'] = 'Checking for available upgrade';
+$string['usinglatest'] = 'You are using the latest version!';
+$string['useturnitin_mod'] = 'Enable Turnitin for {$a}';

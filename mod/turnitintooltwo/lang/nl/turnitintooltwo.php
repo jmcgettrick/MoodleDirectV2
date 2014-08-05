@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: nl
 
 $string['addsubmission'] = 'Inzending toevoegen';
@@ -140,7 +140,7 @@ $string['turnitinaccountid_desc'] = '<b>[Vereist]</b><br />Voer de ID van uw Tur
 $string['turnitinanon'] = 'Anonieme Beoordeling';
 $string['turnitinanon_help'] = 'U kunt uw Turnitin-opdracht configureren om Anonieme Beoordeling te gebruiken door deze waarde in te stellen op &#39;Ja&#39;. Wanneer anonieme beoordeling eenmaal is ingeschakeld voor een opdracht kan het niet uitgeschakeld worden.';
 $string['turnitinapiurl'] = 'Turnitin API URL';
-$string['turnitinapiurl_desc'] = '<b>[Vereist]</b><br />Voer de Turnitin API URL in<br /><i>(bijv. https://www.turnitin.com)<br />(bijv. https://submit.ac.uk)</i>';
+$string['turnitinapiurl_desc'] = '<b>[Vereist]</b><br />Voer de Turnitin API URL in<br /><i>(bijv. https://api.turnitin.com)<br />(bijv. https://submit.ac.uk)</i>';
 $string['turnitindeleteconfirm'] = 'Als u papers verwijdert, worden ze van uw lijst met inzendingen en uit uw inbox gehaald, maar worden ze niet volledig uit de Turnitin-database verwijderd. Weet u zeker dat u deze inzending wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.';
 $string['turnitindeletionerror'] = 'Verwijderen van Turnitin-inzending mislukt. De lokale Moodle-kopie is verwijderd, maar de inzending in Turnitin kon niet verwijderd worden.';
 $string['turnitinenrolstudents'] = 'Alle studenten inschrijven';
@@ -404,7 +404,7 @@ $string['nonenrolledstudent'] = 'Niet ingeschreven student';
 $string['startdatenotyearago'] = 'Startdatum kan niet meer dan 1 jaar geleden zijn';
 $string['searchcourses'] = 'Cursussen zoeken';
 $string['errorsdesc'] = 'Er is een probleem opgetreden bij het uploaden van de volgende bestanden naar Turnitin.';
-$string['tiiexplain'] = 'Turnitin is een commercieel product en u moet betalen voor een abonnement om gebruik te maken van deze dienst. Voor meer informatie, zie <a href=&#34;http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>';
+$string['tiiexplain'] = 'Turnitin is een commercieel product en u moet betalen voor een abonnement om gebruik te maken van deze dienst. Voor meer informatie, zie <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>';
 $string['useturnitin'] = 'Turnitin inschakelen';
 $string['turnitinconfig'] = 'Configuratie Turnitin Plagiaatdetectie-plugin';
 $string['studentdisclosuredefault'] = 'Alle bestanden worden ingediend bij de plagiaatdetectie-service Turnitin.com';
@@ -424,7 +424,7 @@ $string['defaultupdated'] = 'Turnitin-standaardwaarden bijgewerkt';
 $string['pp_createsubmissionerror'] = 'Er was een fout in de plagiaat-plugin bij het creëren van een inzending';
 $string['pp_updatesubmissionerror'] = 'Er was een fout in de plagiaat-plugin bij het updaten van een inzending';
 $string['pp_submission_error'] = 'Er is een fout opgetreden met uw inzending:';
-$string['pp_configuredesc'] = 'U moet deze module binnen de turnitintooltwo-module configureren. Klik <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>hier</a> om deze plugin te configureren';
+$string['pp_configuredesc'] = 'U moet deze module binnen de turnitintooltwo-module configureren. Klik <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>hier</a> om deze plugin te configureren';
 $string['coursestomigrate'] = 'Er zijn {$a} cursussen beschikbaar die u kunt verplaatsen vanuit Turnitin';
 $string['migrationheader'] = 'Verplaatsen van Turnitin-cursus';
 $string['gradingtemplate'] = 'Beoordelingssjabloon';
@@ -437,3 +437,13 @@ $string['submitondraft'] = 'Verzend bestand wanneer het voor het eerst wordt ge�
 $string['submitonfinal'] = 'Verzend bestand wanneer student het ter beoordeling instuurt';
 $string['turnitindiagnostic'] = 'Diagnostische Modus Inschakelen';
 $string['turnitindiagnostic_desc'] = '<b>[Let op]</b><br />Schakel Diagnostische modus alleen in om problemen op te sporen met de Turnitin API.';
+$string['autorefreshgrades'] = 'Automatisch cijfers/scores verversen';
+$string['autorefreshgrades_help'] = 'Standaard zal na elke oproep tot Turnitin de Moodle integratie-plugin proberen automatisch wijzigingen die gemaakt zijn in Turnitin door te voeren. U kunt deze optie gebruiken om deze functie uit te schakelen, maar om de synchronisatie tussen beide systemen te behouden, moet u vaak handmatig cijfers en oorspronkelijkheidsscores vernieuwen vanuit Moodle.';
+$string['yesgrades'] = 'Ja, ververs oorspronkelijkheidsscores en cijfers automatisch';
+$string['nogrades'] = 'Nee, ik zal originaliteitsscores en cijfers handmatig verversen';
+$string['submissionagreementerror'] = 'U moet de overeenkomst accepteren voor deze inzending';
+$string['noxmlwriterlibrary'] = 'Om deze plugin te gebruiken moet u de PHP XMLWriter-extensie gebruiken die op uw server is geïnstalleerd.';
+$string['checkupgrade'] = 'Controleren op beschikbare upgrades';
+$string['checkingupgrade'] = 'Controleren op beschikbare upgrades';
+$string['usinglatest'] = 'U gebruikt de nieuwste versie!';
+$string['useturnitin_mod'] = 'Turnitin inschakelen voor {a}';

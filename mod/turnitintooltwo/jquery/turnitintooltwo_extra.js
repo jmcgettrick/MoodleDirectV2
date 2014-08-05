@@ -1,10 +1,7 @@
 jQuery(document).ready(function($) {
     // Hide the nav in the class recreation box
     if ($("#view_context").html() == "box" || $("#view_context").html() == "box_solid") {
-        var pagecontent = $('#page-content').html();
-        $('#page').html(pagecontent);
-        $(".navbar").hide();
-        $("#region-pre").hide();
+        $(".navbar, #page-navbar, .block-region, #region-pre").hide();
     }
 
     // Add style to header row
@@ -86,7 +83,7 @@ jQuery(document).ready(function($) {
                             for ( var i=0 ; i<nTrs.length ; i++ )
                             {
                                 var iDisplayIndex = oSettings._iDisplayStart + i;
-                                var sGroup = oSettings.aoData[ oSettings.aiDisplay[iDisplayIndex] ]._aData[0];
+                                var sGroup = oSettings.aoData[ oSettings.aiDisplay[i] ]._aData[0];
                                 if ( sGroup != sLastGroup )
                                 {
                                     var nGroup = document.createElement( 'tr' );
@@ -261,7 +258,14 @@ jQuery(document).ready(function($) {
     if ($('#class_ids').length > 0) {
 
         // Move box within frame
-        $(".side-pre-only #page-content #region-main").css({'margin-left' : '0px'});
+        $(".side-pre-only #page-content #region-main").css({
+            'margin-left' : '0px'
+        });
+
+        $(".has-region-side-pre #page-content #region-main").css({
+            'width': '100%',
+            'margin-top': '-30px'
+        });
 
         var class_ids = $('#class_ids').html();
 
