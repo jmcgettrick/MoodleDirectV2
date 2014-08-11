@@ -5,6 +5,16 @@ For installation instructions and trouble shooting please see Installation Instr
 Moodle Direct v2 Release Notes
 ------------------------------------------------------------------------------------
 
+####################################################################################
+
+Date:       2014-August-11
+Release:    v2014012406
+
+- Fixes:
+	> Timestamp fixed when editing dates in inbox to account for server timezone.
+
+####################################################################################
+
 Date:       2014-June-11
 Release:    v2014012405
 
