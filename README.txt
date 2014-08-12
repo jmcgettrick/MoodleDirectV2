@@ -12,6 +12,7 @@ Release:    v2014012406
 
 - Fixes:
 	> Link to a file in Assignment Summary now renders correctly.
+	> Inbox part date editing now works on Windows servers.
 
 ####################################################################################
 
