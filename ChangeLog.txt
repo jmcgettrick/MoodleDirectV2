@@ -1,4 +1,3 @@
-2014-08-11 : Timestamp fixed when editing dates in inbox to account for server timezone.
 2014-06-21 : Grades now removed from Gradebook when submission is deleted.
 2014-06-21 : PP cron now ignores files with no OR score when cron attempts to refresh scores.
 2014-06-21 : SDK setting added to use Moodle SSL certificate if it is present.

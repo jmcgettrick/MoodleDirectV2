@@ -11,7 +11,7 @@ Date:       2014-August-11
 Release:    v2014012406
 
 - Fixes:
-	> Timestamp fixed when editing dates in inbox to account for server timezone.
+	> 
 
 ####################################################################################
 
