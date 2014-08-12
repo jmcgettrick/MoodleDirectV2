@@ -11,7 +11,7 @@ Date:       2014-August-11
 Release:    v2014012406
 
 - Fixes:
-	> 
+	> Link to a file in Assignment Summary now renders correctly.
 
 ####################################################################################
 
