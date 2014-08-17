@@ -257,12 +257,12 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
     public function print_disclosure($cmid) {
         global $DB, $OUTPUT;
 
-        $config = turnitintooltwo_admin_config();
+        $usingtii = $DB->get_field('plagiarism_turnitin_config', 'value', array('cm' => $cmid, 'name' => 'use_turnitin'));
         $output = '';
 
-        if (!empty($config->agreement)) {
-            $usingtii = $DB->get_field('plagiarism_turnitin_config', 'value', array('cm' => $cmid, 'name' => 'use_turnitin'));
-            if ($usingtii) {
+        if ($usingtii) {
+            $config = turnitintooltwo_admin_config();
+            if (!empty($config->agreement)) {
                 $contents = format_text($config->agreement, FORMAT_MOODLE, array("noclean" => true));
                 $output = $OUTPUT->box($contents, 'generalbox boxaligncenter', 'intro');
             }
