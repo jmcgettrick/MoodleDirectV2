@@ -262,7 +262,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
         if (!empty($config->agreement)) {
             $usingtii = $DB->get_field('plagiarism_turnitin_config', 'value', array('cm' => $cmid, 'name' => 'use_turnitin'));
-            if (!empty($config->agreement) && $usingtii) {
+            if ($usingtii) {
                 $contents = format_text($config->agreement, FORMAT_MOODLE, array("noclean" => true));
                 $output = $OUTPUT->box($contents, 'generalbox boxaligncenter', 'intro');
             }
