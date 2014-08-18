@@ -263,11 +263,13 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         $output = '';
 
         if ($usingtii) {
+            // Output the agreement if it has been configured in the turnitintooltwo settings
             $config = turnitintooltwo_admin_config();
             if (!empty($config->agreement)) {
                 $contents = format_text($config->agreement, FORMAT_MOODLE, array("noclean" => true));
                 $output = $OUTPUT->box($contents, 'generalbox boxaligncenter', 'intro');
             }
+            // Make sure it is an assign module and show the EULA link if they have not accepted it already
             $cm = get_coursemodule_from_id('', $cmid);
             if ($cm->modname == 'assign') {
                 $user = new turnitintooltwo_user($USER->id, "Learner");
