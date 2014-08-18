@@ -273,6 +273,10 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 $user = new turnitintooltwo_user($USER->id, "Learner");
                 $eulaaccepted = (!$user->user_agreement_accepted) ? $user->get_accepted_user_agreement() : $user->user_agreement_accepted;
                 if (!$eulaaccepted) {
+                    $jsurl = new moodle_url('/mod/turnitintooltwo/jquery/jquery-1.8.2.min.js');
+                    $PAGE->requires->js($jsurl);
+                    $jsurl = new moodle_url('/mod/turnitintooltwo/jquery/turnitintooltwo.js');
+                    $PAGE->requires->js($jsurl);
                     $jsurl = new moodle_url('/mod/turnitintooltwo/jquery/plagiarism_plugin.js');
                     $PAGE->requires->js($jsurl);
                     
