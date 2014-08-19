@@ -10,7 +10,15 @@ Moodle Direct v2 Release Notes
 Date:       2014-August-11
 Release:    v2014012406
 
+- Error reporting added for files that are too large, small submissions and any other submission errors.
+- Error reporting added to cron.
+- Error reporting and success statement added at submission stage.
+- Non acceptance of EULA now indicated to tutor in inbox.
+- Error indicators and rollover messages now displayed in inbox.
+- Error messages saved and displayed in settings area.
+- EULA moved to submission declaration and form hidden.
 - Fixes:
+	> Long assignment titles are now truncated.
 	> Link to a file in Assignment Summary now renders correctly.
 	> Inbox part date editing now works on Windows servers.
 
