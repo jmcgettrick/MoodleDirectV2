@@ -834,7 +834,12 @@ class LTI extends OAuthSimple {
             curl_setopt($ch, CURLOPT_PROXYUSERPWD, sprintf('%s:%s', $this->proxyuser, $this->proxypassword));
         }
 
+        $start_time = microtime(true);
+
         $result = curl_exec($ch);
+
+        $total_response_time = (microtime(true) - $start_time);
+        turnitintooltwo_perflog($ch, $total_response_time);
 
         if( $result === false) {
             $err = 'Curl error: ' . curl_error($ch);

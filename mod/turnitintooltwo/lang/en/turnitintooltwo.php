@@ -448,3 +448,5 @@ $string['checkupgrade'] = 'Check for available upgrade';
 $string['checkingupgrade'] = 'Checking for available upgrade';
 $string['usinglatest'] = 'You are using the latest version!';
 $string['useturnitin_mod'] = 'Enable Turnitin for {$a}';
+$string['enableperformancelogs'] = 'Enable network performance logging';
+$string['enableperformancelogs_desc'] = 'If enabled, each request to the Turnitintool server will be logged in {dataroot}/temp/turnitintooltwo/logs';

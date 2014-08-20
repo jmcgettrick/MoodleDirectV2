@@ -277,7 +277,12 @@ class Soap extends SoapClient {
 
         $this->setHttpHeaders( join( PHP_EOL, $curl_headers ) );
 
+        $start_time = microtime(true);
+
         $result = curl_exec($ch);
+
+        $total_response_time = (microtime(true) - $start_time);
+        turnitintooltwo_perflog($ch, $total_response_time);
 
         if( $result === false) {
             $logger = new Logger( $this->logpath );
