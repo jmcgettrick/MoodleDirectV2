@@ -545,6 +545,7 @@ function turnitintooltwo_updateavailable($current_version) {
 
         // Set the url, number of POST vars, POST data.
         curl_setopt($ch, CURLOPT_URL, "https://www.turnitin.com/static/resources/files/moodledirect2_latest.xml");
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);

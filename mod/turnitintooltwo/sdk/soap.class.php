@@ -255,7 +255,7 @@ class Soap extends SoapClient {
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,            $location );
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($ch, CURLOPT_TIMEOUT,        120);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true );
