@@ -28,6 +28,8 @@ class Soap extends SoapClient {
     private $proxybypass;
     private $sslcertificate;
 
+    private $istestingconnection;
+
     protected $extensions;
 
     public static $lislanguage = 'en-US';
@@ -139,6 +141,14 @@ class Soap extends SoapClient {
         $this->sslcertificate = $sslcertificate;
     }
 
+    public function getIsTestingConnection() {
+        return $this->$istestingconnection;
+    }
+
+    public function setIsTestingConnection($istestingconnection) {
+        $this->istestingconnection = $istestingconnection;
+    }
+
     public function genUuid() {
         return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand( 0, 0xffff ),
@@ -233,10 +243,16 @@ class Soap extends SoapClient {
                         'OriginalityReportCapable' => 'Boolean',
                         'AcceptNothingSubmission' => 'Boolean'
                         );
+        $this->istestingconnection = false;
         parent::__construct( $wsdl, $options );
     }
 
     public function __doRequest($request, $location, $action, $version, $one_way = null) {
+
+        global $CFG;
+        if (!empty($CFG->tiioffline) && !$this->istestingconnection) {
+            turnitintooltwo_print_error('turnitintoolofflineerror', 'turnitintooltwo');
+        }
 
         $http_headers = array(
             'Content-type: text/xml;charset="utf-8"',

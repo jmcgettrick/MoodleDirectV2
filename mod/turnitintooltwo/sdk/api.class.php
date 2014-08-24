@@ -30,6 +30,8 @@ class TurnitinAPI {
     private $proxybypass;
     private $sslcertificate;
 
+    private $istestingconnection;
+
     private $personwsdl;
     private $coursesectionwsdl;
     private $lineitemwsdl;
@@ -64,6 +66,8 @@ class TurnitinAPI {
         $this->apibaseurl = $apibaseurl;
         $this->integrationid = $integrationid;
         $this->language   = $language;
+
+        $this->istestingconnection = false;
 
         $this->personwsdl = dirname(__FILE__).'/wsdl/lis-person.wsdl';
         $this->coursesectionwsdl = dirname(__FILE__).'/wsdl/lis-coursesection.wsdl';
@@ -199,6 +203,24 @@ class TurnitinAPI {
     }
 
     /**
+     * Get testing connection flag
+     *
+     * @return boolean
+     */
+    public function getIsTestingConnection() {
+        return $this->istestingconnection;
+    }
+
+    /**
+     * Set testing connection flag
+     *
+     * @param boolean $istestingconnection
+     */
+    public function setIsTestingConnection($istestingconnection) {
+        $this->istestingconnection = $istestingconnection;
+    }
+
+    /**
      * Get SDK Version
      *
      * Get the current release version of the SDK
@@ -290,6 +312,7 @@ class TurnitinAPI {
         if ((isset($this->sslcertificate)) AND ($this->sslcertificate != '')) {
             $service->setSSLCertificate( $this->sslcertificate );
         }
+        $service->setIsTestingConnection($this->istestingconnection);
         return $service;
     }
 

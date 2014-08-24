@@ -51,7 +51,7 @@ class turnitintooltwo_comms {
      *
      * @return object \APITurnitin
      */
-    public function initialise_api() {
+    public function initialise_api($istestingconnection=false) {
         global $CFG;
 
         $api = new TurnitinAPI($this->tiiaccountid, $this->tiiapiurl, $this->tiisecretkey,
@@ -90,6 +90,8 @@ class turnitintooltwo_comms {
             $certificate = realpath("$CFG->dataroot/moodleorgca.crt");
             $api->setSSLCertificate($certificate);
         }
+
+        $api->setIsTestingConnection($istestingconnection);
 
         return $api;
     }

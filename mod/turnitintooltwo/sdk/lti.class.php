@@ -36,12 +36,15 @@ class LTI extends OAuthSimple {
     private $proxybypass;
     private $sslcertificate;
 
+    private $istestingconnection;
+
     public function __construct( $apibaseurl ) {
         $this->setApiBaseUrl( $apibaseurl );
         $this->ltiparams = array(
             'lti_version'      => 'LTI-1p0',
             'resource_link_id' => $this->genUuid()
         );
+        $this->istestingconnection = false;
     }
 
     /**
@@ -809,11 +812,25 @@ class LTI extends OAuthSimple {
         $this->sslcertificate = $sslcertificate;
     }
 
+    public function getIsTestingConnection() {
+        return $this->$istestingconnection;
+    }
+
+    public function setIsTestingConnection($istestingconnection) {
+        $this->istestingconnection = $istestingconnection;
+    }
+
     /**
      *
      * @param array $params
      */
     private function transportData( $params ) {
+
+        global $CFG;
+        if (!empty($CFG->tiioffline) && !$this->istestingconnection) {
+            turnitintooltwo_print_error('turnitintoolofflineerror', 'turnitintooltwo');
+        }
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,            $this->endpoint );
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);

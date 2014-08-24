@@ -450,3 +450,5 @@ $string['usinglatest'] = 'You are using the latest version!';
 $string['useturnitin_mod'] = 'Enable Turnitin for {$a}';
 $string['enableperformancelogs'] = 'Enable network performance logging';
 $string['enableperformancelogs_desc'] = 'If enabled, each request to the Turnitintool server will be logged in {dataroot}/temp/turnitintooltwo/logs';
+$string['turnitintoolofflineerror'] = 'We are experiencing a temporary problem. Please try again shortly.';
+$string['offlinestatus'] = 'Turnitin has been set to offline. (The variable $CFG->tiioffline has been set to true.)';
