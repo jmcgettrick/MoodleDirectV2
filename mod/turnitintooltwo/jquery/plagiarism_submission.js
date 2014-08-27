@@ -27,7 +27,13 @@ jQuery(document).ready(function($) {
             success: function(data) {
                 eval(data);
                 if (data.success == false) {
-                    $('span.maincontent').html(data.message);
+                    $('div.turnitin_submit_error_'+pathnamehash).css('display', 'block');
+                    $('div.turnitin_submit_error_'+pathnamehash).html(data.message);
+                } else {
+                    if (typeof data.message !== "undefined") {
+                        $('div.turnitin_submit_success_'+pathnamehash).css('display', 'block');
+                        $('div.turnitin_submit_success_'+pathnamehash).html(data.message);
+                    }
                 }
             }
         });

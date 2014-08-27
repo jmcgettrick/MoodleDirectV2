@@ -5,7 +5,7 @@
 
 jQuery(document).ready(function($) {
     $(document).on('mouseover', '.tii_links_container .tii_tooltip', function() {
-        $(this).tooltipster();
+        $(this).tooltipster({ multiple: true });
         return false;
     });
 
@@ -65,8 +65,15 @@ jQuery(document).ready(function($) {
 
     // Launch the Turnitin EULA
     if ($(".pp_turnitin_ula").length > 0) {
-        $(document).on('click', '.pp_turnitin_ula', function() {
-            launchEULA('#useragreement_form form');
+        if ($('.editsubmissionform').length > 0) {
+            $('.editsubmissionform').hide();
+        }
+        if ($('.pp_turnitin_ula').siblings('.mform').length > 0) {
+            $('.pp_turnitin_ula').siblings('.mform').hide();
+        }
+        $(window).on("message", function(ev) {
+            var message = typeof ev.data === 'undefined' ? ev.originalEvent.data : ev.data;
+            window.location.reload();
         });
     }
 
@@ -79,14 +86,14 @@ jQuery(document).ready(function($) {
         $('.forum_eula_launch_noscript').remove();
 
         $(".forum_eula_launch span").on('click', function(e) {
-            launchEULA('.useragreement_form');
+            openEULA('.useragreement_form');
         });
     }
 
-    function launchEULA(identifier) {
+    function openEULA(identifier) {
         $.ajax({
             type: "POST",
-            url: "../../plagiarism/turnitin/ajax.php",
+            url: M.cfg.wwwroot+"/plagiarism/turnitin/ajax.php",
             dataType: "json",
             data: {action: 'useragreement', cmid: $('span.cmid').html()},
             success: function(data) {
