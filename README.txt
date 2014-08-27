@@ -7,7 +7,7 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
-Date:       2014-August-11
+Date:       2014-August-19
 Release:    v2014012406
 
 - Error reporting added for files that are too large, small submissions and any other submission errors.
@@ -16,11 +16,14 @@ Release:    v2014012406
 - Non acceptance of EULA now indicated to tutor in inbox.
 - Error indicators and rollover messages now displayed in inbox.
 - Error messages saved and displayed in settings area.
-- EULA moved to submission declaration and form hidden.
+- EULA moved to submission declaration and submission form hidden.
+- Turnitin Paper Id now shown next to submission to show that paper has been submitted. 
 - Fixes:
 	> Long assignment titles are now truncated.
 	> Link to a file in Assignment Summary now renders correctly.
 	> Inbox part date editing now works on Windows servers.
+	> Cron in PP changed to check for scores when ORcapable is 1.
+	> Course Migration query fixed when creating class.
 
 ####################################################################################
 

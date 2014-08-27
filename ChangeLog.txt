@@ -1,3 +1,6 @@
+2014-08-19 : Turnitin Paper Id now shown next to submission to show that paper has been submitted in PP.
+2014-08-19 : Cron in PP changed to check for scores when ORcapable is 1.
+2014-08-19 : Course Migration query fixed when creating class. 
 2014-08-19 : Error reporting added for files that are too large, small submissions and any other submission errors.
 2014-08-19 : Error reporting added to cron.
 2014-08-19 : Error reporting and success statement added at submission stage.
