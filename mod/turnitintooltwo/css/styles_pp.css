@@ -10,13 +10,14 @@
     padding-right: 8px;
 }
 
-.tii_links_container .launch_form, .tii_links_container .useragreement_form, 
+.tii_links_container .launch_form, .tii_links_container .useragreement_form, .tii_links_container .turnitin_submit_error,
 .tii_links_container .turnitin_eula_link, .tii_links_container #useragreement_form form, 
-.tii_links_container .cmid, .plagiarism_submission, .plagiarism_submission, .pp_turnitin_cmid, .tii_useragreement_form {
+.tii_links_container .cmid, .plagiarism_submission, .plagiarism_submission, .pp_turnitin_cmid, .tii_useragreement_form,
+#tii_view_context {
     display:none;
 }
 
-.tii_links_container .origreport_open, .tii_links_container .grade_icon, 
+.tii_links_container .origreport_open, .tii_links_container .grade_icon, .tii_links_container .tii_error_icon,
 .tii_links_container .row_rubric_view, .tii_links_container .row_peermark_reviews {
     float: left;
 }
@@ -105,6 +106,18 @@
     white-space:nowrap;
 }
 
+.tii_links_container .score_no_orcapable {
+    width:16px;
+    text-align:center;
+    color:#CC0000;
+    background:#CCCCCC;
+    cursor: normal;
+}
+
+.tii_links_container .turnitin_paper_id {
+    padding-right:6px;
+}
+
 .tii_links_container .warning {
     border: 1px solid #CC0000;
     padding: 8px;
@@ -112,6 +125,16 @@
     width: 99%;
     text-align:center;
     display:block;
+    margin-bottom:6px;
+}
+
+.tii_links_container .success {
+    border: 1px solid #CC0000;
+    padding: 8px;
+    background: #FFFFFF;
+    width: 100%;
+    text-align:center;
+    display:none;
     margin-bottom:6px;
 }
 
@@ -147,12 +170,29 @@
     line-height: 28px;
 }
 
-.tii_links_container .forum_eula_launch_noscript, .tii_links_container .forum_eula_launch span, 
-.pp_turnitin_ula {
+.tii_links_container .forum_eula_launch_noscript, .tii_links_container .forum_eula_launch span, .pp_turnitin_ula {
     cursor:pointer;
     text-decoration: underline;
+    text-align: center;
+    border: 1px solid #CC0000;
+    background:url([[pix:turnitintooltwo|icon]]) no-repeat center 12px;
+    padding: 48px 12px 12px;
+    color: #FF0000;
+    margin-top:12px;
+    font-size: 14px;
+    font-weight: bold;
+    display: block;
 }
 
-.tii_links_container .forum_eula_launch_noscript, .tii_links_container .forum_eula_launch span {
-    color: #FF0000;
+.tii_links_container .turnitin_submit_error {
+    width: auto;
+    margin-top: 12px;
+}
+
+.tii_links_container .tii_error_icon {
+    cursor: pointer;
+}
+
+.tii_links_container .eularedirect {
+    text-align: center;
 }
