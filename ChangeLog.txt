@@ -1,3 +1,6 @@
+2014-08-19 : Course migration bug no longer tries to populate PP array in migration if PP not installed
+2014-08-19 : File errors page no longer errors if file has been deleted.
+2014-08-19 : Remove Grademark settings if GradeMark is disabled.
 2014-08-19 : Turnitin Paper Id now shown next to submission to show that paper has been submitted in PP.
 2014-08-19 : Cron in PP changed to check for scores when ORcapable is 1.
 2014-08-19 : Course Migration query fixed when creating class. 
