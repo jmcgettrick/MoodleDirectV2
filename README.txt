@@ -26,7 +26,9 @@ Release:    v2014012406
 	> Cron in PP changed to check for scores when ORcapable is 1.
 	> Course Migration query fixed when creating class.
 	> File errors page no longer errors if file has been deleted.
-	> Course migration bug no longer tries to populate PP array in migration if PP not installed
+	> Course migration bug no longer tries to populate PP array in migration if PP not installed.
+	> Course migration error fixed when no Turnitin courses to link to exist.
+	> Inbox submission links now work after refreshing non moodle users submissions in Turnitin Assignment.
 
 ####################################################################################
 

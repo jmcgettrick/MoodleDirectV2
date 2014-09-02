@@ -1,3 +1,5 @@
+2014-08-19 : Inbox links fixed when refreshing non moodle users submissions in Turnitin Assignment
+2014-08-19 : Course migration error fixed when no Turnitin courses exist
 2014-08-19 : Course migration bug no longer tries to populate PP array in migration if PP not installed
 2014-08-19 : File errors page no longer errors if file has been deleted.
 2014-08-19 : Remove Grademark settings if GradeMark is disabled.
