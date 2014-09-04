@@ -7,6 +7,21 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
+Date:       2014-September-04
+Release:    v2014012407
+
+- Remove Grademark settings if GradeMark is disabled. (Thanks to Alex Rowe)
+- Date handling reconfigured in PP to prevent erros (Thanks to Dan Marsden)
+- Fixes:
+	> File errors page no longer errors if file has been deleted. (Thanks to Ruslin Kabalin)
+	> Course migration bug no longer tries to populate PP array in migration if PP not installed.
+	> Inbox submission links now work after refreshing non moodle users submissions in Turnitin Assignment.
+	> Assignment Grade (PP) table no longer populated if grade is null when cron runs.
+	> Encoding issue with module description fixed.
+	> Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden)
+
+####################################################################################
+
 Date:       2014-August-19
 Release:    v2014012406
 
@@ -16,7 +31,6 @@ Release:    v2014012406
 - Non acceptance of EULA now indicated to tutor in inbox.
 - Error indicators and rollover messages now displayed in inbox.
 - Error messages saved and displayed in settings area.
-- Remove Grademark settings if GradeMark is disabled.
 - EULA moved to submission declaration and submission form hidden.
 - Turnitin Paper Id now shown next to submission to show that paper has been submitted. 
 - Fixes:
@@ -25,10 +39,7 @@ Release:    v2014012406
 	> Inbox part date editing now works on Windows servers.
 	> Cron in PP changed to check for scores when ORcapable is 1.
 	> Course Migration query fixed when creating class.
-	> File errors page no longer errors if file has been deleted.
-	> Course migration bug no longer tries to populate PP array in migration if PP not installed.
 	> Course migration error fixed when no Turnitin courses to link to exist.
-	> Inbox submission links now work after refreshing non moodle users submissions in Turnitin Assignment.
 
 ####################################################################################
 
