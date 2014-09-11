@@ -646,7 +646,9 @@ class turnitintooltwo_assignment {
             $assignment->setQuotedExcluded($this->turnitintooltwo->excludequoted);
             $assignment->setSmallMatchExclusionType($this->turnitintooltwo->excludetype);
             $assignment->setSmallMatchExclusionThreshold((int)$this->turnitintooltwo->excludevalue);
-            $assignment->setAnonymousMarking($this->turnitintooltwo->anon);
+            if ($config->useanon) {
+                $assignment->setAnonymousMarking($this->turnitintooltwo->anon);
+            }
             $assignment->setAllowNonOrSubmissions($this->turnitintooltwo->allownonor);
             $assignment->setLateSubmissionsAllowed($this->turnitintooltwo->allowlate);
             if ($config->userepository) {
@@ -1173,7 +1175,9 @@ class turnitintooltwo_assignment {
             $assignment->setQuotedExcluded($this->turnitintooltwo->excludequoted);
             $assignment->setSmallMatchExclusionType($this->turnitintooltwo->excludetype);
             $assignment->setSmallMatchExclusionThreshold((int) $this->turnitintooltwo->excludevalue);
-            $assignment->setAnonymousMarking($this->turnitintooltwo->anon);
+            if ($config->useanon) {
+                $assignment->setAnonymousMarking($this->turnitintooltwo->anon);
+            }
             $assignment->setLateSubmissionsAllowed($this->turnitintooltwo->allowlate);
             if ($config->userepository) {
                 $assignment->setInstitutionCheck((isset($this->turnitintooltwo->institution_check)) ?
@@ -1759,7 +1763,7 @@ class turnitintooltwo_assignment {
 
             foreach ($submissionsdata as $submission) {
                 $submission->nmoodle = 1;
-                $submission->userid = "nm-".$submission->submission_nmuserid;
+                $submission->userid = $submission->submission_nmuserid;
                 $submission->firstname = $submission->submission_nmfirstname;
                 $submission->lastname = $submission->submission_nmlastname;
 

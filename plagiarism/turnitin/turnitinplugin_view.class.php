@@ -154,33 +154,40 @@ class turnitinplugin_view {
             }
 
             // Quickmark Manager.
-            $quickmarkmanagerlink = $OUTPUT->box_start('row_quickmark_manager', '');
-            $quickmarkmanagerlink .= html_writer::link($CFG->wwwroot.
-                                            '/mod/turnitintooltwo/extras.php?cmd=quickmarkmanager&view_context=box',
-                                            get_string('launchquickmarkmanager', 'turnitintooltwo'),
-                                            array('class' => 'plagiarism_turnitin_quickmark_manager_launch',
-                                                'title' => get_string('launchquickmarkmanager', 'turnitintooltwo')));
-            $quickmarkmanagerlink .= html_writer::tag('span', '',
-                                            array('class' => 'launch_form', 'id' => 'quickmark_manager_form'));
-            $quickmarkmanagerlink .= $OUTPUT->box_end(true);
+            $quickmarkmanagerlink = '';
+            if ($config->usegrademark) {
+                $quickmarkmanagerlink .= $OUTPUT->box_start('row_quickmark_manager', '');
+                $quickmarkmanagerlink .= html_writer::link($CFG->wwwroot.
+                                                '/mod/turnitintooltwo/extras.php?cmd=quickmarkmanager&view_context=box',
+                                                get_string('launchquickmarkmanager', 'turnitintooltwo'),
+                                                array('class' => 'plagiarism_turnitin_quickmark_manager_launch',
+                                                    'title' => get_string('launchquickmarkmanager', 'turnitintooltwo')));
+                $quickmarkmanagerlink .= html_writer::tag('span', '',
+                                                array('class' => 'launch_form', 'id' => 'quickmark_manager_form'));
+                $quickmarkmanagerlink .= $OUTPUT->box_end(true);
+            }
 
             // Peermark Manager.
             $peermarkmanagerlink = '';
-            if ($cmid != 0) {
-                $peermarkmanagerlink .= $OUTPUT->box_start('row_peermark_manager', '');
-                $peermarkmanagerlink .= html_writer::link($CFG->wwwroot.
-                                                '/plagiarism/turnitin/ajax.php?cmid='.$cmid.
-                                                    '&action=peermarkmanager&view_context=box',
-                                                get_string('launchpeermarkmanager', 'turnitintooltwo'),
-                                                array('class' => 'plagiarism_turnitin_peermark_manager_pp_launch',
-                                                        'id' => 'peermark_manager_'.$cmid,
-                                                        'title' => get_string('launchpeermarkmanager', 'turnitintooltwo')));
-                $peermarkmanagerlink .= html_writer::tag('span', '', array('class' => 'launch_form',
-                                                                        'id' => 'peermark_manager_form'));
-                $peermarkmanagerlink .= $OUTPUT->box_end(true);
+            if ($config->enablepeermark) {
+                if ($cmid != 0) {
+                    $peermarkmanagerlink .= $OUTPUT->box_start('row_peermark_manager', '');
+                    $peermarkmanagerlink .= html_writer::link($CFG->wwwroot.
+                                                    '/plagiarism/turnitin/ajax.php?cmid='.$cmid.
+                                                        '&action=peermarkmanager&view_context=box',
+                                                    get_string('launchpeermarkmanager', 'turnitintooltwo'),
+                                                    array('class' => 'plagiarism_turnitin_peermark_manager_pp_launch',
+                                                            'id' => 'peermark_manager_'.$cmid,
+                                                            'title' => get_string('launchpeermarkmanager', 'turnitintooltwo')));
+                    $peermarkmanagerlink .= html_writer::tag('span', '', array('class' => 'launch_form',
+                                                                            'id' => 'peermark_manager_form'));
+                    $peermarkmanagerlink .= $OUTPUT->box_end(true);
+                }
             }
 
-            $mform->addElement('static', 'static', '', $quickmarkmanagerlink.$peermarkmanagerlink);
+            if (!empty($quickmarkmanagerlink) || !empty($peermarkmanagerlink)) {
+                $mform->addElement('static', 'static', '', $quickmarkmanagerlink.$peermarkmanagerlink);
+            }
         }
 
         if (empty($config_warning)) {
@@ -227,7 +234,7 @@ class turnitinplugin_view {
             $mform->addRule('plagiarism_exclude_matches_value', null, 'numeric', null, 'client');
             $mform->disabledIf('plagiarism_exclude_matches_value', 'plagiarism_exclude_matches', 'eq', 0);
 
-            if ($location == "activity") {
+            if ($location == "activity" && $config->usegrademark) {
                 // Populate Rubric options.
                 $rubricoptions = array('' => get_string('norubric', 'turnitintooltwo')) + $instructorrubrics;
                 if (!empty($this->turnitintooltwo->rubric)) {
@@ -251,6 +258,9 @@ class turnitinplugin_view {
                 $mform->setType('rubric_warning_seen', PARAM_RAW);
 
                 $mform->addElement('static', 'rubric_note', '', get_string('attachrubricnote', 'turnitintooltwo'));
+            } else {
+                $mform->addElement('hidden', 'plagiarism_rubric', '');
+                $mform->setType('plagiarism_rubric', PARAM_RAW);
             }
 
             if (!empty($config->useerater)) {
@@ -376,11 +386,15 @@ class turnitinplugin_view {
                     if ($v->submissiontype == "file") {
                         $fs = get_file_storage();
                         $file = $fs->get_file_by_hash($v->identifier);
-                        $cells["file"] = new html_table_cell(html_writer::link($CFG->wwwroot.'/pluginfile.php/'.
-                                                $file->get_contextid().'/'.$file->get_component().'/'.$file->get_filearea().'/'.
-                                                $file->get_itemid().'/'.$file->get_filename(),
-                                                $OUTPUT->pix_icon('fileicon', 'open '.$file->get_filename(), 'mod_turnitintooltwo').
-                                                    " ".$file->get_filename()));
+                        if ($file = $fs->get_file_by_hash($v->identifier)) {
+                            $cells["file"] = new html_table_cell(html_writer::link($CFG->wwwroot.'/pluginfile.php/'.
+                                                    $file->get_contextid().'/'.$file->get_component().'/'.$file->get_filearea().'/'.
+                                                    $file->get_itemid().'/'.$file->get_filename(),
+                                                    $OUTPUT->pix_icon('fileicon', 'open '.$file->get_filename(), 'mod_turnitintooltwo').
+                                                        " ".$file->get_filename()));
+                        } else {
+                            $cells["file"] = get_string('filedoesnotexist', 'turnitintooltwo');
+                        }
                     } else {
                         $cells["file"] = str_replace('_', ' ', ucfirst($v->submissiontype));
                     }

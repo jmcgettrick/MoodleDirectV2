@@ -1173,7 +1173,9 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                                 $modulepluginsettings["plagiarism_exclude_matches_value"] : 0;
 
         $assignment->setSmallMatchExclusionThreshold($modulepluginsettings["plagiarism_exclude_matches_value"]);
-        $assignment->setAnonymousMarking($modulepluginsettings["plagiarism_anonymity"]);
+        if ($config->useanon) {
+            $assignment->setAnonymousMarking($modulepluginsettings["plagiarism_anonymity"]);
+        }
         $assignment->setAllowNonOrSubmissions(!empty($modulepluginsettings["plagiarism_allow_non_or_submissions"]) ? 1 : 0);
         $assignment->setTranslatedMatching(!empty($modulepluginsettings["plagiarism_transmatch"]) ? 1 : 0);
 
@@ -1228,9 +1230,20 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         if ($cm->modname == "forum") {
             $dtpost = $dtstart;
         } else {
-            $dtpost = ($dtdue <= $dtstart) ? time() : $dtdue;
+            $now = time();
+            if ($dtdue <= $dtstart) {
+                if ($dtstart > $now) {
+                    $dtpost = $dtstart;
+                } else {
+                    $dtpost = $now;
+                }
+            } else {
+                $dtpost = $dtdue;
+            }
         }
-        $dtdue = ($dtdue <= $dtstart) ? strtotime('+1 month') : $dtdue;
+        if ($dtdue <= $dtstart) {
+            $dtdue = strtotime('+1 month', $dtstart);
+        }
         $assignment->setDueDate(gmdate("Y-m-d\TH:i:s\Z", $dtdue));
         $assignment->setFeedbackReleaseDate(gmdate("Y-m-d\TH:i:s\Z", $dtpost));
 
@@ -1316,8 +1329,8 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         global $DB;
 
         $submissions = $DB->get_records_select('plagiarism_turnitin_files',
-                                        " statuscode = ? AND similarityscore IS NULL AND orcapable != ? ",
-                                        array('success', 0), 'externalid, cm');
+                                        " statuscode = ? AND similarityscore IS NULL AND ( orcapable = ? OR orcapable IS NULL ) ",
+                                        array('success', 1), 'externalid, cm');
         $submissionids = array();
 
         foreach ($submissions as $tiisubmission) {
@@ -1350,6 +1363,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                         $plagiarismfile->externalid = $tiisubmissionid;
                         $plagiarismfile->similarityscore = (is_numeric($readsubmission->getOverallSimilarity())) ?
                                                                         $readsubmission->getOverallSimilarity() : null;
+                        $plagiarismfile->grade = (is_numeric($readsubmission->getGrade())) ? $readsubmission->getGrade() : null;
                         $plagiarismfile->orcapable = ($readsubmission->getOriginalityReportCapable() == 1) ? 1 : 0;
                         $plagiarismfile->transmatch = 0;
                         if (is_int($readsubmission->getTranslatedOverallSimilarity()) &&
@@ -1364,7 +1378,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                             echo "File updated: ".$plagiarismfile->id."\n";
                         }
 
-                        if (!is_null($readsubmission->getGrade())) {
+                        if (!is_null($plagiarismfile->grade)) {
                             $this->update_grade($cm, $readsubmission, $currentsubmission->userid);
                         }
                     }

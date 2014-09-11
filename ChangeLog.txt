@@ -1,3 +1,10 @@
+2014-09-04 : Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden)
+2014-09-04 : Date handling reconfigured in PP to prevent erros (Thanks to Dan Marsden)
+2014-09-04 : Inbox links fixed when refreshing non moodle users submissions in Turnitin Assignment
+2014-09-04 : Course migration error fixed when no Turnitin courses exist
+2014-09-04 : Course migration bug no longer tries to populate PP array in migration if PP not installed
+2014-09-04 : File errors page no longer errors if file has been deleted. (Thanks to Ruslin Kabalin)
+2014-09-04 : Remove Grademark settings if GradeMark is disabled. (Thanks to Alex Rowe)
 2014-08-19 : Turnitin Paper Id now shown next to submission to show that paper has been submitted in PP.
 2014-08-19 : Cron in PP changed to check for scores when ORcapable is 1.
 2014-08-19 : Course Migration query fixed when creating class. 
