@@ -7,6 +7,17 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
+Date:       2014-September-22
+Release:    v2014012408
+
+- Fixes:
+	> EULA notice removed from PP submissions with previous submissions.
+	> Rubrics now being saved in PP.
+	> EULA no longer blocked by popups in Turnitin Assignment.
+	> EULA & Disclosure no longer being shown if PP is disabled for module (Thanks to Dan Marsden).
+
+####################################################################################
+
 Date:       2014-September-04
 Release:    v2014012407
 
@@ -18,7 +29,7 @@ Release:    v2014012407
 	> Inbox submission links now work after refreshing non moodle users submissions in Turnitin Assignment.
 	> Assignment Grade (PP) table no longer populated if grade is null when cron runs.
 	> Encoding issue with module description fixed.
-	> Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden)
+	> Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden).
 
 ####################################################################################
 
