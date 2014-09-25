@@ -1,3 +1,7 @@
+2014-09-22 : EULA notice removed from PP submissions with previous submissions.
+2014-09-22 : Rubrics now being saved in PP.
+2014-09-22 : EULA no longer blocked by popups in Turnitin Assignment.
+2014-09-22 : EULA & Disclosure no longer being shown if PP is disabled for module (Thanks to Dan Marsden).
 2014-09-04 : Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden)
 2014-09-04 : Date handling reconfigured in PP to prevent erros (Thanks to Dan Marsden)
 2014-09-04 : Inbox links fixed when refreshing non moodle users submissions in Turnitin Assignment

@@ -162,7 +162,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
             $plagiarismelements = $this->get_settings_fields();
 
             $turnitinpluginview = new turnitinplugin_view();
-            $turnitinpluginview->add_elements_to_settings_form($mform, "activity", $cmid);
+            $turnitinpluginview->add_elements_to_settings_form($mform, "activity", $cmid, $plagiarismvalues["plagiarism_rubric"]);
 
             // Disable all plagiarism elements if turnitin is not enabled.
             foreach ($plagiarismelements as $element) {
@@ -261,19 +261,27 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         $config = turnitintooltwo_admin_config();
         $output = '';
 
-        // Check Turnitin is enabled for this current module.
-        $usingtii = $DB->get_field('plagiarism_turnitin_config', 'value', array('cm' => $cmid, 'name' => 'use_turnitin'));
-        if (!$usingtii) {
+        // Get course details
+        $cm = get_coursemodule_from_id('', $cmid);
+
+        $configsettings = $this->get_config_settings('mod_'.$cm->modname);
+        // Exit if Turnitin is not being used for this activity type.
+        if (empty($configsettings['turnitin_use_mod_'.$cm->modname])) {
             return '';
         }
 
+        $plagiarismsettings = $this->get_settings($cmid);
+        // Check Turnitin is enabled for this current module.
+        if (empty($plagiarismsettings['use_turnitin'])) {
+            return '';
+        }
+
+        // Show agreement.
         if (!empty($config->agreement)) {
             $contents = format_text($config->agreement, FORMAT_MOODLE, array("noclean" => true));
             $output = $OUTPUT->box($contents, 'generalbox boxaligncenter', 'intro');
         }
 
-        // Get course details
-        $cm = get_coursemodule_from_id('', $cmid);
         // Create the course/class in Turnitin if it doesn't already exist.
         $coursedata = turnitintooltwo_assignment::get_course_data($cm->course, 'PP');
         if (empty($coursedata->turnitin_cid)) {
@@ -653,34 +661,6 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 }
             }
 
-            // Add Error to show that user has not accepted EULA.
-            if (($linkarray["userid"] != $USER->id) && $istutor) {
-                // There is a moodle plagiarism bug where get_links is called twice, the first loop is incorrect and is killing
-                // this functionality. Have to check that user exists here first else there will be a fatal error.
-                if ($mdl_user = $DB->get_record('user', array('id' => $linkarray["userid"]))) {
-                    // We also need to check for security that they are actually on the Course.
-                    switch ($cm->modname) {
-                        case 'assign':
-                        case 'workshop':
-                            $capability = 'mod/'.$cm->modname.':submit';
-                            break;
-                        case 'forum':
-                            $capability = 'mod/'.$cm->modname.':replypost';
-                            break;
-                    }
-                    if (has_capability($capability, $context, $linkarray["userid"])) {
-                        $user = new turnitintooltwo_user($linkarray["userid"], "Learner");
-                        if (!$user->user_agreement_accepted) {
-                            $erroricon = html_writer::tag('div', $OUTPUT->pix_icon('doc-x-grey', get_string('notacceptedeula', 'turnitintooltwo'), 
-                                                                    'mod_turnitintooltwo'), 
-                                                                    array('title' => get_string('notacceptedeula', 'turnitintooltwo'), 
-                                                                            'class' => 'tii_tooltip tii_error_icon'));
-                            $output .= html_writer::tag('div', $erroricon, array('class' => 'clear'));
-                        }
-                    }
-                }
-            }
-
             // Display Links for files and contents.
             if ((!empty($linkarray["file"]) || !empty($linkarray["content"])) && 
                     ($istutor || ($submission_status && ($USER->id == $linkarray["userid"])))) {
@@ -862,6 +842,35 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                                                                 array('title' => $errorstring, 
                                                                         'class' => 'tii_tooltip tii_error_icon'));
                         $output .= html_writer::tag('div', $erroricon, array('class' => 'clear'));
+                    }
+                    
+                } else {
+                    // Add Error to show that user has not accepted EULA.
+                    if (($linkarray["userid"] != $USER->id) && $istutor) {
+                        // There is a moodle plagiarism bug where get_links is called twice, the first loop is incorrect and is killing
+                        // this functionality. Have to check that user exists here first else there will be a fatal error.
+                        if ($mdl_user = $DB->get_record('user', array('id' => $linkarray["userid"]))) {
+                            // We also need to check for security that they are actually on the Course.
+                            switch ($cm->modname) {
+                                case 'assign':
+                                case 'workshop':
+                                    $capability = 'mod/'.$cm->modname.':submit';
+                                    break;
+                                case 'forum':
+                                    $capability = 'mod/'.$cm->modname.':replypost';
+                                    break;
+                            }
+                            if (has_capability($capability, $context, $linkarray["userid"])) {
+                                $user = new turnitintooltwo_user($linkarray["userid"], "Learner");
+                                if (!$user->user_agreement_accepted) {
+                                    $erroricon = html_writer::tag('div', $OUTPUT->pix_icon('doc-x-grey', get_string('notacceptedeula', 'turnitintooltwo'), 
+                                                                            'mod_turnitintooltwo'), 
+                                                                            array('title' => get_string('notacceptedeula', 'turnitintooltwo'), 
+                                                                                    'class' => 'tii_tooltip tii_error_icon'));
+                                    $output .= html_writer::tag('div', $erroricon, array('class' => 'clear'));
+                                }
+                            }
+                        }
                     }
                 }
 
