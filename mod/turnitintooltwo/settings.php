@@ -59,6 +59,15 @@ if ($ADMIN->fulltree) {
                                                     'mod_turnitintooltwo')." ".get_string('checkingupgrade', 'turnitintooltwo'), 
                                                     array('class' => 'tii_upgrading_check'));
 
+    // Offline status.
+    if (!empty($CFG->tiioffline)) {
+        $offlinecomment = html_writer::start_tag('div', array('class' => 'offline_status'));
+        $offlinecomment .= $OUTPUT->box(get_string('offlinestatus', 'turnitintooltwo'), 'offline');
+        $offlinecomment .= html_writer::end_tag('div');
+    } else {
+        $offlinecomment = '';
+    }
+
     // Test connection to turnitin link
     $testconnection = html_writer::start_tag('div', array('class' => 'test_connection'));
     $testconnection .= $OUTPUT->box($OUTPUT->pix_icon('globe', get_string('connecttest', 'turnitintooltwo'),
@@ -80,7 +89,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('turnitintooltwo/accountid',
                                                     get_string("turnitinaccountid", "turnitintooltwo"),
-                                                    get_string("turnitinaccountid_desc", "turnitintooltwo").$testconnection, ''));
+                                                    get_string("turnitinaccountid_desc", "turnitintooltwo").$offlinecomment.$testconnection, ''));
 
     $settings->add(new admin_setting_configpasswordunmask('turnitintooltwo/secretkey',
                                                         get_string("turnitinsecretkey", "turnitintooltwo"),
@@ -91,6 +100,9 @@ if ($ADMIN->fulltree) {
                                                     get_string("turnitinapiurl_desc", "turnitintooltwo"), ''));
 
     $ynoptions = array(0 => get_string('no'), 1 => get_string('yes'));
+
+    $settings->add(new admin_setting_configselect('turnitintooltwo/enableperformancelogs', get_string('enableperformancelogs', 'turnitintooltwo'),
+                                                    get_string('enableperformancelogs_desc', 'turnitintooltwo'), 0, $ynoptions));
 
     $settings->add(new admin_setting_configselect('turnitintooltwo/enablediagnostic', get_string('turnitindiagnostic', 'turnitintooltwo'),
                        get_string('turnitindiagnostic_desc', 'turnitintooltwo'), 0, $ynoptions));

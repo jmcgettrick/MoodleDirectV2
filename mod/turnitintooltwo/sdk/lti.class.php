@@ -36,12 +36,15 @@ class LTI extends OAuthSimple {
     private $proxybypass;
     private $sslcertificate;
 
+    private $istestingconnection;
+
     public function __construct( $apibaseurl ) {
         $this->setApiBaseUrl( $apibaseurl );
         $this->ltiparams = array(
             'lti_version'      => 'LTI-1p0',
             'resource_link_id' => $this->genUuid()
         );
+        $this->istestingconnection = false;
     }
 
     /**
@@ -809,14 +812,28 @@ class LTI extends OAuthSimple {
         $this->sslcertificate = $sslcertificate;
     }
 
+    public function getIsTestingConnection() {
+        return $this->$istestingconnection;
+    }
+
+    public function setIsTestingConnection($istestingconnection) {
+        $this->istestingconnection = $istestingconnection;
+    }
+
     /**
      *
      * @param array $params
      */
     private function transportData( $params ) {
+
+        global $CFG;
+        if (!empty($CFG->tiioffline) && !$this->istestingconnection) {
+            turnitintooltwo_print_error('turnitintoolofflineerror', 'turnitintooltwo');
+        }
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,            $this->endpoint );
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($ch, CURLOPT_TIMEOUT,        600);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt($ch, CURLOPT_POST,           true );
@@ -834,7 +851,12 @@ class LTI extends OAuthSimple {
             curl_setopt($ch, CURLOPT_PROXYUSERPWD, sprintf('%s:%s', $this->proxyuser, $this->proxypassword));
         }
 
+        $start_time = microtime(true);
+
         $result = curl_exec($ch);
+
+        $total_response_time = (microtime(true) - $start_time);
+        turnitintooltwo_perflog($ch, $total_response_time);
 
         if( $result === false) {
             $err = 'Curl error: ' . curl_error($ch);
