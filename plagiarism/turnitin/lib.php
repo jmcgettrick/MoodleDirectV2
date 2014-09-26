@@ -464,6 +464,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
                 // Get user's grades.
                 $duedate = 0;
+                $currentgradequery = false;
                 if ($cm->modname == 'forum') {
                     static $gradeitem;
                     if (empty($gradeitem)) {
