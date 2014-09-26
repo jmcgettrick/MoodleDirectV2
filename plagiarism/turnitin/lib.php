@@ -483,7 +483,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                     }
                     $currentgradequery = $DB->get_record('grade_grades', array('userid' => $linkarray["userid"], 'itemid' => $gradeitem->id));
                     $duedate = $moduledata->assessmentend;
-                } else {
+                } else if ($cm->modname == 'assign') {
                     $currentgradequery = $DB->get_record('assign_grades',
                                                 array('userid' => $linkarray["userid"], 'assignment' => $cm->instance));
                     $duedate = (!empty($moduledata->duedate)) ? $moduledata->duedate : time();
