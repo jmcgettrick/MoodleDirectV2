@@ -7,6 +7,22 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
+Date:       2014-October-08
+Release:    v2014012409
+
+- Plagiarism plugin now uses the hidden until date from gradebook as the post date on Turnitin.
+- PP Post date in Turnitin is now stored in Moodle.
+- Connection test added to cron event handler.
+- Unnecessary Gradebook update removed when viewing Turnitin Assignment.
+- Specify assign when looking for user's grades in PP (Thanks to mattgibson).
+- Fixes:
+	> Details for a non moodle user who is only in expired classes can be retrieved when grabbing submission data.
+	> Logger class renamed in SDK.
+	> Gradelib file included in cron.
+	> Scope of tool tipster anti-aliasing fixed to not affect whole of Moodle.
+
+####################################################################################
+
 Date:       2014-September-22
 Release:    v2014012408
 
