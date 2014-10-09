@@ -1,3 +1,4 @@
+2014-10-08 : PHP header function replaced with moodle redirect function to fit with moodle guidelines
 2014-10-08 : PHP end tags removed to fit with moodle guidelines
 2014-10-08 : Date of late submissions indicated in red
 2014-10-08 : Plagiarism plugin now uses the hidden until date from gradebook as the post date on Turnitin.

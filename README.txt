@@ -16,6 +16,7 @@ Release:    v2014012409
 - Unnecessary Gradebook update removed when viewing Turnitin Assignment.
 - Specify assign when looking for user's grades in PP (Thanks to mattgibson).
 - PHP end tags removed to fit with moodle guidelines
+- PHP header function replaced with moodle redirect function to fit with moodle guidelines
 - Fixes:
 	> Details for a non moodle user who is only in expired classes can be retrieved when grabbing submission data.
 	> Logger class renamed in SDK.
