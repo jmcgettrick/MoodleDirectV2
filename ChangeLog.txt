@@ -1,3 +1,4 @@
+2014-10-08 : Date of late submissions indicated in red
 2014-10-08 : Plagiarism plugin now uses the hidden until date from gradebook as the post date on Turnitin.
 2014-10-08 : PP Post date in Turnitin is now stored in Moodle.
 2014-10-08 : Connection test added to cron event handler.
