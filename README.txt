@@ -23,6 +23,7 @@ Release:    v2014012409
 	> Gradelib file included in cron.
 	> Scope of tool tipster anti-aliasing fixed to not affect whole of Moodle.
 	> Date of late submissions indicated in red
+	> Oracle database error when getting forum post
 
 ####################################################################################
 
