@@ -15,9 +15,10 @@ Release:    v2014012409
 - Connection test added to cron event handler.
 - Unnecessary Gradebook update removed when viewing Turnitin Assignment.
 - Specify assign when looking for user's grades in PP (Thanks to mattgibson).
-- PHP end tags removed to fit with moodle guidelines
-- PHP header function replaced with moodle redirect function to fit with moodle guidelines
-- Error handling added when getting users for tutors and students tab
+- PHP end tags removed to fit with moodle guidelines.
+- PHP header function replaced with moodle redirect function to fit with moodle guidelines.
+- Error handling added when getting users for tutors and students tabs.
+- Error handling added when enrolling all students in tutors and students tabs.
 - Fixes:
 	> Details for a non moodle user who is only in expired classes can be retrieved when grabbing submission data.
 	> Logger class renamed in SDK.

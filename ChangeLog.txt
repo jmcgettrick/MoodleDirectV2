@@ -1,4 +1,5 @@
-2014-10-08 : Error handling added when getting users for tutors and students tab
+2014-10-08 : Error handling added when enrolling all students in tutors and students tabs
+2014-10-08 : Error handling added when getting users for tutors and students tabs
 2014-10-08 : Fixed Oracle database error when getting forum post
 2014-10-08 : PHP header function replaced with moodle redirect function to fit with moodle guidelines
 2014-10-08 : PHP end tags removed to fit with moodle guidelines
