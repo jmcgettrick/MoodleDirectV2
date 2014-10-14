@@ -1,3 +1,4 @@
+2014-10-08 : Submissions are removed from the events cron if a student has not accepted the EULA.
 2014-10-08 : Error handling added when enrolling all students in tutors and students tabs
 2014-10-08 : Error handling added when getting users for tutors and students tabs
 2014-10-08 : Fixed Oracle database error when getting forum post

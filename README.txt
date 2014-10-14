@@ -19,6 +19,7 @@ Release:    v2014012409
 - PHP header function replaced with moodle redirect function to fit with moodle guidelines.
 - Error handling added when getting users for tutors and students tabs.
 - Error handling added when enrolling all students in tutors and students tabs.
+- Submissions are removed from the events cron if a student has not accepted the EULA.
 - Fixes:
 	> Details for a non moodle user who is only in expired classes can be retrieved when grabbing submission data.
 	> Logger class renamed in SDK.
