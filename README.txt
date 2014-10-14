@@ -28,6 +28,7 @@ Release:    v2014012409
 	> Date of late submissions indicated in red.
 	> Oracle database error when getting forum post.
 	> Inbox hidden columns fixed if Grademark is disabled.
+	> Close text removed from submission box to stop errors when Moodle run in an iframe.
 
 ####################################################################################
 

@@ -1,3 +1,4 @@
+2014-10-08 : Close text removed from submission box to stop errors when Moodle run in an iframe.
 2014-10-08 : Inbox hidden columns fixed if Grademark is disabled.
 2014-10-08 : Submissions are removed from the events cron if a student has not accepted the EULA.
 2014-10-08 : Error handling added when enrolling all students in tutors and students tabs
