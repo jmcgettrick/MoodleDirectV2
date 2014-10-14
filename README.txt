@@ -29,6 +29,7 @@ Release:    v2014012409
 	> Oracle database error when getting forum post.
 	> Inbox hidden columns fixed if Grademark is disabled.
 	> Close text removed from submission box to stop errors when Moodle run in an iframe.
+	> Individual part post dates can now be the same as post date.
 
 ####################################################################################
 
