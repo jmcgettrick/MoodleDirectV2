@@ -1,3 +1,4 @@
+2014-10-08 : submissiontype now used in correct context in PP file errors.
 2014-10-08 : Individual part post dates can now be the same as post date.
 2014-10-08 : Close text removed from submission box to stop errors when Moodle run in an iframe.
 2014-10-08 : Inbox hidden columns fixed if Grademark is disabled.
