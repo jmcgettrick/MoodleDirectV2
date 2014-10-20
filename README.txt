@@ -20,6 +20,7 @@ Release:    v2014012409
 - Error handling added when getting users for tutors and students tabs.
 - Error handling added when enrolling all students in tutors and students tabs.
 - Submissions are removed from the events cron if a student has not accepted the EULA.
+- EULA is now presented via an Iframe rather than a separate tab.
 - Fixes:
 	> Details for a non moodle user who is only in expired classes can be retrieved when grabbing submission data.
 	> Logger class renamed in SDK.
