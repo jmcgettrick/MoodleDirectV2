@@ -302,7 +302,7 @@ class turnitintooltwo_submission {
         $grades->userid = $this->userid;
         $params['idnumber'] = $cm->idnumber;
 
-        @include_once($CFG->dirroot."/lib/gradelib.php");
+        @include_once($CFG->libdir."/gradelib.php");
         grade_update('mod/turnitintooltwo', $turnitintooltwoassignment->turnitintooltwo->course, 'mod',
                         'turnitintooltwo', $turnitintooltwoassignment->turnitintooltwo->id, 0, $grades, $params);
 
@@ -533,7 +533,7 @@ class turnitintooltwo_submission {
      * @param type $save - save in db regradlesss of changes
      * @return type
      */
-    public function save_updated_submission_data($tiisubmissiondata, $turnitintooltwoassignment = "", 
+    public function save_updated_submission_data($tiisubmissiondata, $turnitintooltwoassignment = "",
                                                     $bulk = false, $save = false) {
         global $DB, $CFG;
 
@@ -606,7 +606,7 @@ class turnitintooltwo_submission {
             }
 
             // Update gradebook.
-            @include_once($CFG->dirroot."/lib/gradelib.php");
+            @include_once($CFG->libdir."/gradelib.php");
             if ($sub->userid > 0 && $sub->submission_unanon) {
                 $user = new turnitintooltwo_user($sub->userid, "Learner");
 
