@@ -1,3 +1,4 @@
+2014-10-08 : Czech language pack added.
 2014-10-08 : EULA is now presented via an Iframe rather than a separate tab.
 2014-10-08 : submissiontype now used in correct context in PP file errors.
 2014-10-08 : Individual part post dates can now be the same as post date.

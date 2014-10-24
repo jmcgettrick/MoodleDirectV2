@@ -10,6 +10,7 @@ Moodle Direct v2 Release Notes
 Date:       2014-October-08
 Release:    v2014012409
 
+- Czech language pack added.
 - Plagiarism plugin now uses the hidden until date from gradebook as the post date on Turnitin.
 - PP Post date in Turnitin is now stored in Moodle.
 - Connection test added to cron event handler.
