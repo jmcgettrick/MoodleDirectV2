@@ -33,7 +33,8 @@ Release:    v2014012409
 	> Inbox hidden columns fixed if Grademark is disabled.
 	> Close text removed from submission box to stop errors when Moodle run in an iframe.
 	> Individual part post dates can now be the same as post date.
-	> submissiontype now used in correct context in PP file errors.
+	> Submissiontype now used in correct context in PP file errors.
+	> Test connection now hidden on plugin upgrade.
 
 ####################################################################################
 
