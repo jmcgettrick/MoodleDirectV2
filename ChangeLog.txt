@@ -1,3 +1,4 @@
+2014-10-08 : Incorrect word count on text content submissions fixed.
 2014-10-08 : Test connection now hidden on plugin upgrade.
 2014-10-08 : Late submissions allowed setting in Turnitin for Plagiarism plugin assignments is now always true.
 2014-10-08 : Czech language pack added.

@@ -35,6 +35,7 @@ Release:    v2014012409
 	> Individual part post dates can now be the same as post date.
 	> Submissiontype now used in correct context in PP file errors.
 	> Test connection now hidden on plugin upgrade.
+	> Incorrect word count on text content submissions.
 
 ####################################################################################
 
