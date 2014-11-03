@@ -1,3 +1,4 @@
+2014-10-08 : Late submissions allowed setting in Turnitin for Plagiarism plugin assignments is now always true.
 2014-10-08 : Czech language pack added.
 2014-10-08 : EULA is now presented via an Iframe rather than a separate tab.
 2014-10-08 : submissiontype now used in correct context in PP file errors.
