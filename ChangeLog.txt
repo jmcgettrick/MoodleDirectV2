@@ -1,3 +1,4 @@
+2014-10-08 : Moodle assignment due dates now advanced by 1 day in Turnitin instead of 1 month.
 2014-10-08 : Incorrect word count on text content submissions fixed.
 2014-10-08 : Test connection now hidden on plugin upgrade.
 2014-10-08 : Late submissions allowed setting in Turnitin for Plagiarism plugin assignments is now always true.

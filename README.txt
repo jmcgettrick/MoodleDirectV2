@@ -35,7 +35,8 @@ Release:    v2014012409
 	> Individual part post dates can now be the same as post date.
 	> Submissiontype now used in correct context in PP file errors.
 	> Test connection now hidden on plugin upgrade.
-	> Incorrect word count on text content submissions.
+	> Incorrect word count on text content submissions fixed.
+	> Moodle assignment due dates now advanced by 1 day in Turnitin instead of 1 month.
 
 ####################################################################################
 
