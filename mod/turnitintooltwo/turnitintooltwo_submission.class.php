@@ -265,7 +265,7 @@ class turnitintooltwo_submission {
      * @return type
      */
     public function delete_submission() {
-        global $DB;
+        global $CFG, $DB;
         $notice = array();
 
         $turnitincomms = new turnitintooltwo_comms();
@@ -277,6 +277,34 @@ class turnitintooltwo_submission {
             $notice["message"] = get_string('submissiondeleteerror', 'turnitintooltwo');
             return $notice;
         }
+
+        // Update grade in Gradecenter.
+        $turnitintooltwoassignment = new turnitintooltwo_assignment($this->turnitintooltwoid);
+        $cm = get_coursemodule_from_instance("turnitintooltwo", $turnitintooltwoassignment->turnitintooltwo->id,
+                                                        $turnitintooltwoassignment->turnitintooltwo->course);
+        $grades = new stdClass();
+
+        // Only add to gradebook if author has been unanonymised or assignment doesn't have anonymous marking
+        if ($submissions = $DB->get_records('turnitintooltwo_submissions', array('turnitintooltwoid' =>
+                                                $turnitintooltwoassignment->turnitintooltwo->id,
+                                                    'userid' => $this->userid, 'submission_unanon' => 1))) {
+            $overallgrade = $turnitintooltwoassignment->get_overall_grade($submissions);
+            if ($turnitintooltwoassignment->turnitintooltwo->grade < 0) {
+                // Using a scale.
+                $grades->rawgrade = ($overallgrade == '--') ? null : $overallgrade;
+            } else {
+                $grades->rawgrade = ($overallgrade == '--') ? null : number_format($overallgrade, 2);
+            }
+
+        } else {
+            $grades->rawgrade = null;
+        }
+        $grades->userid = $this->userid;
+        $params['idnumber'] = $cm->idnumber;
+
+        @include_once($CFG->dirroot."/lib/gradelib.php");
+        grade_update('mod/turnitintooltwo', $turnitintooltwoassignment->turnitintooltwo->course, 'mod',
+                        'turnitintooltwo', $turnitintooltwoassignment->turnitintooltwo->id, 0, $grades, $params);
 
         // If we have a Turnitin Id then delete submission.
         if (!empty($this->submission_objectid)) {
@@ -474,8 +502,10 @@ class turnitintooltwo_submission {
 
     /**
      * Update and save an individual submission from Turnitin
+     *
+     * @param type $save - save in db regradlesss of changes
      */
-    public function update_submission_from_tii() {
+    public function update_submission_from_tii($save = false) {
         // Initialise Comms Object.
         $turnitincomms = new turnitintooltwo_comms();
         $turnitincall = $turnitincomms->initialise_api();
@@ -487,7 +517,7 @@ class turnitintooltwo_submission {
             $response = $turnitincall->readSubmission($submission);
             $readsubmission = $response->getSubmission();
 
-            $this->save_updated_submission_data($readsubmission);
+            $this->save_updated_submission_data($readsubmission, '', false, $save);
             $this->get_submission_details();
         } catch (Exception $e) {
             $turnitincomms->handle_exceptions($e, 'tiisubmissiongeterror', false);
@@ -500,9 +530,11 @@ class turnitintooltwo_submission {
      * @global type $DB
      * @param type $tiisubmissiondata
      * @param type $bulk
+     * @param type $save - save in db regradlesss of changes
      * @return type
      */
-    public function save_updated_submission_data($tiisubmissiondata, $turnitintooltwoassignment = "", $bulk = false) {
+    public function save_updated_submission_data($tiisubmissiondata, $turnitintooltwoassignment = "", 
+                                                    $bulk = false, $save = false) {
         global $DB, $CFG;
 
         if (empty($turnitintooltwoassignment)) {
@@ -527,7 +559,7 @@ class turnitintooltwo_submission {
             }
         }
 
-        $sub->submission_grade = ($tiisubmissiondata->getGrade()) ? $tiisubmissiondata->getGrade() : null;
+        $sub->submission_grade = ($tiisubmissiondata->getGrade() == '') ? null : $tiisubmissiondata->getGrade();
         $sub->submission_gmimaged = $tiisubmissiondata->getFeedbackExists();
         $sub->submission_unanon = ($tiisubmissiondata->getAnonymous() == 1) ? 0 : 1;
         $sub->submission_orcapable = ($tiisubmissiondata->getOriginalityReportCapable() == 1) ? 1 : 0;
@@ -540,8 +572,7 @@ class turnitintooltwo_submission {
         $sub->submission_attempts = ($tiisubmissiondata->getAuthorLastViewedFeedback() > 0) ?
                                     strtotime($tiisubmissiondata->getAuthorLastViewedFeedback()) : 0;
 
-        // Only update if certain items have changed to save on database load.
-        $save = false;
+        // If save not passed in then only update if certain items have changed to save on database load.
         if ($this->submission_grade != $sub->submission_grade || $this->submission_score != $sub->submission_score ||
             $this->submission_modified != $sub->submission_modified || $this->submission_attempts != $sub->submission_attempts ||
             $this->submission_unanon != $sub->submission_unanon) {

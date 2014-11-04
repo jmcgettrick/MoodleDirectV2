@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: sv
 
 $string['addsubmission'] = 'Lägg Till Inlämning';
@@ -140,7 +140,7 @@ $string['turnitinaccountid_desc'] = '<b>[Obligatoriskt]</b><br />Ange ditt Prim�
 $string['turnitinanon'] = 'Anonyma Kommentarer';
 $string['turnitinanon_help'] = 'Du kan konfigurera din Turnitin uppgift till att använda Anonyma Kommentarer genom att sätta det här värdet till Ja. När anonyma kommentarer väl har aktiverats för en uppgift kan det inte inaktiveras.';
 $string['turnitinapiurl'] = 'Turnitin API-URL';
-$string['turnitinapiurl_desc'] = '<b>[Obligatoriskt]</b><br />Ange Turnitin API-URL:en<br /><i>(t.ex. https://www.turnitin.com)<br />(t.ex. https://submit.ac.uk)</i>';
+$string['turnitinapiurl_desc'] = '<b>[Obligatoriskt]</b><br />Ange Turnitin API-URL:en<br /><i>(t.ex. https://api.turnitin.com)<br />(t.ex. https://submit.ac.uk)</i>';
 $string['turnitindeleteconfirm'] = 'Radering av uppsatser tar bort dem från din inlämningslista och inkorg, men tar inte\nbort dem helt från Turnitins databas.\n\nÄr du säker på att du vill radera denna inlämning? Denna åtgärd kan inte ångras.';
 $string['turnitindeletionerror'] = 'Radering av inlämning för Turnitin misslyckades. Den lokala Moodle-kopian har tagits bort men inlämningen i Turnitin kunde inte raderas.';
 $string['turnitinenrolstudents'] = 'Registrera Alla Studenter';
@@ -177,7 +177,7 @@ $string['turnitinuserepository'] = 'Aktivera Institutionellt Arkiv';
 $string['turnitinuserepository_desc'] = 'Välj huruvida du vill tillåta användning av Institutionella Arkiv i Turnitins Uppgifter.<br /><i>(Detta är endast tillgängligt för dem som har ett Institutionellt Arkiv aktiverat för sitt konto)</i>';
 $string['turnitintutorsremove'] = 'Är du säker på att du vill ta bort denna handledare från kursen inom Turnitin?';
 $string['turnitinuserepository_help'] = 'Använd denna inställning för att aktivera ett Institutionellt Arkiv-alternativ i uppgiftens inställningsskärm.';
-$string['tutorstatus'] = '{$a->inlämnad}/{$a->totalt} Studentinlämningar, {$a->betygsatta} Inlämning{$a->gplural} Betygsatt';
+$string['tutorstatus'] = '{$a->submitted}/{$a->total} Studentinlämningar, {$a->graded} Inlämning{$a->gplural} Betygsatt';
 $string['type'] = 'Inlämningstyp';
 $string['types'] = 'Inlämningstyper';
 $string['types_help'] = '<p>Inlämningar kan göras i två olika format. Kopiera och Klistra eller genom en Filuppladdning.</p>';
@@ -405,7 +405,7 @@ $string['nonenrolledstudent'] = 'Oregistrerad Student';
 $string['startdatenotyearago'] = 'Startdatum kan inte vara för mer än 1 år sedan';
 $string['searchcourses'] = 'Sök Kurser';
 $string['errorsdesc'] = 'Det uppstod ett problem vid försök att ladda upp följande filer till Turnitin.';
-$string['tiiexplain'] = 'Turnitin är en kommersiell produkt och du måste ha ett betalt abonnemang för att använda den här tjänsten. För mer information se <a href=&#34;http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>';
+$string['tiiexplain'] = 'Turnitin är en kommersiell produkt och du måste ha ett betalt abonnemang för att använda den här tjänsten. För mer information se <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>';
 $string['useturnitin'] = 'Aktivera Turnitin';
 $string['turnitinconfig'] = 'Turnitin Plagiering Plugin Konfiguration';
 $string['studentdisclosuredefault'] = 'Alla uppladdade filer kommer att lämnas in till Turnitin.com; upptäckartjänsten för plagiering';
@@ -425,7 +425,7 @@ $string['defaultupdated'] = 'Turnitin standardinställningar uppdaterade';
 $string['pp_createsubmissionerror'] = 'Det uppstod ett fel i plagiering plugin vid skapandet av en inlämnan';
 $string['pp_updatesubmissionerror'] = 'Det uppstod ett fel i plagiering plugin vid uppdatering av en inlämnan';
 $string['pp_submission_error'] = 'Ett fel uppstod med ditt inlämnande:';
-$string['pp_configuredesc'] = 'Du måste konfigurera denna modul inom turnitintooltwo modulen. Var god klicka <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>här</a> för att konfigurera denna plugin';
+$string['pp_configuredesc'] = 'Du måste konfigurera denna modul inom turnitintooltwo modulen. Var god klicka <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>här</a> för att konfigurera denna plugin';
 $string['coursestomigrate'] = 'Du har {$a} klasser tillgängliga för migration från Turnitin';
 $string['migrationheader'] = 'Turnitin Klass Migration';
 $string['gradingtemplate'] = 'Betygsmall';
@@ -438,3 +438,13 @@ $string['submitondraft'] = 'Lämna in filen när den har laddats upp';
 $string['submitonfinal'] = 'Lämna in filen när den har laddats upp';
 $string['turnitindiagnostic'] = 'Aktivera Diagnostikläge';
 $string['turnitindiagnostic_desc'] = '<b>[Varning]</b><br />Aktivera Diagnostikläge endast för att spåra problem med Turnitin API.';
+$string['autorefreshgrades'] = 'Automatisk Uppdatering Av Betyg / Poäng';
+$string['autorefreshgrades_help'] = 'Som standard efter varje samtal till Turnitin så kommer integrationen för Moodle plugin att automatiskt försöka ta ner ändringar som görs medan du är i i Turnitin. Du kan använda detta alternativ för att avaktivera denna funktion, men för att upprätthålla synkronisering mellan de båda systemen måste du frekvent uppdatera betyg och originalitetspoäng manuellt inifrån Moodle.';
+$string['yesgrades'] = 'Ja, uppdatera originalitetspoäng och betyg automatiskt';
+$string['nogrades'] = 'Nej, jag vill uppdatera originalitetspoäng och betyg manuellt';
+$string['submissionagreementerror'] = 'Du måste acceptera avtalet för denna inlämning';
+$string['noxmlwriterlibrary'] = 'Du måste ha PHP XMLWriter-tillägget installerat på din server för att kunna använda detta insticksprogram.';
+$string['checkupgrade'] = 'Sök efter tillgängliga uppgraderingar';
+$string['checkingupgrade'] = 'Söker efter tillgängliga uppgraderingar';
+$string['usinglatest'] = 'Du har den senaste versionen!';
+$string['useturnitin_mod'] = 'Aktivera Turnitin för {a}';

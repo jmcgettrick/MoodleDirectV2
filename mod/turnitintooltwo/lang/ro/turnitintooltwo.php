@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: ro
 
 $string['addsubmission'] = 'Adăugați depunerea';
@@ -140,7 +140,7 @@ $string['turnitinaccountid_desc'] = '<b>[Necesar]</b><br />Introduceți ID-ul co
 $string['turnitinanon'] = 'Evaluare anonimă';
 $string['turnitinanon_help'] = 'Vă puteți configura tema Turnitin să folosească Evaluarea anonimă setând această valoare la Da. Odată ce evaluarea anonimă a fost activată pentru o temă nu poate fi dezactivată.';
 $string['turnitinapiurl'] = 'URL-ul API Turnitin';
-$string['turnitinapiurl_desc'] = '<b>[Necesar]</b><br />Introduceți URL-ul API Turnitin<br /><i>(de ex., https://www.turnitin.com)<br />(de ex., https://submit.ac.uk)</i>';
+$string['turnitinapiurl_desc'] = '<b>[Necesar]</b><br />Introduceți URL-ul API Turnitin<br /><i>(de ex., https://api.turnitin.com)<br />(de ex., https://submit.ac.uk)</i>';
 $string['turnitindeleteconfirm'] = 'Ștergerea lucrărilor le șterge din lista și căsuța dumneavoastră de depuneri dar nu le înlătură complet\n din baza de date Turnitin.\n\nSunteți sigur că vreți să ștergeți această depunere? Această acțiune nu poate fi anulată.';
 $string['turnitindeletionerror'] = 'Ștergerea depunerii Turnitin a eșuat. Copia locală Moodle a fost înlăturată dar depunerea din Turnitin nu a putut fi ștearsă.';
 $string['turnitinenrolstudents'] = 'Înregistrați toți studenții';
@@ -405,7 +405,7 @@ $string['nonenrolledstudent'] = 'Student neînregistrat';
 $string['startdatenotyearago'] = 'Data de început nu poate fi mai mult de acum 1 an';
 $string['searchcourses'] = 'Căutare cursuri';
 $string['errorsdesc'] = 'A existat o problemă în timpul încercării de a încărca următoarele fișiere la Turnitin.';
-$string['tiiexplain'] = 'Turnitin este un produs comercial și trebuie să aveți un abonament plătit pentru a folosi acest serviciu pentru mai multe informații citiți <a href=http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>&#34;';
+$string['tiiexplain'] = 'Turnitin este un produs comercial și trebuie să aveți un abonament plătit pentru a folosi acest serviciu pentru mai multe informații citiți <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>&#34;';
 $string['useturnitin'] = 'Activați Turnitin';
 $string['turnitinconfig'] = 'Configurarea plugin-ului plagiatului Turnitin';
 $string['studentdisclosuredefault'] = 'Toate fișierele încărcate vor fi depuse serviciului de detectare a plagiatului Turnitin.com';
@@ -425,7 +425,7 @@ $string['defaultupdated'] = 'Setările prestabilite ale Turnitin actualizate';
 $string['pp_createsubmissionerror'] = 'A avut loc o eroare în plugin-ul plagiatului la crearea unei depuneri';
 $string['pp_updatesubmissionerror'] = 'A avut loc o eroare în plugin-ul plagiatului la actualizarea unei depuneri';
 $string['pp_submission_error'] = 'A avut loc o eroare cu depunerea dumneavoastră:';
-$string['pp_configuredesc'] = 'Trebuie să configurați acest modul în cadrul modulului turnitintooltwo. Vă rugăm să dați clic <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>aici</a> pentru a configura acest plugin';
+$string['pp_configuredesc'] = 'Trebuie să configurați acest modul în cadrul modulului turnitintooltwo. Vă rugăm să dați clic <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>aici</a> pentru a configura acest plugin';
 $string['coursestomigrate'] = 'Aveți {$a} cursuri disponibile pentru a migra de la Turnitin';
 $string['migrationheader'] = 'Migrarea cursului Turnitin';
 $string['gradingtemplate'] = 'Șablon notare';
@@ -438,3 +438,13 @@ $string['submitondraft'] = 'Depunere fișier la prima încărcare';
 $string['submitonfinal'] = 'Depunere fișier atunci când studentul trimite pentru notare';
 $string['turnitindiagnostic'] = 'Activați Modul diagnostic';
 $string['turnitindiagnostic_desc'] = '<b>[Atenție]</b><br />Activați Modul diagnostic numai pentru a detecta problemele cu API Turnitin.';
+$string['autorefreshgrades'] = 'Reîncărcarea automată a notelor/punctajelor';
+$string['autorefreshgrades_help'] = 'În mod prestabilit, după fiecare apel către Turnitin plugin-ul integrării Moodle va încerca să sincronizeze automat modificările realizate în timpul aflării în cadrul Turnitin. Puteți folosi această opțiune pentru a dezactiva această funcție; totuși pentru a menține sincronizarea dintre ambele sisteme va trebui să reîncărcați frecvent în mod manual notele și punctajele de originalitate din cadrul Moodle.';
+$string['yesgrades'] = 'Da, reîncărcați automat procentajele de originalitate și notele';
+$string['nogrades'] = 'Nu, voi reîncărca manual procentajele de originalitate și notele';
+$string['submissionagreementerror'] = 'Trebuie să acceptați acordul pentru această depunere';
+$string['noxmlwriterlibrary'] = 'Pentru a utiliza acest insert, va trebui să aveţi extensia PHP XMLWriter instalată pe serverul dvs.';
+$string['checkupgrade'] = 'Verificare disponibilitate upgrade';
+$string['checkingupgrade'] = 'Se verifică dacă există upgrade disponibil';
+$string['usinglatest'] = 'Utilizaţi cea mai recentă versiune!';
+$string['useturnitin_mod'] = 'Activare Turnitin pentru {a}';

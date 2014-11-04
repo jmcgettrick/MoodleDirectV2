@@ -272,7 +272,6 @@ function turnitintooltwo_duplicate_recycle($courseid, $action) {
 
         // Join Instructor to class.
         $turnitintooltwouser->join_user_to_class($newcourse->turnitin_cid);
-        
         $currentcourse->turnitin_cid = $newcourse->turnitin_cid;
         $currentcourse->turnitin_ctl = $newcourse->turnitin_ctl;
     }
@@ -305,14 +304,16 @@ function turnitintooltwo_duplicate_recycle($courseid, $action) {
                             $turnitintooltwoassignment->turnitintooltwo->rubric : '';
             $rubric_id = (!empty($rubric_id) && array_key_exists($rubric_id, $instructorrubrics)) ? $rubric_id : '';
 
-            $assignment->setRubricId();
+            $assignment->setRubricId($rubric_id);
             $assignment->setSubmitPapersTo($turnitintooltwoassignment->turnitintooltwo->submitpapersto);
             $assignment->setResubmissionRule($turnitintooltwoassignment->turnitintooltwo->reportgenspeed);
             $assignment->setBibliographyExcluded($turnitintooltwoassignment->turnitintooltwo->excludebiblio);
             $assignment->setQuotedExcluded($turnitintooltwoassignment->turnitintooltwo->excludequoted);
             $assignment->setSmallMatchExclusionType($turnitintooltwoassignment->turnitintooltwo->excludetype);
             $assignment->setSmallMatchExclusionThreshold((int)$turnitintooltwoassignment->turnitintooltwo->excludevalue);
-            $assignment->setAnonymousMarking($turnitintooltwoassignment->turnitintooltwo->anon);
+            if ($config->useanon) {
+                $assignment->setAnonymousMarking($turnitintooltwoassignment->turnitintooltwo->anon);
+            }
             $assignment->setLateSubmissionsAllowed($turnitintooltwoassignment->turnitintooltwo->allowlate);
             if ($config->userepository) {
                 $assignment->setInstitutionCheck((isset($turnitintooltwoassignment->turnitintooltwo->institution_check)) ?
@@ -535,8 +536,10 @@ function turnitintooltwo_tempfile($suffix) {
  * @param type $module
  * @return null
  */
-function turnitintooltwo_updateavailable($module) {
-    $returnvalue = null;
+function turnitintooltwo_updateavailable($current_version) {
+    global $CFG;
+
+    $returnvalue = get_string('usinglatest', 'mod_turnitintooltwo');
 
     try {
         // Open connection.
@@ -547,6 +550,13 @@ function turnitintooltwo_updateavailable($module) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        if (isset($CFG->proxyhost) AND !empty($CFG->proxyhost)) {
+            curl_setopt($ch, CURLOPT_PROXY, $CFG->proxyhost.':'.$CFG->proxyport);
+        }
+        if (isset($CFG->proxyuser) AND !empty($CFG->proxyuser)) {
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, sprintf('%s:%s', $CFG->proxyuser, $CFG->proxypassword));
+        }
 
         // Execute post.
         $result = curl_exec($ch);
@@ -555,17 +565,14 @@ function turnitintooltwo_updateavailable($module) {
         curl_close($ch);
 
         $xml = simplexml_load_string($result);
-
-        $version = (empty($module->version)) ? $module->versiondisk : $module->version;
-
         if ((isset($xml)) AND (isset($xml->version))) {
-            if ($xml->version > $version) {
-                $returnvalue = $xml->filename;
+            if ($xml->version > $current_version) {
+                $returnvalue = html_writer::link($xml->filename, get_string("upgradeavailable", "turnitintooltwo"));
             }
         }
 
     } catch (Exception $e) {
-        turnitin_comms::handle_exceptions($e, 'checkupdateavailableerror', false);
+        turnitintooltwo_comms::handle_exceptions($e, 'checkupdateavailableerror', false);
     }
 
     return $returnvalue;
@@ -610,8 +617,14 @@ function turnitintooltwo_get_assignments_from_tii($courseid, $returnformat = "js
 
         $currentassignments['TT'] = $DB->get_records_select("turnitintooltwo_parts",
                                                                 " tiiassignid ".$insql, $inparams, '', 'tiiassignid');
-        $currentassignments['PP'] = $DB->get_records_select("plagiarism_turnitin_config", " name = 'turnitin_assignid' ".
+
+        $dbman = $DB->get_manager();
+        if ($dbman->table_exists('plagiarism_turnitin_config')) {
+            $currentassignments['PP'] = $DB->get_records_select("plagiarism_turnitin_config", " name = 'turnitin_assignid' ".
                                                                 " AND value ".$insql, $inparams, '', 'value');
+        } else {
+            $currentassignments['PP'] = array();
+        }
     }
 
     try {
@@ -799,13 +812,14 @@ function turnitintooltwo_get_courses_from_tii($integrationids, $coursetitle, $co
 }
 
 function turnitintooltwo_sort_array(&$data, $sortcol, $sortdir) {
-    $code = '$retval = strnatcmp($a["'.$sortcol.'"], $b["'.$sortcol.'"]);';
-    $code .= 'return $retval;';
-
     if ($sortdir == "desc") {
-        usort($data, create_function('$b, $a', $code));
+        return usort($data, function($b, $a) use ($sortcol) {
+            return strnatcmp($a[$sortcol], $b[$sortcol]);
+        });
     } else {
-        usort($data, create_function('$a, $b', $code));
+        return usort($data, function($a, $b) use ($sortcol) {
+            return strnatcmp($a[$sortcol], $b[$sortcol]);
+        });
     }
 }
 
@@ -923,7 +937,7 @@ function turnitintooltwo_getfiles($moduleid) {
                                     $file->coursetitle . ' (' . $file->courseshort . ') - ' . $file->activity);
         }
 
-        $filenametodisplay = (is_null($file->filename) ? $file->rawfilename : $file->filename);
+        $filenametodisplay = (empty($file->filename) ? $file->rawfilename : $file->filename);
         $submission = html_writer::link($CFG->wwwroot.'/pluginfile.php/'.$file->contextid.'/mod_turnitintooltwo/submissions/'.
                                     $file->itemid.'/'.$file->rawfilename,
                                         $OUTPUT->pix_icon('fileicon', 'open '.$filenametodisplay, 'mod_turnitintooltwo')." ".
@@ -1002,11 +1016,18 @@ function turnitintooltwo_getusers() {
     $querywhere = ' WHERE ( ';
     for ($i = 0; $i < count($displaycolumns); $i++) {
         $bsearchable[$i] = optional_param('bSearchable_'.$i, null, PARAM_TEXT);
-        $ssearchn[$i] = optional_param('sSearch_'.$i, null, PARAM_TEXT);
-        if (!is_null($bsearchable[$i]) && $bsearchable[$i] == "true" && ( $ssearch != '' OR $ssearchn[$i] != '')) {
-            $namedparam = 'search_term_'.$i;
-            $querywhere .= $DB->sql_like($displaycolumns[$i], ':'.$namedparam, false)." OR ";
-            $queryparams['search_term_'.$i] = '%'.$ssearch.'%';
+        if (!is_null($bsearchable[$i]) && $bsearchable[$i] == "true" && $ssearch != '') {
+            $include = true;
+            if ($i <= 1) {
+                if (!is_int($ssearch) || is_null($ssearch)) {
+                    $include = false;
+                }
+            }
+
+            if ($include) {
+                $querywhere .= $DB->sql_like($displaycolumns[$i], ':search_term_'.$i, false)." OR ";
+                $queryparams['search_term_'.$i] = '%'.$ssearch.'%';
+            }
         }
     }
     if ( $querywhere == ' WHERE ( ' ) {
@@ -1036,7 +1057,8 @@ function turnitintooltwo_getusers() {
         }
 
         $return["aaData"][] = array($checkbox, ($user->turnitin_uid == 0) ?
-                                '' : $user->turnitin_uid, $user->lastname, $user->firstname, $pseudoemail);
+                                '' : $user->turnitin_uid, format_string($user->lastname), 
+                                        format_string($user->firstname), $pseudoemail);
     }
     $return["sEcho"] = $secho;
     $return["iTotalRecords"] = count($users);
@@ -1186,30 +1208,31 @@ function turnitintooltwo_show_browser_new_course_form() {
 function turnitintooltwo_show_browser_link_course_form() {
     global $DB, $OUTPUT;
 
+    $output = "";
     $courseids = $DB->get_records("turnitintooltwo_courses", array('course_type' => 'TT'), '', 'courseid');
-    list($notinsql, $notinparams) = $DB->get_in_or_equal(array_keys($courseids), SQL_PARAMS_QM, 'param', false);
-    $unlinkedcoursesquery = $DB->get_records_select('course', "category != 0 AND id ".$notinsql,
+    if (!empty($courseids)) {
+        list($notinsql, $notinparams) = $DB->get_in_or_equal(array_keys($courseids), SQL_PARAMS_QM, 'param', false);
+        $unlinkedcoursesquery = $DB->get_records_select('course', "category != 0 AND id ".$notinsql,
                                         $notinparams, 'shortname', 'id, shortname AS name');
 
-    if (!empty($unlinkedcoursesquery)) {
-        $unlinkedcourses = array();
-        foreach ($unlinkedcoursesquery as $course) {
-            $unlinkedcourses[$course->id] = $course->name;
+        if (!empty($unlinkedcoursesquery)) {
+            $unlinkedcourses = array();
+            foreach ($unlinkedcoursesquery as $course) {
+                $unlinkedcourses[$course->id] = $course->name;
+            }
+
+            $elements = array();
+            $elements[] = array('header', 'update_course_fieldset', get_string('linkcourse', 'turnitintooltwo'));
+            $elements[] = array('select', 'coursetolink', get_string('selectcourse', 'turnitintooltwo'), '', $unlinkedcourses);
+            $elements[] = array('button', 'update_course', get_string('linkcourse', 'turnitintooltwo'));
+            $customdata["elements"] = $elements;
+            $customdata["hide_submit"] = true;
+            $customdata["disable_form_change_checker"] = true;
+
+            $updatecourseform = new turnitintooltwo_form('', $customdata);
+            $output = $OUTPUT->box(get_string('or', 'turnitintooltwo'), '', 'or_container');
+            $output .= $updatecourseform->display();
         }
-
-        $elements = array();
-        $elements[] = array('header', 'update_course_fieldset', get_string('linkcourse', 'turnitintooltwo'));
-        $elements[] = array('select', 'coursetolink', get_string('selectcourse', 'turnitintooltwo'), '', $unlinkedcourses);
-        $elements[] = array('button', 'update_course', get_string('linkcourse', 'turnitintooltwo'));
-        $customdata["elements"] = $elements;
-        $customdata["hide_submit"] = true;
-        $customdata["disable_form_change_checker"] = true;
-
-        $updatecourseform = new turnitintooltwo_form('', $customdata);
-        $output = $OUTPUT->box(get_string('or', 'turnitintooltwo'), '', 'or_container');
-        $output .= $updatecourseform->display();
-    } else {
-        $output = "";
     }
 
     return $output;

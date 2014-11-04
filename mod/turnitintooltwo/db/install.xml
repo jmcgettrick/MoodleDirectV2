@@ -15,8 +15,9 @@
                 <FIELD NAME="defaultdtstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="numparts" NEXT="defaultdtdue"/>
                 <FIELD NAME="defaultdtdue" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultdtstart" NEXT="defaultdtpost"/>
                 <FIELD NAME="defaultdtpost" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultdtdue" NEXT="anon"/>
-                <FIELD NAME="anon" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultdtpost" NEXT="portfolio"/>
-                <FIELD NAME="portfolio" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="anon" NEXT="allowlate"/>
+                <FIELD NAME="anon" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultdtpost" NEXT="submitted"/>
+                <FIELD NAME="submitted" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="anon" NEXT="portfolio"/>
+                <FIELD NAME="portfolio" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="submitted" NEXT="allowlate"/>
                 <FIELD NAME="allowlate" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="portfolio" NEXT="reportgenspeed"/>
                 <FIELD NAME="reportgenspeed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="allowlate" NEXT="submitpapersto"/>
                 <FIELD NAME="submitpapersto" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="reportgenspeed" NEXT="spapercheck"/>
@@ -77,6 +78,10 @@
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
             </KEYS>
+            <INDEXES>
+                <INDEX NAME="turnitintooltwoid" UNIQUE="false" FIELDS="turnitintooltwoid" NEXT="tiiassignid" />
+                <INDEX NAME="tiiassignid" UNIQUE="false" FIELDS="tiiassignid" PREVIOUS="turnitintooltwoid" />
+            </INDEXES>
         </TABLE>
         <TABLE NAME="turnitintooltwo_users" COMMENT="Turnitin Tools Users" NEXT="turnitintooltwo_courses" PREVIOUS="turnitintooltwo_parts">
             <FIELDS>
@@ -85,7 +90,8 @@
                 <FIELD NAME="turnitin_uid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="turnitin_utp"/>
                 <FIELD NAME="turnitin_utp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" PREVIOUS="turnitin_uid" NEXT="instructor_defaults"/>
                 <FIELD NAME="instructor_defaults" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="turnitin_utp" NEXT="instructor_rubrics"/>
-                <FIELD NAME="instructor_rubrics" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="instructor_defaults"/>
+                <FIELD NAME="instructor_rubrics" TYPE="text" LENGTH="medium" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="instructor_defaults" NEXT="user_agreement_accepted"/>
+                <FIELD NAME="user_agreement_accepted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" PREVIOUS="instructor_rubrics"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
@@ -106,6 +112,9 @@
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
             </KEYS>
+            <INDEXES>
+                <INDEX NAME="courseid-course_type" UNIQUE="false" FIELDS="courseid, course_type" />
+            </INDEXES>
         </TABLE>
         <TABLE NAME="turnitintooltwo_submissions" COMMENT="Turnitin Tools Submissions" PREVIOUS="turnitintooltwo_courses" NEXT="turnitintooltwo_peermarks">
             <FIELDS>
@@ -161,6 +170,10 @@
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
             </KEYS>
+            <INDEXES>
+                <INDEX NAME="parent_tii_assign_id" UNIQUE="false" FIELDS="parent_tii_assign_id" NEXT="tiiassignid"/>
+                <INDEX NAME="tiiassignid" UNIQUE="false" FIELDS="tiiassignid" PREVIOUS="parent_tii_assign_id"/>
+            </INDEXES>
         </TABLE>
     </TABLES>
 </XMLDB>

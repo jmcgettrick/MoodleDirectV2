@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: pt_br
 
 $string['addsubmission'] = 'Adicionar Envio';
@@ -140,7 +140,7 @@ $string['turnitinaccountid_desc'] = '<b>[Obrigatório]</b><br />Digite a Identif
 $string['turnitinanon'] = 'Correção Anônima';
 $string['turnitinanon_help'] = 'Você pode configurar o seu trabalho Turnitin para usar a Correção Anônima definindo este valor para Sim. Ao habilitar a correção anônima em um trabalho, o mesmo não poderá ser mais desabilitado.';
 $string['turnitinapiurl'] = 'URL da API Turnitin';
-$string['turnitinapiurl_desc'] = '<b>[Obrigatório]</b><br />Digite a URL da API Turnitin<br /><i>(ex. https://www.turnitin.com)<br />(ex. https://submit.ac.uk)</i>';
+$string['turnitinapiurl_desc'] = '<b>[Obrigatório]</b><br />Digite a URL da API Turnitin<br /><i>(ex. https://api.turnitin.com)<br />(ex. https://submit.ac.uk)</i>';
 $string['turnitindeleteconfirm'] = 'Ao excluir documentos fará com que os mesmos sejam removidos da sua lista de envios e da sua caixa de entrada, mas não os \nremoverá completamente da base de dados do Turnitin.\n\nTem certeza que deseja excluir esse envio? Essa ação não poderá ser desfeita.';
 $string['turnitindeletionerror'] = 'Falha ao excluir o envio Turnitin. A cópia local do Moodle foi removida, mas o envio no Turnitin não pôde ser excluído.';
 $string['turnitinenrolstudents'] = 'Matricular todos os Alunos';
@@ -177,7 +177,7 @@ $string['turnitinuserepository'] = 'Habilitar o Depósito Institucional';
 $string['turnitinuserepository_desc'] = 'Escolher se permite utilizar os Depósitos Institucionais nos Trabalhos Turnitin<br /><i>(Isso só está disponível para aqueles que têm o Depósito Institucional habilitado em suas contas)</i>';
 $string['turnitintutorsremove'] = 'Tem certeza de que deseja remover esse tutor do curso Turnitin?';
 $string['turnitinuserepository_help'] = 'Utilize essa configuração para habilitar a opção do Depósito Institucional na tela de configuração do trabalho.';
-$string['tutorstatus'] = '{$a->enviado}/{$a->total} Envios dos Alunos, {$a->avaliado} Envios{$a->gplural} Avaliado';
+$string['tutorstatus'] = '{$a->submitted}/{$a->total} Envios dos Alunos, {$a->graded} Envios{$a->gplural} Avaliado';
 $string['type'] = 'Tipo de Envio';
 $string['types'] = 'Tipos de Envios';
 $string['types_help'] = '<p>Os envios podem ser feitos em dois formatos diferentes. Copiar e colar e Upload de arquivo.</p>';
@@ -353,7 +353,7 @@ $string['coursetitleerror'] = 'Você deve fornecer um título de aula para a pes
 $string['createmoodlecourses'] = 'Recriar cursos';
 $string['createmoodleassignments'] = 'Recriar todos os trabalhos das aulas selecionadas no Moodle?';
 $string['recreatemulticlasses'] = 'Suas aulas selecionadas estão sendo recriadas agora. Dependendo do número de aulas que você selecionou, isso pode levar alguns minutos';
-$string['recreatemulticlassescomplete'] = 'A recriação da aula está concluída agora. {$a->concluído} de {$a->total} foram criadas com sucesso.';
+$string['recreatemulticlassescomplete'] = 'A recriação da aula está concluída agora. {$a->completed} de {$a->total} foram criadas com sucesso.';
 $string['createcourse'] = 'Criar novo curso Moodle';
 $string['linkcourse'] = 'Vincular curso ao curso Moodle existente';
 $string['selectcourse'] = 'Selecionar o curso Moodle';
@@ -403,7 +403,7 @@ $string['nonenrolledstudent'] = 'Alunos não matriculados';
 $string['startdatenotyearago'] = 'Alunos não matriculados';
 $string['searchcourses'] = 'Pesquisar cursos';
 $string['errorsdesc'] = 'Ocorreu um problema ao tentar fazer o upload dos seguintes arquivos ao Turnitin.';
-$string['tiiexplain'] = 'O Turnitin é um produto comercial e você deve pagar uma assinatura para usar esse serviço. Para obter mais informações, consulte <a href=&#34;http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>';
+$string['tiiexplain'] = 'O Turnitin é um produto comercial e você deve pagar uma assinatura para usar esse serviço. Para obter mais informações, consulte <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>';
 $string['useturnitin'] = 'Habilitar o Turnitin';
 $string['turnitinconfig'] = 'Configuração do plugin de plágio Turnitin';
 $string['studentdisclosuredefault'] = 'Todos os arquivos enviados serão submetidos ao serviço de detecção de plágio Turnitin.com';
@@ -423,7 +423,7 @@ $string['defaultupdated'] = 'Configurações padrão Turnitin atualizadas';
 $string['pp_createsubmissionerror'] = 'Ocorreu um erro no plugin de plágio ao criar o envio';
 $string['pp_updatesubmissionerror'] = 'Ocorreu um erro no plugin de plágio ao atualizar o envio';
 $string['pp_submission_error'] = 'Ocorreu um erro com o seu envio:';
-$string['pp_configuredesc'] = 'Você deve configurar esse módulo dentro do módulo turnitintooltwo. Clique <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>aqui</a> para configurar esse plugin';
+$string['pp_configuredesc'] = 'Você deve configurar esse módulo dentro do módulo turnitintooltwo. Clique <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>aqui</a> para configurar esse plugin';
 $string['coursestomigrate'] = 'Você tem {$a} aulas disponíveis para migrar do Turnitin';
 $string['migrationheader'] = 'Migração de aula Turnitin';
 $string['gradingtemplate'] = 'Modelo de avaliação';
@@ -436,3 +436,13 @@ $string['submitondraft'] = 'Enviar arquivo quando for feito o primeiro upload';
 $string['submitonfinal'] = 'Enviar o arquivo quando o aluno enviá-lo para avaliação';
 $string['turnitindiagnostic'] = 'Habilitar Modo Diagnóstico';
 $string['turnitindiagnostic_desc'] = '<b>[Cuidado]</b><br />Habilitar modo de Diagnóstico somente para rastrear os problemas com o API do Turnitin.';
+$string['autorefreshgrades'] = 'Atualização Automática de Notas / Pontos';
+$string['autorefreshgrades_help'] = 'Por padrão, após cada chamada para o Turnitin, o plugin de integração Moodle tentará automaticamente anular as mudanças feitas enquanto dentro do Turnitin. Você pode usar essa opção para desligar esse recurso, no entanto, para manter a sincronização entre os dois sistemas você terá que frequentemente atualizar as notas e os pontos do originalidade manualmente de dentro do Moodle.';
+$string['yesgrades'] = 'Sim, atualize automaticamente os pontos e notas do originalidade';
+$string['nogrades'] = 'Não, Eu vou atualizar manualmente a pontuação do originalidade e notas';
+$string['submissionagreementerror'] = 'Você deve aceitar o acordo para esse envio.';
+$string['noxmlwriterlibrary'] = 'Para usar esse plugin, a extensão PHP XMLWriter precisa estar instalada no seu servidor.';
+$string['checkupgrade'] = 'Verificar atualizações disponíveis';
+$string['checkingupgrade'] = 'Verificando atualizações disponíveis';
+$string['usinglatest'] = 'Você está usando a versão mais recente!';
+$string['useturnitin_mod'] = 'Habilitar Turnitin para {a}';

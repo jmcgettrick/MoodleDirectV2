@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
         $("#id_submissionfile").parent().parent().hide();
     }
 
-    $('.submit_nothing').live('click', function() {
+    $(document).on('click', '.submit_nothing', function() {
         if ( $(this).hasClass("disabled") ) return;
         $(this).addClass('disabled');
         var part_id = $(this).prop('id').split('_')[2];
@@ -32,7 +32,7 @@ jQuery(document).ready(function($) {
     });
 
     // Configure submit paper form elements depending on what submission type is selected
-    $("#id_submissiontype").live('change', function() {
+    $(document).on('change', '#id_submissiontype', function() {
         if ($("#id_submissiontype").val() == 1) {
             $("#id_submissiontext").parent().parent().hide();
             $("#id_submissionfile").parent().parent().show();
@@ -50,7 +50,7 @@ jQuery(document).ready(function($) {
     }
 
     // Show loading if submission passes validation
-    $(".submission_form_container form").live('submit', function() {
+    $(document).on('submit', '.submission_form_container form', function() {
         try {
             var myValidator = validate_turnitintooltwo_form;
         } catch(e) {
@@ -135,7 +135,7 @@ jQuery(document).ready(function($) {
         });
     }
 
-    $('.show_peermark_instructions, .hide_peermark_instructions').live('click', function() {
+    $(document).on('click', '.show_peermark_instructions, .hide_peermark_instructions', function() {
         var idStr = $(this).attr('id').split("_");
 
         if (idStr[0] == "show") {
@@ -151,7 +151,7 @@ jQuery(document).ready(function($) {
 
     // Show options for parts in mod_form.php
     showPartDatesBoxes();
-    $("#id_numparts").live('change', function () {
+    $(document).on('change', '#id_numparts', function () {
         showPartDatesBoxes();
     });
 
@@ -280,6 +280,7 @@ jQuery(document).ready(function($) {
             },
             "fnDrawCallback":  function( oSettings ) {
                 initialiseDVLaunchers("all", 0, part_id, 0);
+                initialiseRefreshRow("all", 0, part_id, 0);
                 initialiseUploadBox("all", 0, 0, 0);
                 initialiseZipDownloads(part_id);
                 initialiseCheckboxes(0, part_id);
@@ -330,7 +331,7 @@ jQuery(document).ready(function($) {
         $('#id_submitbutton').attr('disabled', 'disabled');
     }
 
-    $(".turnitin_ula").live('click', function () {
+    $(document).on('click', '.turnitin_ula', function () {
         $.ajax({
             type: "POST",
             url: "ajax.php",
@@ -342,14 +343,22 @@ jQuery(document).ready(function($) {
                     $('#useragreement_form form').append('<input name="'+key+'" value="'+val+'" type="hidden" />');
                 });
                 $('#useragreement_form form').append('<input type="submit" value="Submit" />');
+
+                $("#useragreement_form form").on("submit", function(event) {
+                    eulaWindow = window.open('', 'eula');
+                    eulaWindow.document.write('<frameset><frame id="eulaWindow" name="eulaWindow"></frame></frameset>');
+                    $(eulaWindow).on("message", function(ev) {
+                        eulaWindow.close();
+                    });
+                    $(eulaWindow).bind('beforeunload', function() {
+                        window.$('.submission_form_container').html('');
+                        window.$("#refresh_loading").show();
+                        window.location.reload();
+                    });
+                });
+
                 $('#useragreement_form form').submit();
                 $('#useragreement_inputs').html('');
-
-                $(window).on("message", function(ev) {
-                    if (ev.originalEvent.data == 'turnitin_eula_accepted') {
-                        window.location = window.location;
-                    }
-                });
             }
         });
     });
@@ -403,8 +412,8 @@ jQuery(document).ready(function($) {
     });
 
     // Open an iframe light box containing the Quickmark Manager
-    if ($('.quickmark_manager_launch').length > 0) {
-        $('.quickmark_manager_launch').colorbox({
+    if ($('.quickmark_manager_launch').length > 0 || $('.plagiarism_turnitin_quickmark_manager_launch').length > 0) {
+        $('.quickmark_manager_launch, .plagiarism_turnitin_quickmark_manager_launch').colorbox({
             iframe:true, width:"700px", height:"432px", opacity: "0.7", className: "quickmark_manager", transition: "none",
             onLoad: function() { getLoadingGif(); },
             onCleanup: function() { hideLoadingGif(); }
@@ -518,6 +527,19 @@ jQuery(document).ready(function($) {
 
     $('#inbox_form form, .launch_form form').submit();
 
+    // Update the DB value for EULA accepted
+    function userAgreementAccepted( user_id ){
+        $.ajax({
+            type: "POST",
+            url: "ajax.php",
+            dataType: "json",
+            data: {action: 'acceptuseragreement', user_id: user_id},
+            success: function(data) {
+                window.location.href = window.location.href;
+            }
+        });
+    }
+
     // Enable the editing fields in the inbox parts table
     function enableEditingText(part_id) {
         $('#tabs-'+part_id+' .editable_date, #tabs-'+part_id+' .editable_text').editable('enable');
@@ -551,7 +573,9 @@ jQuery(document).ready(function($) {
                 eval(result);
                 start = result.end;
 
-                table.fnAddData(result.aaData);
+                if (result.aaData.length > 0) {
+                    table.fnAddData(result.aaData);
+                }
 
                 if (result.end < result.total) {
                     getSubmissions(table, assignment_id, part_id, start, refresh_requested, result.total);
@@ -560,6 +584,10 @@ jQuery(document).ready(function($) {
                     $('#refresh_'+part_id).show();
                     enableEditingText(part_id);
                 }
+            },
+            "error": function(data, response) {
+                $('#'+part_id+"_processing").attr('style', 'visibility: hidden');
+                $('.dataTables_empty').html(M.str.turnitintooltwo.tiisubmissionsgeterror);
             }
         });
     }
@@ -715,9 +743,9 @@ jQuery(document).ready(function($) {
 
         $(identifier).colorbox({
             onLoad: function() {
-                        $('.upload #cboxClose').hide();
-                        getLoadingGif();
-                    },
+                $('.upload #cboxClose').hide();
+                getLoadingGif();
+            },
             onClosed: function() { hideLoadingGif(); },
             onCleanup:function() {
                 hideLoadingGif();
@@ -755,7 +783,7 @@ jQuery(document).ready(function($) {
         });
 
         // Open an iframe light box which requests selected submissions as pdfs from Turnitin
-        $('#tabs-'+part_id+' .gmpdfzip_box').live('click', function(e) {
+        $(document).on('click', '#tabs-'+part_id+' .gmpdfzip_box', function(e) {
             $(this).colorbox({
                 open:true,iframe:true, width:"786px", height:"300px", opacity: "0.7", className: "gmpdfzip_window", transition: "none",
                 href: function() {
@@ -787,6 +815,24 @@ jQuery(document).ready(function($) {
             var idStr = $(this).attr("id").split("_");
             downloadZipFile(idStr[0]+"_"+idStr[1], idStr[2]);
             return false;
+        });
+    }
+
+
+    function initialiseRefreshRow(scope, submission_id, part_id, user_id) {
+        var identifier = ".refresh_row .fa-refresh";
+        if (scope == "row") {
+            identifier = "#refreshrow_"+submission_id+'_'+part_id+"_"+user_id+" .fa-refresh";
+        }
+
+        // Unbind the event first to stop it being binded multiple times
+        $(identifier).unbind("click");
+
+        $(identifier).click(function() {
+            $(this).hide();
+            $(this).siblings('.fa-spinner').css("display","inline-block");
+            var idStr = $(this).parent().attr("id").split("_");
+            refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
         });
     }
 
@@ -909,6 +955,10 @@ jQuery(document).ready(function($) {
                 } else {
                     link = link+"_"+data.submission_id;
                 }
+                // Show export links.
+                if (submission_id != 0) {
+                    $('#export_links').removeClass('hidden_class');
+                }
                 $("#"+link+"_"+part_id+'_'+user_id).parent().parent().children().each(function() {
                     i++;
                     $(this).html(data.row[i]);
@@ -916,6 +966,7 @@ jQuery(document).ready(function($) {
 
                 initialiseUploadBox("row", data.submission_id, part_id, user_id);
                 initialiseDVLaunchers("row", data.submission_id, part_id, user_id);
+                initialiseRefreshRow("row", data.submission_id, part_id, user_id);
                 initialiseCheckboxes(data.submission_id, part_id);
                 initialiseUnanoymiseForm("row", $('#assignment_id').html(), data.submission_id);
             }
@@ -928,7 +979,7 @@ jQuery(document).ready(function($) {
         if (submission_id != 0) {
             identifier = 'check_'+submission_id;
         }
-        $(identifier).live('click', function() {
+        $(document).on('click', identifier, function() {
             if ($('.inbox_checkbox:checked').length > 0) {
                 $('#zip_downloads').slideDown();
                 initialiseHiddenZipDownloads(part_id)

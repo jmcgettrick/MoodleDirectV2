@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: it
 
 $string['addsubmission'] = 'Aggiungi consegna';
@@ -89,7 +89,6 @@ $string['proxyurl_desc'] = '<b> [Facoltativo] </ b> <br /> Se il server utilizza
 $string['proxyuser'] = 'Nome utente proxy';
 $string['proxyuser_desc'] = '<b> [Facoltativo] </ b> <br /> Se il proxy richiede autenticazione inserisci il nome utente qui.';
 $string['reportgenspeed'] = 'Velocità della generazione del report';
-$string['reportgenspeed_help'] = 'Esistono tre opzioni per l&#39;impostazione di questo compito: ʺ&#39;.$string[&#39;genimmediately1&#39;].&#39;ʺ, ʺ&#39;.$string[&#39;genimmediately2&#39;].&#39;ʺ, e ʺ&#39;.$string[&#39;genduedate&#39;].&#39;ʺ.<br /><br/> L&#39;opzione ʺ&#39;.$string[&#39;genimmediately1&#39;].&#39;ʺ genera l&#39; Originality Report immediatamente quando uno studente consegna l&#39;elaborato. Con questa opzione selezionata gli studenti non saranno in grado di consegnare gli elaborati una seconda volta.<br /><br/>';
 $string['resubmission'] = 'Riconsegna dell&#39;elaborato';
 $string['resubmissiongradewarn'] = 'Le riconsegne per questo compito sono consentite fino alla data di scadenza. Eventuali annotazioni verranno cancellate se l&#39;elaborato verrà riconsegnato. Vuoi continuare?';
 $string['resubmit'] = 'Riconsegna';
@@ -135,7 +134,7 @@ $string['turnitinaccountid_desc'] = '<b>[Necessario]</b><br />Inserisci il tuo n
 $string['turnitinanon'] = 'Annotazione anonima';
 $string['turnitinanon_help'] = 'Puoi configurare il tuo compito Turnitin per utilizzare Annotazione anonima impostando questo valore su Sì. Una volta che Annotazione anonima è stata attivata in un compito non può essere disattivata.';
 $string['turnitinapiurl'] = 'URL dell&#39; API Turnitin';
-$string['turnitinapiurl_desc'] = '<b> [Obbligatorio] </ b> <br /> Inserisci l&#39;URL dell&#39;API di Turnitin <br /> <i> (ad esempio https://www.turnitin.com) <br /> (ad esempio, https://submit.ac.uk) </ i>';
+$string['turnitinapiurl_desc'] = '<b> [Obbligatorio] </ b> <br /> Inserisci l&#39;URL dell&#39;API di Turnitin <br /> <i> (ad esempio https://api.turnitin.com) <br /> (ad esempio, https://submit.ac.uk) </ i>';
 $string['turnitindeleteconfirm'] = 'I documenti eliminati vengono cancellati dall&#39;elenco delle consegne e dalla tua casella di posta in arrivo ma non vengono rimossi completamente dal database Turnitin.\n\n Sei sicuro di voler eliminare i documenti? Questa azione non può essere annullata.';
 $string['turnitindeletionerror'] = 'L&#39;eliminazione degli elaborati consegnati non ha avuto successo. La copia locale Moodle è stata rimossa, ma gli elaborati consegnati a Turnitin non possono essere cancellati.';
 $string['turnitinenrolstudents'] = 'Iscrivi tutti gli studenti';
@@ -389,7 +388,7 @@ $string['nonenrolledstudent'] = 'Nessuno studente iscritto';
 $string['startdatenotyearago'] = 'La data di inizio non può essere più di 1 anno fa';
 $string['searchcourses'] = 'Sfoglia corsi';
 $string['errorsdesc'] = 'Si è verificato un problema nel tentativo di caricare i seguenti file su Turnitin.';
-$string['tiiexplain'] = 'Turnitin è un prodotto commerciale ed è necessario avere un abbonamento a pagamento per utilizzare questo servizio per ulteriori informazioni, vai a <a href=&#34;http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>';
+$string['tiiexplain'] = 'Turnitin è un prodotto commerciale ed è necessario avere un abbonamento a pagamento per utilizzare questo servizio per ulteriori informazioni, vai a <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>';
 $string['useturnitin'] = 'AbilitaTurnitin';
 $string['turnitinconfig'] = 'Configurazione del plugin del plagio di Turnitin';
 $string['studentdisclosuredefault'] = 'Tutti i file caricati saranno sottoposti al servizio di rilevamento plagio Turnitin.com';
@@ -409,7 +408,7 @@ $string['defaultupdated'] = 'Impostazioni predefinite Turnitin aggiornate';
 $string['pp_createsubmissionerror'] = 'Si è verificato un errore nel plugin del plagio durante la preparazione della consegna dell&#39;elaborato';
 $string['pp_updatesubmissionerror'] = 'Si è verificato un errore nel plugin del plagio durante l&#39;aggiornamento della consegna dell&#39;elaborato';
 $string['pp_submission_error'] = 'Si è verificato un errore nella consegna dell&#39;elaborato';
-$string['pp_configuredesc'] = 'Devi configurare il modulo all&#39;interno del modulo turnitintooltwo. Fai clic su <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>here</a> per configurare questo plugin';
+$string['pp_configuredesc'] = 'Devi configurare il modulo all&#39;interno del modulo turnitintooltwo. Fai clic su <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>here</a> per configurare questo plugin';
 $string['coursestomigrate'] = 'CI sono classi $a} disponibili da migrare da Turnitin';
 $string['migrationheader'] = 'Migrazione della classe Turnitin';
 $string['gradingtemplate'] = 'Modello di classificazione';
@@ -422,3 +421,13 @@ $string['submitondraft'] = 'Consegna il file appena viene caricato';
 $string['submitonfinal'] = 'Consegna il file quando lo studente lo invia per la valutazione';
 $string['turnitindiagnostic'] = 'Abilita modalità diagnostica';
 $string['turnitindiagnostic_desc'] = '<b> [Attenzione] </ b> <br /> Abilita la modalità di diagnostica solo per identificare i problemi con l&#39;API Turnitin.';
+$string['autorefreshgrades'] = 'Aggiornamento automatico dei voti / risultati';
+$string['autorefreshgrades_help'] = 'Per impostazione predefinita, dopo ogni chiamata a Turnitin, l&#39; integrazione di Moodle cercherà di eliminare automaticamente le modifiche apportate in Turnitin. Puoi utilizzare questa opzione per disattivare questa funzione, tuttavia, al fine di mantenere la sincronizzazione tra i due sistemi dovrai aggiornare manualmente i voti e i risultati di originalità da Moodle.';
+$string['yesgrades'] = 'Sì, aggiorna automaticamente I risultati e i voti dell&#39;Originality Report';
+$string['nogrades'] = 'No, aggiornerò I risultati sull&#39;originalità e valuterò manualmente';
+$string['submissionagreementerror'] = 'Devi accettare il contratto per la consegna di questo elaborato.';
+$string['noxmlwriterlibrary'] = 'Per usare questo plugin devi avere l&#39;estensione PHP XMLWriter installato sul tuo server.';
+$string['checkupgrade'] = 'Verifica aggiornamento disponibile';
+$string['checkingupgrade'] = 'Verifica aggiornamento disponibile in corso';
+$string['usinglatest'] = 'Stai utilizzando la versione più recente!';
+$string['useturnitin_mod'] = 'Abilita Turnitin per {a}';

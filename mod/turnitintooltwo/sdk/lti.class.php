@@ -34,6 +34,7 @@ class LTI extends OAuthSimple {
     private $proxyuser;
     private $proxypassword;
     private $proxybypass;
+    private $sslcertificate;
 
     public function __construct( $apibaseurl ) {
         $this->setApiBaseUrl( $apibaseurl );
@@ -419,7 +420,7 @@ class LTI extends OAuthSimple {
         }
         $output = '<form action="' . $this->getEndPoint() . '" method="POST" target="' . $object->getFormTarget() . '" enctype="' . $enctype . '">'.PHP_EOL;
         foreach ( $params as $name => $value ) {
-            $output .= '<input name="' . $name . '" value="' . $value . '" type="hidden" />'.PHP_EOL;
+            $output .= '<input name="' . htmlentities($name, ENT_QUOTES) . '" value="' . htmlentities($value, ENT_QUOTES) . '" type="hidden" />'.PHP_EOL;
         }
         if ( $uploadtext ) {
             $output .= '<textarea name="custom_submission_data"></textarea>'.PHP_EOL;
@@ -798,6 +799,18 @@ class LTI extends OAuthSimple {
 
     /**
      *
+     * @return string
+     */
+    public function getSSLCertificate() {
+        return $this->sslcertificate;
+    }
+
+    public function setSSLCertificate($sslcertificate) {
+        $this->sslcertificate = $sslcertificate;
+    }
+
+    /**
+     *
      * @param array $params
      */
     private function transportData( $params ) {
@@ -810,6 +823,9 @@ class LTI extends OAuthSimple {
         curl_setopt($ch, CURLOPT_POSTFIELDS,     $params);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2 );
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1 );
+        if (isset($this->sslcertificate) AND !empty($this->sslcertificate)) {
+            curl_setopt($ch, CURLOPT_CAINFO, $this->sslcertificate);
+        }
         if (isset($this->proxyhost) AND !empty($this->proxyhost)) {
             curl_setopt($ch, CURLOPT_PROXY, $this->proxyhost.':'.$this->proxyport);
         }

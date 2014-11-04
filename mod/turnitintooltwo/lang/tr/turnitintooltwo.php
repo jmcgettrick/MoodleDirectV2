@@ -1,6 +1,6 @@
 <?php
-// Version: 2014012401
-// Date: 2014-01-24
+// Version: 2014012405
+// Date: 2014-07-25
 // Language: tr
 
 $string['addsubmission'] = 'Gönderi Ekle';
@@ -140,7 +140,7 @@ $string['turnitinaccountid_desc'] = '<b>[Required]</b><br />Öncelikli Turnitin 
 $string['turnitinanon'] = 'Anonim İşaretleme';
 $string['turnitinanon_help'] = 'Bu değeri Evet olarak ayarlamak suretiyle, Turnitin ödevinizi anonim işaretleme kullanmak üzere yapılandırabilirsiniz. Anonim işaretleme bir kez etkin hale getirilirse bir daha devre dışı bırakılamaz.';
 $string['turnitinapiurl'] = 'Turnitin API URL';
-$string['turnitinapiurl_desc'] = '<b>[Required]</b><br />Turnitin API URL sini giriniz<br /><i>(ör., https://www.turnitin.com)<br />(ör., https://submit.ac.uk)</i>';
+$string['turnitinapiurl_desc'] = '<b>[Required]</b><br />Turnitin API URL sini giriniz<br /><i>(ör., https://api.turnitin.com)<br />(ör., https://submit.ac.uk)</i>';
 $string['turnitindeleteconfirm'] = 'Ödevleri silindiğinde gönderi listesi ve gelen kutunuzdan kaldırılır fakat Turnitin veri tabanından tamamıyla kaldırılmaz.\n\nBu gönderimi silmek istediğinize emin misiniz? Bu işlem yarım bırakılamaz.';
 $string['turnitindeletionerror'] = 'Turnitin gönderisi silinirken bir hata oluştu. Yerel Moodle kopyası kaldırıldı ancak Turnitin&#39; deki gönderi silinemedi.';
 $string['turnitinenrolstudents'] = 'Tüm Öğrencileri Kaydet';
@@ -404,7 +404,7 @@ $string['nonenrolledstudent'] = 'Kayıtlı Olmayan Öğrenci';
 $string['startdatenotyearago'] = 'Başlangıç tarihi 1 yıldan fazla olamaz';
 $string['searchcourses'] = 'Kurs Ara';
 $string['errorsdesc'] = 'Bu dosyalar Turnitin&#39;e yüklenirken bir hata oluştu: ';
-$string['tiiexplain'] = 'Turnitin ticari bir üründür ve bu servisi kullanmak için ödeme yapmalısınız, daha fazla bilgi için: <a href=&#34;http://docs.moodle.org/en/Turnitin_administration&#34;>http://docs.moodle.org/en/Turnitin_administration</a>';
+$string['tiiexplain'] = 'Turnitin ticari bir üründür ve bu servisi kullanmak için ödeme yapmalısınız, daha fazla bilgi için: <a href=http://docs.moodle.org/en/Turnitin_administration>http://docs.moodle.org/en/Turnitin_administration</a>';
 $string['useturnitin'] = 'Turnitin&#39;i Etkinleştir';
 $string['turnitinconfig'] = 'Turnitin İntihal Eklenti Yapılandırması';
 $string['studentdisclosuredefault'] = 'Yüklenen tüm dosyalar, Turnitin.com intihal tespit servisine gönderilecektir';
@@ -424,7 +424,7 @@ $string['defaultupdated'] = 'Turnitin varsayılan ayarları güncellendi';
 $string['pp_createsubmissionerror'] = 'Ödev oluşturulurken intihal eklentisi ile ilgili bir hata oluştu';
 $string['pp_updatesubmissionerror'] = 'Ödev yüklenirken intihal eklentisi ile ilgili bir hata oluştu';
 $string['pp_submission_error'] = 'Gönderiminizle ilgili bir hata oluştu:';
-$string['pp_configuredesc'] = 'Bu modülü, turnitintooltwo modülünde yapılandırmalısınız. Bu eklentiyi yüklemek için lütfen <a href=&#34;{$a}/admin/settings.php?section=modsettingturnitintooltwo&#34;>buraya</a> tıklayın';
+$string['pp_configuredesc'] = 'Bu modülü, turnitintooltwo modülünde yapılandırmalısınız. Bu eklentiyi yüklemek için lütfen <a href={$a}/admin/settings.php?section=modsettingturnitintooltwo>buraya</a> tıklayın';
 $string['coursestomigrate'] = 'Turnitin&#39;den geçişi gerçekleştirilecek {$a} sınıfınız bulunmaktadır';
 $string['migrationheader'] = 'Turnitin Sınıf Geçişi';
 $string['gradingtemplate'] = 'Puanlama Şablonu';
@@ -437,3 +437,13 @@ $string['submitondraft'] = 'Dosyayı yükleme işlemi yapıldığında gönder';
 $string['submitonfinal'] = 'Dosyayı öğrenci işaretleme için gönderdikten sonra yolla';
 $string['turnitindiagnostic'] = 'Teşhis Modunu Etkinleştir';
 $string['turnitindiagnostic_desc'] = '<b>[Caution]</b><br />Teşhis modunu sadece Turnitin API ile ilgili problemleri ortaya çıkarmak için etkinleştiriniz.';
+$string['autorefreshgrades'] = 'Notları/Puanları otomatik olarak Yenile';
+$string['autorefreshgrades_help'] = 'Her Turnitin bağlantısından sonra Moodle bütünleştirme eklentisi Turnitin&#39; de yapılan değişiklikleri otomatik olarak alacaktır. Bu özelliği kapatmak bu için seçeneği kullanabilirsiniz, bununla birlikte bu iki sistem arasındaki senkronizasyonu sağlamak için Moodle da orijinallik puanı ile notları manuel olarak sıklıkla yenilemeniz gerekir.';
+$string['yesgrades'] = 'Evet, orijinallik puanı ve notları otomatik olarak yenile';
+$string['nogrades'] = 'Hayır, Orijinallik puanını ve notları manuel olarak yenileyeceğim';
+$string['submissionagreementerror'] = 'Bu gönderim için sözleşmeyi kabul etmelisiniz';
+$string['noxmlwriterlibrary'] = 'Bu eklentiyi kullanabilmek için sunucunuzda PHP XMLWriter eklentisi kurulu olmalıdır.';
+$string['checkupgrade'] = 'Kullanılabilir yükseltmeleri denetle';
+$string['checkingupgrade'] = 'Kullanılabilir yükseltmeler denetleniyor';
+$string['usinglatest'] = 'Güncel sürümü kullanıyorsunuz!';
+$string['useturnitin_mod'] = 'Turnitin&#39;i {a} için etkinleştir';

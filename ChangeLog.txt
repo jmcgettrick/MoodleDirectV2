@@ -1,3 +1,65 @@
+2014-09-04 : Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden)
+2014-09-04 : Date handling reconfigured in PP to prevent erros (Thanks to Dan Marsden)
+2014-09-04 : Inbox links fixed when refreshing non moodle users submissions in Turnitin Assignment
+2014-09-04 : Course migration error fixed when no Turnitin courses exist
+2014-09-04 : Course migration bug no longer tries to populate PP array in migration if PP not installed
+2014-09-04 : File errors page no longer errors if file has been deleted. (Thanks to Ruslin Kabalin)
+2014-09-04 : Remove Grademark settings if GradeMark is disabled. (Thanks to Alex Rowe)
+2014-08-19 : Turnitin Paper Id now shown next to submission to show that paper has been submitted in PP.
+2014-08-19 : Cron in PP changed to check for scores when ORcapable is 1.
+2014-08-19 : Course Migration query fixed when creating class. 
+2014-08-19 : Error reporting added for files that are too large, small submissions and any other submission errors.
+2014-08-19 : Error reporting added to cron.
+2014-08-19 : Error reporting and success statement added at submission stage.
+2014-08-19 : Non acceptance of EULA now indicated to tutor in inbox.
+2014-08-19 : Error indicators and rollover messages now displayed in inbox.
+2014-08-19 : Error messages saved and displayed in settings area.
+2014-08-19 : EULA moved to submission declaration and form hidden.
+2014-08-19 : Long assignment titles are now truncated.
+2014-08-19 : Inbox date editing fixed for Windows.
+2014-08-19 : Link to a file in Summary now renders correctly. 
+2014-06-21 : Grades now removed from Gradebook when submission is deleted.
+2014-06-21 : PP cron now ignores files with no OR score when cron attempts to refresh scores.
+2014-06-21 : SDK setting added to use Moodle SSL certificate if it is present.
+2014-06-21 : WSDL files used by SDK are now stored locally.
+2014-06-21 : Database dump added to PP settings page.
+2014-06-21 : Enrol admin as an instructor when migrating incase they are not on the account.
+2014-06-21 : Feedback files no longer sent to Turnitin in PP
+2014-06-21 : Bug fixed with course migration where accept anything setting was not being passed to recreated assignment
+2014-06-21 : Bug fixed where Grademark null grades were overwriting grades previously set in Moodle in the Plagiarism plugin.
+2014-06-21 : Gradebook now updates when post date is changed on the inbox screen.
+2014-06-21 : Error message now shown if ajax request to get submissions times out
+2014-06-21 : Bug fixed where instructors can not access Turnitin Messages Inbox
+2014-06-21 : Forum posts are now submitted to Turnitin when posted
+2014-06-21 : Code changes as required by Moodlerooms to better fit Moodle guidelines
+2014-06-21 : Peermark Manager now accessible to any instructor in PP
+2014-06-21 : Extra permission checks added for migration tool
+2014-06-21 : Improved CSS to scope only to plugins and files added to jQuery plugin organisation
+2014-06-21 : User creation removed from restore procedure
+2014-06-21 : Additonal indexes added to database tables
+2014-06-21 : Bug fixed where user could submit without accepting Moodle disclaimer
+2014-06-21 : Postgres bug fixed when searching unlinked users table
+2014-06-21 : Bug fixed where a grade set to 0 in GradeMark was showing as — in Turnitin Assignment
+2014-06-21 : Course reset functionality added to remove Turnitin data when a class/module is reset.
+2014-06-21 : Config warning added if plugin has not been configured.
+2014-06-21 : Removed restriction in PP to allow submissions after the due date.
+2014-06-21 : Removed restriction on word count and content length if accepting any file type
+2014-06-21 : Ability added to enable/disable Turnitin in individual modules.
+2014-06-21 : Anonymous marking option is locked once a submission is made to any assignment part
+2014-06-21 : Automatic connection test and upgrade check in settings stopped and changed to buttons
+2014-06-21 : Bug fixed where new files with same filename displaying correct OR link
+2014-06-21 : Check for XMLWriter extension added to settings area
+2014-06-21 : Bug fixed with Allow Non OR file type setting not being changed in Turnitin.
+2014-06-21 : Version file updated for Moodle 2.7+ compatibility
+2014-06-21 : Javascript reorganised to fit better with Moodle guidelines
+2014-06-21 : Font Awesome added to plugin
+2014-06-21 : Javascript cleaned up in block to use Moodle value
+2014-06-21 : EULA closing reworked to accomodate IE
+2014-06-21 : Anonymous marking and Translated matching settings removed in PP modules if they are disabled in config. 
+2014-06-21 : Ability added for instructors to refresh individual rows in a Turnitin Assignment
+2014-06-21 : Automatic grade refreshing from Turnitin can now be turned off in Turnitin Assignments
+2014-06-21 : Erroneous debugging removed
+2014-06-11 : EULA acceptance is now stored locally for submissions.
 2014-04-17 : Full Catalan language pack added.
 2014-04-17 : Timestamp was being incorrectly set preventing more than 1 batch of submissions updating from Turnitin. 
 2014-04-17 : Student is now enrolled on the class when checking EULA acceptance to ensure they are on account.

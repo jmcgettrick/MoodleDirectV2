@@ -27,20 +27,37 @@ if ($ADMIN->fulltree) {
 
     $config = turnitintooltwo_admin_config();
 
-    $tabmenu = $turnitintooltwoview->draw_settings_menu($module, 'settings').
-                    html_writer::tag('noscript', get_string('noscript', 'turnitintooltwo')).
-                    html_writer::tag('script', '', array("type" => "text/javascript",
-                                                "src" => $CFG->wwwroot."/mod/turnitintooltwo/scripts/jquery-1.8.2.min.js")).
-                    html_writer::tag('script', '', array("type" => "text/javascript",
-                                                "src" => $CFG->wwwroot."/mod/turnitintooltwo/scripts/turnitintooltwo_settings.js")).
-                    html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
-                                                "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/styles.css"));
+    $library_warning = '';
+    if (!extension_loaded('XMLWriter')) {
+        $library_warning = html_writer::tag('div', get_string('noxmlwriterlibrary', 'turnitintooltwo'), 
+                                                array('class' => 'library_not_present_warning'));
+    }
 
-    $upgrade = turnitintooltwo_updateavailable($module);
-    $upgradeavailable = (is_null($upgrade)) ?
-                            '' : " - ".html_writer::link($upgrade, get_string("upgradeavailable", "turnitintooltwo"));
+    $tabmenu = $turnitintooltwoview->draw_settings_menu($module, 'settings').
+                html_writer::tag('noscript', get_string('noscript', 'turnitintooltwo')).$library_warning.
+                html_writer::tag('link', '', array("rel" => "stylesheet", "type" => "text/css",
+                                            "href" => $CFG->wwwroot."/mod/turnitintooltwo/css/styles.css"));
+
+    if ($CFG->branch <= 25) {
+        $tabmenu .= html_writer::tag('script', '', array("type" => "text/javascript",
+                                                "src" => $CFG->wwwroot."/mod/turnitintooltwo/jquery/jquery-1.8.2.min.js")).
+                    html_writer::tag('script', '', array("type" => "text/javascript",
+                                                "src" => $CFG->wwwroot."/mod/turnitintooltwo/jquery/turnitintooltwo_settings.js"));
+    } else {
+        $current_section = optional_param('section', '', PARAM_ALPHAEXT);
+        // Only include jquery if actually on settings page.
+        if ($current_section == 'modsettingturnitintooltwo') {
+            $PAGE->requires->jquery();
+            $PAGE->requires->jquery_plugin('turnitintooltwo-turnitintooltwo_settings', 'mod_turnitintooltwo');
+        }
+    }
 
     $version = (empty($module->version)) ? $module->versiondisk : $module->version;
+    $upgrade = html_writer::tag('span', get_string('checkupgrade', 'turnitintooltwo'), 
+                    array('class' => 'tii_upgrade_check', 'id' => 'version_'.$version));
+    $upgrade .= html_writer::tag('span', $OUTPUT->pix_icon('loader', get_string('checkingupgrade', 'turnitintooltwo'),
+                                                    'mod_turnitintooltwo')." ".get_string('checkingupgrade', 'turnitintooltwo'), 
+                                                    array('class' => 'tii_upgrading_check'));
 
     // Test connection to turnitin link
     $testconnection = html_writer::start_tag('div', array('class' => 'test_connection'));
@@ -57,7 +74,7 @@ if ($ADMIN->fulltree) {
     $testconnection .= $OUTPUT->box('', '', 'test_result');
     $testconnection .= html_writer::end_tag('div');
 
-    $desc = '('.get_string('moduleversion', 'turnitintooltwo').': '.$version.$upgradeavailable.')';
+    $desc = '('.get_string('moduleversion', 'turnitintooltwo').': '.$version.') - '.$upgrade;
 
     $settings->add(new admin_setting_heading('turnitintooltwo_header', $desc, $tabmenu));
 
