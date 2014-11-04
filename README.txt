@@ -37,6 +37,7 @@ Release:    v2014012409
 	> Test connection now hidden on plugin upgrade.
 	> Incorrect word count on text content submissions fixed.
 	> Moodle assignment due dates now advanced by 1 day in Turnitin instead of 1 month.
+	> Select all checkbox fixed in Unlink users screen.
 
 ####################################################################################
 
