@@ -1,3 +1,4 @@
+2014-10-08 : Document viewer no longer hangs in Safari and is no longer blocked by popups.
 2014-10-08 : Editable date boxes now re-enable after esc is pressed while one is active
 2014-10-08 : Select all checkbox fixed in Unlink users screen
 2014-10-08 : Moodle assignment due dates now advanced by 1 day in Turnitin instead of 1 month.

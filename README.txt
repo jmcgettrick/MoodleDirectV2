@@ -38,6 +38,7 @@ Release:    v2014012409
 	> Moodle assignment due dates now advanced by 1 day in Turnitin instead of 1 month.
 	> Select all checkbox fixed in Unlink users screen.
 	> Editable date boxes now re-enable after esc is pressed while one is active.
+	> Document viewer no longer hangs in Safari and is no longer blocked by popups.
 
 ####################################################################################
 
