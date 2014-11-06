@@ -31,13 +31,13 @@ Release:    v2014012409
 	> Date of late submissions indicated in red.
 	> Oracle database error when getting forum post.
 	> Inbox hidden columns fixed if Grademark is disabled.
-	> Close text removed from submission box to stop errors when Moodle run in an iframe.
 	> Individual part post dates can now be the same as post date.
 	> Submissiontype now used in correct context in PP file errors.
 	> Test connection now hidden on plugin upgrade.
 	> Incorrect word count on text content submissions fixed.
 	> Moodle assignment due dates now advanced by 1 day in Turnitin instead of 1 month.
 	> Select all checkbox fixed in Unlink users screen.
+	> Editable date boxes now re-enable after esc is pressed while one is active.
 
 ####################################################################################
 
