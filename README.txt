@@ -39,6 +39,7 @@ Release:    v2014012409
 	> Select all checkbox fixed in Unlink users screen.
 	> Editable date boxes now re-enable after esc is pressed while one is active.
 	> Document viewer no longer hangs in Safari and is no longer blocked by popups.
+	> Student can delete a submission that hasn’t gone to Turnitin in a Turnitin assignment.
 
 ####################################################################################
 

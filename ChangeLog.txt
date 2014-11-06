@@ -1,3 +1,4 @@
+2014-10-08 : Student can delete a submission that hasn’t gone to Turnitin in a Turnitin assignment.
 2014-10-08 : Document viewer no longer hangs in Safari and is no longer blocked by popups.
 2014-10-08 : Editable date boxes now re-enable after esc is pressed while one is active
 2014-10-08 : Select all checkbox fixed in Unlink users screen
