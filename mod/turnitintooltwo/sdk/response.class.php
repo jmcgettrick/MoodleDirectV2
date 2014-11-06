@@ -35,7 +35,7 @@ class Response {
     public function __construct( $soap ) {
         $this->domobject = new DomDocument();
         $this->requestdomobject = new DomDocument();
-        $logger = new Logger( $soap->getLogPath() );
+        $logger = new TurnitinLogger( $soap->getLogPath() );
         if ( $logger ) $logger->logInfo( $soap->getHttpHeaders() . PHP_EOL . $soap->__getLastRequest() );
         if ( $soap->getDebug() ) $this->outputDebug( $soap->__getLastRequest(), 'Request Message', $soap->getHttpHeaders() );
         @$this->requestdomobject->loadXML( $soap->__getLastRequest() );
@@ -447,5 +447,3 @@ class Response {
     }
 
 }
-
-//?>

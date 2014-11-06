@@ -44,9 +44,9 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // If we are in submission window then show close window text
+        // If we are in submission window then show close window text
     if ($('.submission_form_container').length > 0) {
-        $('.upload #cboxClose', top.document).css("display", "block");
+        $('.upload #cboxClose', top.document).attr("title", M.str.turnitintooltwo.close).attr("name", M.str.turnitintooltwo.close).css("display", "block");
     }
 
     // Show loading if submission passes validation
@@ -206,6 +206,10 @@ jQuery(document).ready(function($) {
                     "data": {action: "get_members", assignment: $('#assignment_id').html(), role: $('#user_role').html()},
                     "success": function(result) {
                         fnCallback(result);
+                    },
+                    "error": function(data, response) {
+                        $('.dataTables_processing').attr('style', 'visibility: hidden');
+                        $('.dataTables_empty').html(M.str.turnitintooltwo.membercheckerror);
                     }
                 });
             }
@@ -229,9 +233,10 @@ jQuery(document).ready(function($) {
         } else if ((i == 7 && showOrigReport) || ((i == 7 && !showOrigReport) || (i == 9 && useGrademark))) {
             submissionsDataTableColumnDefs.push({"sClass": "right", "aTargets": [ i ], "iDataSort": [ i-1 ], "sType":"numeric"});
         } else if (i == 1 || ((i >= 6 && !showOrigReport && !useGrademark)
-                                || (i >= 8 && (!showOrigReport && useGrademark) || (showOrigReport && !useGrademark)) || (i >= 10 && showOrigReport && useGrademark))) {
+                                || (i >= 8 && ((!showOrigReport && useGrademark) || (showOrigReport && !useGrademark))) 
+                                || (i >= 10 && showOrigReport && useGrademark))) {
             submissionsDataTableColumnDefs.push({"sClass": "center", "bSortable": false, "aTargets": [ i ]});
-        } else if ((i == 0) || (i == 6 && showOrigReport) || (i == 6 && !showOrigReport) || (i == 8 && useGrademark)) {
+        } else if ((i == 0) || (i == 6 && showOrigReport) || ((i == 6 && !showOrigReport) || (i == 8 && useGrademark))) {
             submissionsDataTableColumnDefs.push({"bVisible": false, "aTargets": [ i ]});
         }
     }
@@ -329,15 +334,17 @@ jQuery(document).ready(function($) {
     // Show the Turnitin user agreement if necessary
     if ($(".turnitin_ula").length > 0) {
         $('#id_submitbutton').attr('disabled', 'disabled');
+        $('.submission_form_container').attr('style', 'display:none;');
 
         $(window).on("message", function(ev) {
             var message = typeof ev.data === 'undefined' ? ev.originalEvent.data : ev.data;
-            window.location.reload();
+            $('iframe.cboxIframe').attr('src', $('iframe.cboxIframe').attr('src'));
         });
     }
 
     // Enrol all students link on the enrolled students page
     $(".enrol_link").click(function () {
+        $("#enrolling_error").hide();
         $(".enrol_link").hide();
         $(".enrolling_container").show();
         $.ajax({
@@ -347,6 +354,11 @@ jQuery(document).ready(function($) {
             data: {action: "enrol_all_students", assignment: $('#assignment_id').html(), sesskey: M.cfg.sesskey},
             success: function(data) {
                 window.location.href = window.location.href;
+            },
+            error: function(data, response) {
+                $(".enrol_link").show();
+                $(".enrolling_container").hide();
+                $("#enrolling_error").show();
             }
         });
     });
@@ -427,6 +439,26 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Open the DV in a new window in such a way as to not be blocked by popups.
+    $(document).on('click', '.origreport_open, .grademark_open', function() {
+        var idStr = $(this).attr("id").split("_");
+        var url = $(this).attr("title")+'&viewcontext=box&do='+idStr[0]+'&submissionid='+idStr[1]+'&sesskey='+M.cfg.sesskey;
+        var dvWindow = window.open(url, 'dv_'+idStr[1]);
+        var width = $(window).width();
+        var height = $(window).height();
+        dvWindow.document.write('<iframe id="dvWindow" name="dvWindow" width="'+width+'" height="'+height+'" sandbox="allow-same-origin allow-top-navigation allow-forms allow-scripts"></iframe>');
+        dvWindow.document.write('<script>document.body.style = \'margin: 0 0;\';</script'+'>'); 
+        dvWindow.document.getElementById('dvWindow').src = url;
+        dvWindow.document.close();
+        $(dvWindow).bind('beforeunload', function() {
+            refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+        });
+        // Previous event does not work in Safari.
+        $(dvWindow).bind('unload', function() {
+            refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+        });
+    });
+
     if ($("#id_rubric, #id_plagiarism_rubric").length > 0) {
         refreshRubricSelect();
     }
@@ -491,7 +523,7 @@ jQuery(document).ready(function($) {
 
         // Enable other editable fields when an editable form is closed
         $('.editable_date, .editable_text').on('hidden', function(e, reason) {
-            if (reason == 'nochange') {
+            if (reason == 'nochange' || reason == 'manual') {
                 var current = ($(this).prop('id'));
                 $('.editable_date, .editable_text').not('#'+current).editable('enable');
             }
@@ -707,12 +739,8 @@ jQuery(document).ready(function($) {
             identifier = "#upload_"+submission_id+"_"+part_id+"_"+user_id;
         }
 
-        var windowWidth = $(window).width();
-
-        var colorBoxWidth = "80%";
-        if (windowWidth < 1000) {
-            colorBoxWidth = "860px";
-        }
+        var colorBoxWidth = ($(window).width() < 1000) ? "860px" : "80%";
+        var colorBoxHeight = ($(window).height() < 700) ? "556px" : "80%";
 
         $(identifier).colorbox({
             onLoad: function() {
@@ -725,8 +753,7 @@ jQuery(document).ready(function($) {
                 var idStr = $(this).attr("id").split("_");
                 refreshInboxRow("upload", idStr[1], idStr[2], idStr[3]);
             },
-            iframe:true, width:colorBoxWidth, height:"556px", opacity: "0.7", className: "upload", transition: "none",
-            close: '<div class="closeText">'+M.str.turnitintooltwo.close+'</div>'
+            iframe:true, width:colorBoxWidth, height:colorBoxHeight, opacity: "0.7", className: "upload", transition: "none", close: ''
         });
     }
 
@@ -811,9 +838,10 @@ jQuery(document).ready(function($) {
 
     // Initialise the events to open the document viewer as the links are loaded after the page
     function initialiseDVLaunchers(scope, submission_id, part_id, user_id) {
-        var identifier = '#'+part_id+' .origreport_open, #'+part_id+' .grademark_open, #'+part_id+' .download_original_open';
+        var identifier = '#'+part_id+' .download_original_open';//#'+part_id+' .origreport_open, #'+part_id+' .grademark_open, 
         if (scope == "row") {
-            identifier = '#origreport_'+submission_id+'_'+part_id+'_'+user_id+', #grademark_'+submission_id+'_'+part_id+'_'+user_id+', #downloadoriginal_'+submission_id+'_'+part_id+'_'+user_id;
+            identifier = '#downloadoriginal_'+submission_id+'_'+part_id+'_'+user_id;
+            //#origreport_'+submission_id+'_'+part_id+'_'+user_id+', #grademark_'+submission_id+'_'+part_id+'_'+user_id+', 
         }
 
         // Unbind the event first to stop it being binded multiple times

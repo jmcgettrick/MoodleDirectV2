@@ -1,3 +1,33 @@
+2014-10-08 : Student can delete a submission that hasn’t gone to Turnitin in a Turnitin assignment.
+2014-10-08 : Document viewer no longer hangs in Safari and is no longer blocked by popups.
+2014-10-08 : Editable date boxes now re-enable after esc is pressed while one is active
+2014-10-08 : Select all checkbox fixed in Unlink users screen
+2014-10-08 : Moodle assignment due dates now advanced by 1 day in Turnitin instead of 1 month.
+2014-10-08 : Incorrect word count on text content submissions fixed.
+2014-10-08 : Test connection now hidden on plugin upgrade.
+2014-10-08 : Late submissions allowed setting in Turnitin for Plagiarism plugin assignments is now always true.
+2014-10-08 : Czech language pack added.
+2014-10-08 : EULA is now presented via an Iframe rather than a separate tab.
+2014-10-08 : submissiontype now used in correct context in PP file errors.
+2014-10-08 : Individual part post dates can now be the same as post date.
+2014-10-08 : Close text removed from submission box to stop errors when Moodle run in an iframe.
+2014-10-08 : Inbox hidden columns fixed if Grademark is disabled.
+2014-10-08 : Submissions are removed from the events cron if a student has not accepted the EULA.
+2014-10-08 : Error handling added when enrolling all students in tutors and students tabs
+2014-10-08 : Error handling added when getting users for tutors and students tabs
+2014-10-08 : Fixed Oracle database error when getting forum post
+2014-10-08 : PHP header function replaced with moodle redirect function to fit with moodle guidelines
+2014-10-08 : PHP end tags removed to fit with moodle guidelines
+2014-10-08 : Date of late submissions indicated in red
+2014-10-08 : Plagiarism plugin now uses the hidden until date from gradebook as the post date on Turnitin.
+2014-10-08 : PP Post date in Turnitin is now stored in Moodle.
+2014-10-08 : Connection test added to cron event handler.
+2014-10-08 : Unnecessary Gradebook update removed when viewing Turnitin Assignment.
+2014-10-08 : Specify assign when looking for user's grades in PP (Thanks to mattgibson).
+2014-10-08 : Details for a non moodle user who is only in expired classes can be retrieved when grabbing submission data.
+2014-10-08 : Logger class renamed in SDK.
+2014-10-08 : Gradelib file included in cron.
+2014-10-08 : Scope of tool tipster anti-aliasing fixed to not affect whole of Moodle.
 2014-09-22 : EULA notice removed from PP submissions with previous submissions.
 2014-09-22 : Rubrics now being saved in PP.
 2014-09-22 : EULA no longer blocked by popups in Turnitin Assignment.

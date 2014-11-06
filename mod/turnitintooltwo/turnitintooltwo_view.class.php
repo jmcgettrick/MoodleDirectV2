@@ -145,6 +145,7 @@ class turnitintooltwo_view {
         $PAGE->requires->string_for_js('slengthmenu', 'turnitintooltwo');
         $PAGE->requires->string_for_js('semptytable', 'turnitintooltwo');
         $PAGE->requires->string_for_js('tiisubmissionsgeterror', 'turnitintooltwo');
+        $PAGE->requires->string_for_js('membercheckerror', 'turnitintooltwo');
         $PAGE->requires->string_for_js('resubmissiongradewarn', 'turnitintooltwo');
     }
 
@@ -1077,6 +1078,9 @@ class turnitintooltwo_view {
             $modified = "--";
         } else {
             $modified = userdate($submission->submission_modified, get_string('strftimedatetimeshort', 'langconfig'));
+            if ($submission->submission_modified > $parts[$partid]->dtdue) {
+                $modified = html_writer::tag('span', $modified, array("class" => "late_submission"));
+            }
         }
 
         // Show Originality score with link to open document viewer.
@@ -1086,8 +1090,9 @@ class turnitintooltwo_view {
             $score = '--';
         } else if (!empty($submission->id) && !empty($submission->submission_objectid) &&
                 ($istutor || $turnitintooltwoassignment->turnitintooltwo->studentreports)) {
-            $score = $OUTPUT->box_start('row_score origreport_open', 'origreport_'.$submission->submission_objectid.
-                                                                                    '_'.$partid.'_'.$moodleuserid);
+            $score = $OUTPUT->box_start('row_score origreport_open', 
+                                        'origreport_'.$submission->submission_objectid.'_'.$partid.'_'.$moodleuserid,
+                                        array('title' => $CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id));
             // Show score.
             if (is_null($submission->submission_score)) {
                 $score .= $OUTPUT->box('&nbsp;', 'score_colour score_colour_');
@@ -1123,9 +1128,9 @@ class turnitintooltwo_view {
 
                 // Output grademark icon.
                 $grade = $OUTPUT->box($OUTPUT->pix_icon('icon-edit',
-                                        get_string('launchgrademark', 'turnitintooltwo'), 'mod_turnitintooltwo'),
-                                        'grademark_open'.$class, 'grademark_'.$submission->submission_objectid.'_'.$partid.
-                                                                                    '_'.$moodleuserid);
+                                    get_string('launchgrademark', 'turnitintooltwo'), 'mod_turnitintooltwo'),
+                                    'grademark_open'.$class, 'grademark_'.$submission->submission_objectid.'_'.$partid.'_'.$moodleuserid,
+                                    array('title' => $CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id));
                 // Show grade.
                 $grade .= $OUTPUT->box(html_writer::tag('span', $submissiongrade, array("class" => "grade"))
                                 ."/".$parts[$partid]->maxmarks, 'grademark_grade');
@@ -1396,6 +1401,7 @@ class turnitintooltwo_view {
 
         switch ($type) {
             case "useragreement":
+                $lti->setFormTarget('');
                 $ltifunction = "outputUserAgreementForm";
                 break;
 
@@ -1645,6 +1651,9 @@ class turnitintooltwo_view {
 
             // Link to enrol all students on course.
             if ($role == "Learner") {
+                $output .= $OUTPUT->box(get_string('errorenrollingall', 'turnitintooltwo'), 
+                                            'general_warning', 'enrolling_error');
+
                 $enrollink = $OUTPUT->box($OUTPUT->pix_icon('enrolicon',
                                                     get_string('turnitinenrolstudents', 'turnitintooltwo'),
                                                     'mod_turnitintooltwo')." ".
@@ -1655,7 +1664,7 @@ class turnitintooltwo_view {
                                                     'mod_turnitintooltwo')." ".
                                                         get_string('enrolling', 'turnitintooltwo'), 'enrolling_container');
             }
-            $output = $OUTPUT->box($enrollingcontainer.$enrollink, '');
+            $output .= $OUTPUT->box($enrollingcontainer.$enrollink, '');
 
             // Output user role to hidden var for use in jQuery calls.
             $output .= $OUTPUT->box($role, '', 'user_role');
