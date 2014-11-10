@@ -7,6 +7,14 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
+Date:       2014-November-10
+Release:    v2014012410
+
+- Fixes:
+	> Anonymous marking reveal form fixed and now initialises correctly on inbox load.
+
+####################################################################################
+
 Date:       2014-October-08
 Release:    v2014012409
 
