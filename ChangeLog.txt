@@ -1,4 +1,8 @@
-2014-11-10 : Anonymous marking reveal form fixed and now initialises correctly on inbox load.
+2014-11-17 : Anonymous marking reveal form fixed and now initialises correctly on inbox load.
+2014-11-17 : Incorrect repository value fixed when synching assignments in Plagiarism plugin.
+2014-11-17 : Assignment title length check added on Turnitin assignments.
+2014-11-17 : Resubmission grade warning no longer shown when resubmission is not possible.
+2014-11-17 : Anonymous marking reveal form fixed and now initialises correctly on inbox load.
 2014-10-08 : Student can delete a submission that hasn’t gone to Turnitin in a Turnitin assignment.
 2014-10-08 : Document viewer no longer hangs in Safari and is no longer blocked by popups.
 2014-10-08 : Editable date boxes now re-enable after esc is pressed while one is active
