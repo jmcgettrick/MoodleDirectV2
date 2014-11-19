@@ -15,6 +15,8 @@ Release:    v2014012410
 	> Incorrect repository value fixed when synching assignments in Plagiarism plugin.
 	> Assignment title length check added on Turnitin assignments.
 	> Resubmission grade warning no longer shown when resubmission is not possible.
+	> Post date stored correctly for PP assignment (thanks to Michael Aherne).
+	> Post dates not updated for future PP assignments.
 
 ####################################################################################
 
