@@ -1,3 +1,4 @@
+2014-11-17 : Cron scores update in the Plagiarism plugin are now split by submission type.
 2014-11-17 : Post date stored correctly for PP assignment (thanks to Michael Aherne).
 2014-11-17 : Post dates not updated for future PP assignments
 2014-11-17 : Anonymous marking reveal form fixed and now initialises correctly on inbox load.
