@@ -18,6 +18,7 @@ Release:    v2014012410
 	> Resubmission grade warning no longer shown when resubmission is not possible.
 	> Post date stored correctly for PP assignment (thanks to Michael Aherne).
 	> Post dates not updated for future PP assignments.
+	> DV opening fixed for Moodle 2.3.
 
 ####################################################################################
 
