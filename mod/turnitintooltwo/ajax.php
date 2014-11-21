@@ -387,6 +387,7 @@ switch ($action) {
 
         $assignmentid = required_param('assignment', PARAM_INT);
         $cm = get_coursemodule_from_instance("turnitintooltwo", $assignmentid);
+        $PAGE->set_context(context_module::instance($cm->id));
         $return = array("status" => "fail", "msg" => get_string('unanonymiseerror', 'turnitintooltwo'));
 
         if (has_capability('mod/turnitintooltwo:grade', context_module::instance($cm->id))) {
@@ -403,6 +404,10 @@ switch ($action) {
                     $return["name"] = format_string($user->lastname).", ".format_string($user->firstname);
                 }
                 $return["status"] = "success";
+                $return["userid"] = $turnitintooltwosubmission->userid;
+                $turnitintooltwoassignment = new turnitintooltwo_assignment($assignmentid);
+                $return["courseid"] = $turnitintooltwoassignment->turnitintooltwo->course;
+                $return["msg"] = "";
             }
 
             // Refresh submission and save.

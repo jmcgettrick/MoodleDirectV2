@@ -441,22 +441,31 @@ jQuery(document).ready(function($) {
 
     // Open the DV in a new window in such a way as to not be blocked by popups.
     $(document).on('click', '.origreport_open, .grademark_open', function() {
-        var idStr = $(this).attr("id").split("_");
-        var url = $(this).attr("title")+'&viewcontext=box&do='+idStr[0]+'&submissionid='+idStr[1]+'&sesskey='+M.cfg.sesskey;
-        var dvWindow = window.open(url, 'dv_'+idStr[1]);
-        var width = $(window).width();
-        var height = $(window).height();
-        dvWindow.document.write('<iframe id="dvWindow" name="dvWindow" width="'+width+'" height="'+height+'" sandbox="allow-same-origin allow-top-navigation allow-forms allow-scripts"></iframe>');
-        dvWindow.document.write('<script>document.body.style = \'margin: 0 0;\';</script'+'>'); 
-        dvWindow.document.getElementById('dvWindow').src = url;
-        dvWindow.document.close();
-        $(dvWindow).bind('beforeunload', function() {
-            refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
-        });
-        // Previous event does not work in Safari.
-        $(dvWindow).bind('unload', function() {
-            refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
-        });
+        var proceed = true;
+        if ($(this).hasClass('graded_warning')) {
+            if (!confirm(M.str.turnitintooltwo.resubmissiongradewarn)) {
+                proceed = false;
+            }
+        }
+
+        if (proceed) {
+            var idStr = $(this).attr("id").split("_");
+            var url = $('#'+idStr[0]+'_url_'+idStr[1]).html()+'&viewcontext=box&do='+idStr[0]+'&submissionid='+idStr[1]+'&sesskey='+M.cfg.sesskey;
+            var dvWindow = window.open(url, 'dv_'+idStr[1]);
+            var width = $(window).width();
+            var height = $(window).height();
+            dvWindow.document.write('<iframe id="dvWindow" name="dvWindow" width="'+width+'" height="'+height+'" sandbox="allow-same-origin allow-top-navigation allow-forms allow-scripts"></iframe>');
+            dvWindow.document.write('<script>document.body.style = \'margin: 0 0;\';</script'+'>'); 
+            dvWindow.document.getElementById('dvWindow').src = url;
+            dvWindow.document.close();
+            $(dvWindow).bind('beforeunload', function() {
+                refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+            });
+            // Previous event does not work in Safari.
+            $(dvWindow).bind('unload', function() {
+                refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+            });
+        }
     });
 
     if ($("#id_rubric, #id_plagiarism_rubric").length > 0) {
@@ -694,19 +703,23 @@ jQuery(document).ready(function($) {
 
     // Show light box with form to reveal the student's name on an anonymised submission
     function initialiseUnanoymiseForm(scope, assignment_id, submission_id) {
-        var identifier = 'a.unanonymise'
+        var identifier = 'a.unanonymise';
         if (scope == "row") {
             identifier = '#submission_'+submission_id;
         }
         $(identifier).colorbox({
-            inline:true, width:"50%", top: "100px", height:"260px", opacity: "0.7", className: "unanonymise_reveal_form",
+            inline:true, width:"50%", top: "100px", height:"260px", opacity: "0.7", className: "tii_unanonymise_reveal_form",
             onComplete : function() {
                 var idStr = $(this).attr("id").split("_");
                 if (submission_id == 0 || submission_id == undefined) {
                     var submission_id = idStr[1];
                 }
+                if (assignment_id == 0) {
+                    assignment_id = $('#assignment_id').html();
+                }
                 $("#submission_id").html(submission_id);
                 $('#cboxLoadedContent .unanonymise_form').show();
+                $('#id_reveal').unbind("click");
                 $('#id_reveal').click(function() {
                     $.ajax({
                         "dataType": 'json',
@@ -718,7 +731,9 @@ jQuery(document).ready(function($) {
                             eval(data);
                             if (data.status == "success") {
                                 parent.$.fn.colorbox.close();
+                                $('#submission_'+submission_id).attr('href', M.cfg.wwwroot+"/user/view.php?id="+data.userid+"&course="+data.courseid);
                                 $('#submission_'+submission_id).html(data.name);
+                                $('#submission_'+submission_id).removeClass('unanonymise cboxElement');
                             } else {
                                 var current_msg = $('#unanonymise_desc').html;
                                 $('#unanonymise_desc').html(current_msg+" "+data.msg);

@@ -1174,7 +1174,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         // Need to truncate the moodle assignment title to be compatible with a Turnitin class (max length 99)
         $assignment->setTitle( mb_strlen( $moduledata->name ) > 80 ? mb_substr( $moduledata->name, 0, 80 ) . "... (Moodle PP)" 
                             : $moduledata->name . " (Moodle PP)" );
-        $assignment->setSubmitPapersTo(!empty($modulepluginsettings["plagiarism_submitpapersto"]) ?
+        $assignment->setSubmitPapersTo(isset($modulepluginsettings["plagiarism_submitpapersto"]) ?
                                             $modulepluginsettings["plagiarism_submitpapersto"] : 1);
         $assignment->setSubmittedDocumentsCheck($modulepluginsettings["plagiarism_compare_student_papers"]);
         $assignment->setInternetCheck($modulepluginsettings["plagiarism_compare_internet"]);
@@ -1359,7 +1359,12 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
      */
     public function cron() {
         $this->cron_update_assignments();
-        $this->cron_update_scores();
+
+        // Update scores by separate submission type.
+        $submissiontypes = array('file', 'text_content', 'forum_post');
+        foreach ($submissiontypes as $submissiontype) {
+            $this->cron_update_scores($submissiontype);
+        }
         return true;
     }
 
@@ -1375,52 +1380,69 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         foreach ($assignments as $assignment) {
             $cm = get_coursemodule_from_id('', $assignment->cm);
 
-            // Don't update for forums as post date will be start date in this instance as there is no gradebook.
-            if ($cm && $cm->modname != 'forum') {
-                // Get course data.
-                $coursedata = turnitintooltwo_assignment::get_course_data($cm->course, 'PP');
-                if (empty($coursedata->turnitin_cid)) {
-                    // Course may existed in a previous incarnation of this plugin.
-                    // Get this and save it in courses table if so.
-                    if ($turnitincid = $this->get_previous_course_id($cm)) {
-                        $coursedata = $this->migrate_previous_course($coursedata, $turnitincid);
+            if ($cm) {
+                $moduledata = $DB->get_record($cm->modname, array('id' => $cm->instance));
+
+                // Don't update for forums as post date will be start date in this instance as there is no gradebook.
+                if ($cm->modname != 'forum') {
+                    // Get course data.
+                    $coursedata = turnitintooltwo_assignment::get_course_data($cm->course, 'PP');
+                    if (empty($coursedata->turnitin_cid)) {
+                        // Course may existed in a previous incarnation of this plugin.
+                        // Get this and save it in courses table if so.
+                        if ($turnitincid = $this->get_previous_course_id($cm)) {
+                            $coursedata = $this->migrate_previous_course($coursedata, $turnitincid);
+                        } else {
+                            // Otherwise create new course in Turnitin.
+                            $tiicoursedata = $this->create_tii_course($cm, $coursedata);
+                            $coursedata->turnitin_cid = $tiicoursedata->turnitin_cid;
+                            $coursedata->turnitin_ctl = $tiicoursedata->turnitin_ctl;
+                        }
+                    }
+
+                    // Only update modules that haven't started yet.
+                    $dtstart = 0;
+                    if (!empty($moduledata->allowsubmissionsfromdate)) {
+                        $dtstart = $moduledata->allowsubmissionsfromdate;
+                    } else if (!empty($moduledata->timeavailable)) {
+                        $dtstart = $moduledata->timeavailable;
                     } else {
-                        // Otherwise create new course in Turnitin.
-                        $tiicoursedata = $this->create_tii_course($cm, $coursedata);
-                        $coursedata->turnitin_cid = $tiicoursedata->turnitin_cid;
-                        $coursedata->turnitin_ctl = $tiicoursedata->turnitin_ctl;
+                        $dtstart = $cm->added;
                     }
-                }
-
-                if ($plagiarism_post_date = $DB->get_record_select('plagiarism_turnitin_config',
-                                            " name = ? AND cm = ? ", array('plagiarism_post_date', $cm->id), 'value')) {
-
-                    $post_date = $plagiarism_post_date->value;
-                    $gradeitem = $DB->get_record('grade_items', array('iteminstance' => $cm->instance, 
-                                                    'itemmodule' => $cm->modname, 'itemnumber' => 0));
-
-                    // 1 means grade is always hidden, 0 means it's never hidden so we make it the same as start date.
-                    // Otherwise there is a hidden until date which we use as the post date.
-                    switch ($gradeitem->hidden) {
-                        case 1:
-                            // If Turnitin post date is in the next 7 days then push it ahead
-                            if ($post_date < (time() + (60 * 60 * 24 * 7)))  {
-                                $this->sync_tii_assignment($cm, $coursedata->turnitin_cid);
-                            }
-                            break;
-                        case 0:
-                            if ($post_date > time()) {
-                                $this->sync_tii_assignment($cm, $coursedata->turnitin_cid);
-                            }
-                            break;
-                        default:
-                            if ($post_date != $gradeitem->hidden) {
-                                $this->sync_tii_assignment($cm, $coursedata->turnitin_cid);
-                            }
-                            break;
+                    if ($dtstart > time()) {
+                        break;
                     }
-                } else {
-                    $this->sync_tii_assignment($cm, $coursedata->turnitin_cid);
+
+                    if ($plagiarism_post_date = $DB->get_record_select('plagiarism_turnitin_config',
+                                                " name = ? AND cm = ? ", array('plagiarism_post_date', $cm->id), 'value')) {
+
+                        $post_date = $plagiarism_post_date->value;
+                        $gradeitem = $DB->get_record('grade_items', array('iteminstance' => $cm->instance, 
+                                                        'itemmodule' => $cm->modname, 'itemnumber' => 0));
+
+                        // 1 means grade is always hidden, 0 means it's never hidden so we make it the same as start date.
+                        // Otherwise there is a hidden until date which we use as the post date.
+                        switch ($gradeitem->hidden) {
+                            case 1:
+                                // If Turnitin post date is in the next 7 days then push it ahead
+                                if ($post_date < (time() + (60 * 60 * 24 * 7)))  {
+                                    $this->sync_tii_assignment($cm, $coursedata->turnitin_cid);
+                                }
+                                break;
+                            case 0:
+                                if ($post_date > time()) {
+                                    $this->sync_tii_assignment($cm, $coursedata->turnitin_cid);
+                                }
+                                break;
+                            default:
+                                if ($post_date != $gradeitem->hidden) {
+                                    $this->sync_tii_assignment($cm, $coursedata->turnitin_cid);
+                                }
+                                break;
+                        }
+                    } else {
+                        $this->sync_tii_assignment($cm, $coursedata->turnitin_cid);
+                    }
                 }
             }
         }
@@ -1433,12 +1455,12 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
      *
      * @return boolean
      */
-    public function cron_update_scores() {
+    public function cron_update_scores($submissiontype = 'file') {
         global $DB;
 
         $submissions = $DB->get_records_select('plagiarism_turnitin_files',
-                                        " statuscode = ? AND similarityscore IS NULL AND ( orcapable = ? OR orcapable IS NULL ) ",
-                                        array('success', 1), 'externalid, cm');
+                                        " statuscode = ? AND submissiontype = ? AND similarityscore IS NULL AND ( orcapable = ? OR orcapable IS NULL ) ",
+                                        array('success', $submissiontype, 1), 'externalid, cm');
         $submissionids = array();
 
         foreach ($submissions as $tiisubmission) {

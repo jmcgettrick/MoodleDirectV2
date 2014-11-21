@@ -7,6 +7,21 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
+Date:       2014-November-17
+Release:    v2014012410
+
+- Cron scores update in the Plagiarism plugin are now split by submission type.
+- Fixes:
+	> Anonymous marking reveal form fixed and now initialises correctly on inbox load.
+	> Incorrect repository value fixed when synching assignments in Plagiarism plugin.
+	> Assignment title length check added on Turnitin assignments.
+	> Resubmission grade warning no longer shown when resubmission is not possible.
+	> Post date stored correctly for PP assignment (thanks to Michael Aherne).
+	> Post dates not updated for future PP assignments.
+	> DV opening fixed for Moodle 2.3.
+
+####################################################################################
+
 Date:       2014-October-08
 Release:    v2014012409
 
