@@ -1000,6 +1000,9 @@ class turnitintooltwo_assignment {
                 if (empty($fieldvalue)) {
                     $return['success'] = false;
                     $return['msg'] = get_string('partnameerror', 'turnitintooltwo');
+                } else if (strlen($fieldvalue) > 40) {
+                    $return['success'] = false;
+                    $return['msg'] = get_string('partnametoolarge', 'turnitintooltwo');
                 } else {
                     $assignment->setTitle($this->turnitintooltwo->name.' - '.$fieldvalue);
                 }
@@ -1043,7 +1046,7 @@ class turnitintooltwo_assignment {
                         break;
 
                     case "dtpost":
-                        if ($fieldvalue <= $partdetails->dtstart) {
+                        if ($fieldvalue < $partdetails->dtstart) {
                             $return['success'] = false;
                             $return['msg'] = get_string('partposterror', 'turnitintooltwo');
                         }

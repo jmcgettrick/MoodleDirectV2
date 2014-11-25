@@ -7,6 +7,68 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
+Date:       2014-November-17
+Release:    v2014012410
+
+- Cron scores update in the Plagiarism plugin are now split by submission type.
+- Fixes:
+	> Anonymous marking reveal form fixed and now initialises correctly on inbox load.
+	> Incorrect repository value fixed when synching assignments in Plagiarism plugin.
+	> Assignment title length check added on Turnitin assignments.
+	> Resubmission grade warning no longer shown when resubmission is not possible.
+	> Post date stored correctly for PP assignment (thanks to Michael Aherne).
+	> Post dates not updated for future PP assignments.
+	> DV opening fixed for Moodle 2.3.
+
+####################################################################################
+
+Date:       2014-October-08
+Release:    v2014012409
+
+- Czech language pack added.
+- Plagiarism plugin now uses the hidden until date from gradebook as the post date on Turnitin.
+- PP Post date in Turnitin is now stored in Moodle.
+- Connection test added to cron event handler.
+- Unnecessary Gradebook update removed when viewing Turnitin Assignment.
+- Specify assign when looking for user's grades in PP (Thanks to mattgibson).
+- PHP end tags removed to fit with moodle guidelines.
+- PHP header function replaced with moodle redirect function to fit with moodle guidelines.
+- Error handling added when getting users for tutors and students tabs.
+- Error handling added when enrolling all students in tutors and students tabs.
+- Submissions are removed from the events cron if a student has not accepted the EULA.
+- EULA is now presented via an Iframe rather than a separate tab.
+- Late submissions allowed setting in Turnitin for Plagiarism plugin assignments is now always true.
+- Fixes:
+	> Details for a non moodle user who is only in expired classes can be retrieved when grabbing submission data.
+	> Logger class renamed in SDK.
+	> Gradelib file included in cron.
+	> Scope of tool tipster anti-aliasing fixed to not affect whole of Moodle.
+	> Date of late submissions indicated in red.
+	> Oracle database error when getting forum post.
+	> Inbox hidden columns fixed if Grademark is disabled.
+	> Individual part post dates can now be the same as post date.
+	> Submissiontype now used in correct context in PP file errors.
+	> Test connection now hidden on plugin upgrade.
+	> Incorrect word count on text content submissions fixed.
+	> Moodle assignment due dates now advanced by 1 day in Turnitin instead of 1 month.
+	> Select all checkbox fixed in Unlink users screen.
+	> Editable date boxes now re-enable after esc is pressed while one is active.
+	> Document viewer no longer hangs in Safari and is no longer blocked by popups.
+	> Student can delete a submission that hasn’t gone to Turnitin in a Turnitin assignment.
+
+####################################################################################
+
+Date:       2014-September-22
+Release:    v2014012408
+
+- Fixes:
+	> EULA notice removed from PP submissions with previous submissions.
+	> Rubrics now being saved in PP.
+	> EULA no longer blocked by popups in Turnitin Assignment.
+	> EULA & Disclosure no longer being shown if PP is disabled for module (Thanks to Dan Marsden).
+
+####################################################################################
+
 Date:       2014-September-04
 Release:    v2014012407
 
@@ -18,7 +80,7 @@ Release:    v2014012407
 	> Inbox submission links now work after refreshing non moodle users submissions in Turnitin Assignment.
 	> Assignment Grade (PP) table no longer populated if grade is null when cron runs.
 	> Encoding issue with module description fixed.
-	> Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden)
+	> Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden).
 
 ####################################################################################
 

@@ -147,10 +147,10 @@ switch ($cmd) {
 
             $label = 'apilog';
             $tabs[] = new tabobject( $label, $CFG->wwwroot.'/mod/turnitintooltwo/settings_extras.php?cmd='.$label,
-                ucfirst( $label ), ucfirst( $label ), false );
+                                        ucfirst( $label ), ucfirst( $label ), false );
             $label = 'activitylog';
             $tabs[] = new tabobject( $label, $CFG->wwwroot.'/mod/turnitintooltwo/settings_extras.php?cmd='.$label,
-                ucfirst( $label ), ucfirst( $label ), false );
+                                        ucfirst( $label ), ucfirst( $label ), false );
             $inactive = array($cmd);
             $selected = $cmd;
             $output .= "";
@@ -216,7 +216,7 @@ switch ($cmd) {
                     $DB->delete_records('turnitintooltwo_users', array('id' => $tiiid));
                 }
             }
-            header("Location: ".$CFG->wwwroot."/mod/turnitintooltwo/settings_extras.php?cmd=unlinkusers");
+            redirect(new moodle_url('/mod/turnitintooltwo/settings_extras.php', array('cmd' => 'unlinkusers')));
             exit;
         }
 
@@ -298,7 +298,7 @@ switch ($cmd) {
                                                                         'name' => 'search_course_title'));
 
         $coursesearchform .= html_writer::label(get_string('integration', 'turnitintooltwo').': ', 'search_course_integration');
-        $coursesearchform .= html_writer::select($integrationids, 'search_course_integration', '', array('' => 'choosedots'),
+        $coursesearchform .= html_writer::select($tiiintegrationids, 'search_course_integration', '', array('' => 'choosedots'),
                                                                 array('id' => 'search_course_integration'));
 
         $coursesearchform .= html_writer::label(get_string('ced', 'turnitintooltwo').': ', 'search_course_end_date');
@@ -342,7 +342,7 @@ switch ($cmd) {
 
         // Make up json array for drop down in table.
         $integrationidsjson = array();
-        foreach ($integrationids as $k => $v) {
+        foreach ($tiiintegrationids as $k => $v) {
             $integrationidsjson[] = array('value' => $k, 'label' => $v);
         }
         $output .= html_writer::script('var integration_ids = '.json_encode($integrationidsjson));

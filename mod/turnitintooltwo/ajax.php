@@ -368,6 +368,7 @@ switch ($action) {
         $turnitintooltwoassignment = new turnitintooltwo_assignment($assignmentid);
         $cm = get_coursemodule_from_instance("turnitintooltwo", $assignmentid);
 
+        $return["aaData"] = array();
         if (has_capability('mod/turnitintooltwo:grade', context_module::instance($cm->id))) {
             $role = required_param('role', PARAM_ALPHA);
             $members = $turnitintooltwoassignment->get_tii_users_by_role($role);
@@ -375,10 +376,7 @@ switch ($action) {
             $PAGE->set_context(context_module::instance($cm->id));
             $turnitintooltwoview = new turnitintooltwo_view();
             $return["aaData"] = $turnitintooltwoview->get_tii_members_by_role($cm, $turnitintooltwoassignment, $members, $role);
-        } else {
-            $return["aaData"] = '';
         }
-
         echo json_encode($return);
         break;
 
@@ -389,6 +387,7 @@ switch ($action) {
 
         $assignmentid = required_param('assignment', PARAM_INT);
         $cm = get_coursemodule_from_instance("turnitintooltwo", $assignmentid);
+        $PAGE->set_context(context_module::instance($cm->id));
         $return = array("status" => "fail", "msg" => get_string('unanonymiseerror', 'turnitintooltwo'));
 
         if (has_capability('mod/turnitintooltwo:grade', context_module::instance($cm->id))) {
@@ -405,6 +404,10 @@ switch ($action) {
                     $return["name"] = format_string($user->lastname).", ".format_string($user->firstname);
                 }
                 $return["status"] = "success";
+                $return["userid"] = $turnitintooltwosubmission->userid;
+                $turnitintooltwoassignment = new turnitintooltwo_assignment($assignmentid);
+                $return["courseid"] = $turnitintooltwoassignment->turnitintooltwo->course;
+                $return["msg"] = "";
             }
 
             // Refresh submission and save.
@@ -427,7 +430,7 @@ switch ($action) {
         $modules = $DB->get_record('modules', array('name' => 'turnitintooltwo'));
         $PAGE->set_context($modules);
 
-        $return = turnitintooltwo_get_courses_from_tii($integrationids, $coursetitle, $courseintegration, $courseenddate, $requestsource);
+        $return = turnitintooltwo_get_courses_from_tii($tiiintegrationids, $coursetitle, $courseintegration, $courseenddate, $requestsource);
         echo json_encode($return);
         break;
 
@@ -609,23 +612,27 @@ switch ($action) {
         }
         $data = array("connection_status" => "fail", "msg" => get_string('connecttestcommerror', 'turnitintooltwo'));
 
-        if (is_siteadmin()) {
-            // Initialise API connection.
-            $turnitincomms = new turnitintooltwo_comms();
-            $tiiapi = $turnitincomms->initialise_api();
+        $config = turnitintooltwo_admin_config();
+        if ((int)$config->accountid != 0 && !empty($config->apiurl) && !empty($config->secretkey)) {
+            if (is_siteadmin()) {
+                // Initialise API connection.
+                $turnitincomms = new turnitintooltwo_comms();
+                $istestingconnection = true; // Provided by Androgogic to override offline mode for testing connection.
+                $tiiapi = $turnitincomms->initialise_api($istestingconnection);
 
-            $class = new TiiClass();
-            $class->setTitle('Test finding a class to see if connection works');
+                $class = new TiiClass();
+                $class->setTitle('Test finding a class to see if connection works');
 
-            try {
-                $response = $tiiapi->findClasses($class);
-                $data["connection_status"] = "success";
-                $data["msg"] = get_string('connecttestsuccess', 'turnitintooltwo');
-            } catch (Exception $e) {
-                $turnitincomms->handle_exceptions($e, 'connecttesterror', false);
+                try {
+                    $response = $tiiapi->findClasses($class);
+                    $data["connection_status"] = "success";
+                    $data["msg"] = get_string('connecttestsuccess', 'turnitintooltwo');
+                } catch (Exception $e) {
+                    $turnitincomms->handle_exceptions($e, 'connecttesterror', false);
+                }
             }
-            echo json_encode($data);
         }
+        echo json_encode($data);
         break;
 
     case "submit_nothing":

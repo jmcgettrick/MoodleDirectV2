@@ -29,6 +29,11 @@ require_once("../../lib/form/button.php");
 require_once("../../lib/form/submit.php");
 require_once($CFG->dirroot."/lib/uploadlib.php");
 
+// Offline mode provided by Androgogic. Set tiioffline in config.php.
+if (!empty($CFG->tiioffline)) {
+    turnitintooltwo_print_error('turnitintoolofflineerror', 'turnitintooltwo');
+}
+
 require_once("turnitintooltwo_view.class.php");
 $turnitintooltwoview = new turnitintooltwo_view();
 
@@ -71,9 +76,13 @@ if ($id) {
     }
 }
 
+// If opening DV then $viewcontext needs to be set to box
+if ($do == "origreport" || $do == "grademark") {
+    $viewcontext = "box";
+}
+
 require_login($course->id);
-$viewpage = 'view.php?id='.$id.'&do='.$do;
-turnitintooltwo_activitylog($viewpage, "REQUEST");
+turnitintooltwo_activitylog('view.php?id='.$id.'&do='.$do, "REQUEST");
 
 // Settings for page navigation
 if ($viewcontext == "window") {
@@ -115,9 +124,8 @@ if (!empty($action)) {
             if ($turnitintooltwoassignment->delete_moodle_assignment_part($turnitintooltwoassignment->turnitintooltwo->id, $part)) {
                 $_SESSION["notice"]['message'] = get_string('partdeleted', 'turnitintooltwo');
             }
-            $url = new moodle_url($CFG->wwwroot."/course/mod.php", array('update' => $cm->id,
-                                            'return' => true, 'sesskey' => sesskey()));
-            header("Location: ".$url);
+            redirect(new moodle_url('/course/mod.php', array('update' => $cm->id,
+                                            'return' => true, 'sesskey' => sesskey())));
             exit;
             break;
 
@@ -128,7 +136,8 @@ if (!empty($action)) {
 
             $tutorid = required_param('turnitintutors', PARAM_INT);
             $_SESSION["notice"]['message'] = $turnitintooltwoassignment->add_tii_tutor($tutorid);
-            header("Location: ".$viewpage);
+
+            redirect(new moodle_url('/mod/turnitintooltwo/view.php', array('id' => $id, 'do' => $do)));
             exit;
             break;
 
@@ -144,7 +153,7 @@ if (!empty($action)) {
                 $membershipid = required_param('membership_id', PARAM_INT);
                 $_SESSION["notice"]['message'] = $turnitintooltwoassignment->remove_tii_user_by_role($membershipid, $memberrole);
             }
-            header("Location: ".$viewpage);
+            redirect(new moodle_url('/mod/turnitintooltwo/view.php', array('id' => $id, 'do' => $do)));
             exit;
             break;
 
@@ -169,7 +178,7 @@ if (!empty($action)) {
             $post['submissionagreement'] = required_param('submissionagreement', PARAM_INT);
 
             // Default params for redirecting if there is a problem.
-            $extraparams = "&part=".$post['submissionpart']."&user=".$post['studentsname'];
+            $extraparams = array("part" => $post['submissionpart'], "user" => $post['studentsname']);
 
             // Check that text content has been provided for submission if applicable.
 
@@ -238,13 +247,14 @@ if (!empty($action)) {
                         if ($digitalreceipt = $turnitintooltwosubmission->do_tii_submission($cm, $turnitintooltwoassignment)) {
                             $_SESSION["digital_receipt"] = $digitalreceipt;
                         }
-                        $extraparams = '';
+                        $extraparams = array();
                         unset($_SESSION['form_data']);
                     }
                 }
             }
 
-            header("Location: view.php?id=".$id.$extraparams."&do=".$do."&view_context=".$viewcontext);
+            $params = array_merge(array('id' => $id, 'do' => $do, 'view_context' => $viewcontext), $extraparams);
+            redirect(new moodle_url('/mod/turnitintooltwo/view.php', $params));
             exit;
             break;
 
@@ -259,7 +269,7 @@ if (!empty($action)) {
             if ($digitalreceipt = $turnitintooltwosubmission->do_tii_submission($cm, $turnitintooltwoassignment)) {
                 $_SESSION["digital_receipt"] = $digitalreceipt;
             }
-            header("Location: view.php?id=".$id."&do=submissions");
+            redirect(new moodle_url('/mod/turnitintooltwo/view.php', array('id' => $id, 'do' => 'submissions')));
             exit;
             break;
 
@@ -269,12 +279,13 @@ if (!empty($action)) {
             }
 
             $submissionid = required_param('sub', PARAM_INT);
+            $turnitintooltwosubmission = new turnitintooltwo_submission($submissionid, "moodle", $turnitintooltwoassignment);
 
-            if ($istutor && $submissionid != 0) {
-                $turnitintooltwosubmission = new turnitintooltwo_submission($submissionid, "moodle", $turnitintooltwoassignment);
+            // Allow instructors to delete submission and students to delete if the submission hasn't gone to Turnitin.
+            if (($istutor && $submissionid != 0) || (!$istutor && empty($turnitintooltwosubmission->submission_objectid))) {
                 $_SESSION["notice"] = $turnitintooltwosubmission->delete_submission();
             }
-            header("Location: view.php?id=".$id."&do=submissions");
+            redirect(new moodle_url('/mod/turnitintooltwo/view.php', array('id' => $id, 'do' => 'submissions')));
             exit;
             break;
     }
@@ -317,7 +328,7 @@ if ($viewcontext == "box" || $viewcontext == "box_solid") {
     $groupmode = groups_get_activity_groupmode($cm);
     if ($groupmode) {
         groups_get_activity_group($cm, true);
-        groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/turnitintooltwo/'.$viewpage);
+        groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$id.'&do='.$do);
     }
 
     $turnitintooltwoview->draw_tool_tab_menu($cm, $do);
@@ -432,6 +443,15 @@ switch ($do) {
         }
         break;
 
+    case "origreport":
+    case "grademark":
+    case "downloadoriginal":
+        $submissionid = required_param('submissionid', PARAM_INT);
+        $user = new turnitintooltwo_user($USER->id, $userrole);
+        echo html_writer::tag("div", $turnitintooltwoview->output_dv_launch_form($do, $submissionid, $user->tii_user_id, $userrole),
+                                                                                array("class" => "launch_form"));
+        break;
+
     case "submissions":
         if (!$istutor && !has_capability('mod/turnitintooltwo:submit', context_module::instance($cm->id))) {
             turnitintooltwo_print_error('permissiondeniederror', 'turnitintooltwo');
@@ -455,9 +475,7 @@ switch ($do) {
         }
 
         // Show duplicate assignment warning if applicable.
-        // Update the GradeBook to make sure the grade stays 'hidden' and wasn't revealed by modedit.
         if ($istutor) {
-            turnitintooltwo_grade_item_update($turnitintooltwo);
             echo $turnitintooltwoview->show_duplicate_assignment_warning($turnitintooltwoassignment, $parts);
         }
 

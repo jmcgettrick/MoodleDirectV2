@@ -32,3 +32,16 @@ Information on how to install a certificate bundle is available via the URLs bel
 Information for Linux environments: http://docs.moodle.org/26/en/SSL_certificate_for_moodle.org
 
 Information for Windows environments: http://curl.haxx.se/docs/sslcerts.html
+
+WSDL
+----
+
+We have had reported issues with users not being able to parse the WSDL files that the API requires. The relevant error message starts “PHP Fatal error:  SOAP-ERROR: Parsing WSDL: ….”
+
+From version 2014012405 onwards we have bundled the WSDL files with the plugin download, however the issue does still occur for some users. This is due to a PHP bug with libxml_disable_entity_loader() being set to true and preventing external entities from being loaded. If this is set by a PHP script then PHP uses this value for all processes on the server. For further information see: https://bugs.php.net/bug.php?id=64938.
+
+To fix this, you need to add the following line to your to your moodle config.php:
+
+libxml_disable_entity_loader(false);
+
+Thanks to Dan Marsden for the information and solution.

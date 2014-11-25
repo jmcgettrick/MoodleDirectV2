@@ -145,6 +145,7 @@ class turnitintooltwo_view {
         $PAGE->requires->string_for_js('slengthmenu', 'turnitintooltwo');
         $PAGE->requires->string_for_js('semptytable', 'turnitintooltwo');
         $PAGE->requires->string_for_js('tiisubmissionsgeterror', 'turnitintooltwo');
+        $PAGE->requires->string_for_js('membercheckerror', 'turnitintooltwo');
         $PAGE->requires->string_for_js('resubmissiongradewarn', 'turnitintooltwo');
     }
 
@@ -388,16 +389,18 @@ class turnitintooltwo_view {
 
             // Output a link for the student to accept the turnitin licence agreement.
             $noscriptula = "";
+            $ula = "";
             if ($userid == $USER->id) {
                 if (!$eulaaccepted) {
+                    $ula = html_writer::tag('div', turnitintooltwo_view::output_dv_launch_form("useragreement", 0, $user->tii_user_id,
+                                "Learner", get_string('turnitinula', 'turnitintooltwo'), false),
+                                    array('class' => 'turnitin_ula', 'data-userid' => $userid));
 
-                    $ula = html_writer::tag('div', get_string('turnitinula', 'turnitintooltwo'), array('class' => 'turnitin_ula', 'data-userid' => $userid));
                     $noscriptula = html_writer::tag('noscript',
                                             $this->output_dv_launch_form("useragreement", 0, $user->tii_user_id, "Learner",
                                             get_string('turnitinula', 'turnitintooltwo'), false)." ".
                                                 get_string('noscriptula', 'turnitintooltwo'),
                                             array('class' => 'warning turnitin_ula_noscript'));
-                    $elements[] = array('html', $ula);
                 }
             }
 
@@ -414,7 +417,7 @@ class turnitintooltwo_view {
 
             $optionsform = new turnitintooltwo_form($CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id.
                                                     '&do=submitpaper&view_context='.$viewcontext, $customdata);
-            $output .= $noscriptula;
+            $output .= $ula.$noscriptula;
             $output .= $OUTPUT->box($optionsform->display(), "submission_form_container");
 
             $turnitincomms = new turnitintooltwo_comms();
@@ -1075,6 +1078,9 @@ class turnitintooltwo_view {
             $modified = "--";
         } else {
             $modified = userdate($submission->submission_modified, get_string('strftimedatetimeshort', 'langconfig'));
+            if ($submission->submission_modified > $parts[$partid]->dtdue) {
+                $modified = html_writer::tag('span', $modified, array("class" => "late_submission"));
+            }
         }
 
         // Show Originality score with link to open document viewer.
@@ -1084,8 +1090,8 @@ class turnitintooltwo_view {
             $score = '--';
         } else if (!empty($submission->id) && !empty($submission->submission_objectid) &&
                 ($istutor || $turnitintooltwoassignment->turnitintooltwo->studentreports)) {
-            $score = $OUTPUT->box_start('row_score origreport_open', 'origreport_'.$submission->submission_objectid.
-                                                                                    '_'.$partid.'_'.$moodleuserid);
+            $score = $OUTPUT->box_start('row_score origreport_open', 
+                                        'origreport_'.$submission->submission_objectid.'_'.$partid.'_'.$moodleuserid);
             // Show score.
             if (is_null($submission->submission_score)) {
                 $score .= $OUTPUT->box('&nbsp;', 'score_colour score_colour_');
@@ -1101,6 +1107,8 @@ class turnitintooltwo_view {
 
             // Put in div placeholder for DV launch form.
             $score .= $OUTPUT->box('', 'launch_form', 'origreport_form_'.$submission->submission_objectid);
+            // URL for DV launcher
+            $score .= $OUTPUT->box($CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id, 'dv_url', 'origreport_url_'.$submission->submission_objectid);
             $score .= $OUTPUT->box_end(true);
         } else {
             $rawscore = -1;
@@ -1116,19 +1124,23 @@ class turnitintooltwo_view {
                     $submissiongrade = "--";
                 }
 
-                $class = ($istutor && $turnitintooltwoassignment->turnitintooltwo->usegrademark && $submissiongrade != "--"
-                            && $turnitintooltwoassignment->turnitintooltwo->reportgenspeed == 1) ? " graded_warning" : "";
+                // Show warning to instructor if student can still resubmit.
+                $class = ($istutor && $turnitintooltwoassignment->turnitintooltwo->reportgenspeed > 0 && 
+                            time() < $parts[$partid]->dtdue || $turnitintooltwoassignment->turnitintooltwo->allowlate == 1 &&
+                                empty($submission->nmoodle)) ? " graded_warning" : "";
 
                 // Output grademark icon.
                 $grade = $OUTPUT->box($OUTPUT->pix_icon('icon-edit',
-                                        get_string('launchgrademark', 'turnitintooltwo'), 'mod_turnitintooltwo'),
-                                        'grademark_open'.$class, 'grademark_'.$submission->submission_objectid.'_'.$partid.
-                                                                                    '_'.$moodleuserid);
+                                    get_string('launchgrademark', 'turnitintooltwo'), 'mod_turnitintooltwo'),
+                                    'grademark_open'.$class, 'grademark_'.$submission->submission_objectid.'_'.$partid.'_'.$moodleuserid,
+                                    array('title' => $CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id));
                 // Show grade.
                 $grade .= $OUTPUT->box(html_writer::tag('span', $submissiongrade, array("class" => "grade"))
                                 ."/".$parts[$partid]->maxmarks, 'grademark_grade');
                 // Put in div placeholder for DV launch form.
                 $grade .= $OUTPUT->box('', 'launch_form', 'grademark_form_'.$submission->submission_objectid);
+                // URL for DV launcher
+                $grade .= $OUTPUT->box($CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id, 'dv_url', 'grademark_url_'.$submission->submission_objectid);
                 $rawgrade = ($submissiongrade == "--") ? -1 : $submissiongrade;
 
             } else if (!isset($submission->submission_objectid) && empty($submission->id) && $istutor ) {
@@ -1394,6 +1406,7 @@ class turnitintooltwo_view {
 
         switch ($type) {
             case "useragreement":
+                $lti->setFormTarget('');
                 $ltifunction = "outputUserAgreementForm";
                 break;
 
@@ -1643,6 +1656,9 @@ class turnitintooltwo_view {
 
             // Link to enrol all students on course.
             if ($role == "Learner") {
+                $output .= $OUTPUT->box(get_string('errorenrollingall', 'turnitintooltwo'), 
+                                            'general_warning', 'enrolling_error');
+
                 $enrollink = $OUTPUT->box($OUTPUT->pix_icon('enrolicon',
                                                     get_string('turnitinenrolstudents', 'turnitintooltwo'),
                                                     'mod_turnitintooltwo')." ".
@@ -1653,7 +1669,7 @@ class turnitintooltwo_view {
                                                     'mod_turnitintooltwo')." ".
                                                         get_string('enrolling', 'turnitintooltwo'), 'enrolling_container');
             }
-            $output = $OUTPUT->box($enrollingcontainer.$enrollink, '');
+            $output .= $OUTPUT->box($enrollingcontainer.$enrollink, '');
 
             // Output user role to hidden var for use in jQuery calls.
             $output .= $OUTPUT->box($role, '', 'user_role');

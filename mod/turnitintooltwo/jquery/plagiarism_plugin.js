@@ -9,25 +9,39 @@ jQuery(document).ready(function($) {
         return false;
     });
 
-    $(document).on('click', '.origreport_open', function() {
+    $(document).on('click', '.pp_origreport_open', function() {
         var classList = $(this).attr('class').replace(/\s+/,' ').split(' ');
 
         for (var i = 0; i < classList.length; i++) {
-           if (classList[i].indexOf('origreport_') !== -1 && classList[i] != 'origreport_open') {
+            if (classList[i].indexOf('origreport_') !== -1 && classList[i] != 'pp_origreport_open') {
                 var classStr = classList[i].split("_");
-                openDV("origreport", classStr[1], classStr[2]);
-           }
+                var url = "";
+                // URL must be stored in separate div on forums
+                if ($('.origreport_forum_launch_'+classStr[1]).length > 0) {
+                    url = $('.origreport_forum_launch_'+classStr[1]).html();
+                } else {
+                    url = $(this).attr("id");
+                }
+                openDV("origreport", classStr[1], classStr[2], url);
+            }
         }
     });
 
-    $(document).on('click', '.grademark_open', function() {
+    $(document).on('click', '.pp_grademark_open', function() {
         var classList = $(this).attr('class').replace(/\s+/,' ').split(' ');
 
         for (var i = 0; i < classList.length; i++) {
-           if (classList[i].indexOf('grademark_') !== -1 && classList[i] != 'grademark_open') {
+            if (classList[i].indexOf('grademark_') !== -1 && classList[i] != 'pp_grademark_open') {
                 var classStr = classList[i].split("_");
-                openDV("grademark", classStr[1], classStr[2]);
-           }
+                var url = "";
+                // URL must be stored in separate div on forums
+                if ($('.grademark_forum_launch_'+classStr[1]).length > 0) {
+                    url = $('.grademark_forum_launch_'+classStr[1]).html();
+                } else {
+                    url = $(this).attr("id");
+                }
+                openDV("grademark", classStr[1], classStr[2], url);
+            }
         }
     });
 
@@ -63,6 +77,21 @@ jQuery(document).ready(function($) {
         return false;
     });
 
+    $(document).on('click', '.pp_turnitin_eula_link', function() {
+        $(this).colorbox({
+            open:true,iframe:true, width:"766px", height:"596px", opacity: "0.7", className: "eula_view", scrolling: "false",
+            onLoad: function() { getLoadingGif(); },
+            onComplete: function() {
+                $(window).on("message", function(ev) {
+                    var message = typeof ev.data === 'undefined' ? ev.originalEvent.data : ev.data;
+                    window.location.reload();
+                });
+            },
+            onCleanup: function() { hideLoadingGif(); }
+        });
+        return false;
+    });
+
     // Launch the Turnitin EULA
     if ($(".pp_turnitin_ula").length > 0) {
         if ($('.editsubmissionform').length > 0) {
@@ -71,53 +100,6 @@ jQuery(document).ready(function($) {
         if ($('.pp_turnitin_ula').siblings('.mform').length > 0) {
             $('.pp_turnitin_ula').siblings('.mform').hide();
         }
-        $(window).on("message", function(ev) {
-            var message = typeof ev.data === 'undefined' ? ev.originalEvent.data : ev.data;
-            window.location.reload();
-        });
-    }
-
-    // Launch the EULA for forums. Has to be done differently
-    if ($(".forum_eula_launch").length > 0) {
-
-        // Remove the a tag and replace with form and message
-        var spanClick = '<span>'+$('.forum_eula_launch_noscript').html()+'</span>';
-        $(".forum_eula_launch").html(spanClick+'<form class="useragreement_form" action="'+$('span.turnitin_eula_link').html()+'" method="POST" accept-charset="utf-8" target="eulaWindow"></form>')
-        $('.forum_eula_launch_noscript').remove();
-
-        $(".forum_eula_launch span").on('click', function(e) {
-            openEULA('.useragreement_form');
-        });
-    }
-
-    function openEULA(identifier) {
-        $.ajax({
-            type: "POST",
-            url: M.cfg.wwwroot+"/plagiarism/turnitin/ajax.php",
-            dataType: "json",
-            data: {action: 'useragreement', cmid: $('span.cmid').html()},
-            success: function(data) {
-                $(identifier).html('');
-                $.each(data, function(key, val) {
-                    $(identifier).append('<input name="'+key+'" value="'+val+'" type="hidden" />');
-                });
-                $(identifier).append('<input type="submit" value="Submit" />');
-
-                $(identifier).on("submit", function(event) {
-                    eulaWindow = window.open('', 'eula');
-                    eulaWindow.document.write('<frameset><frame id="eulaWindow" name="eulaWindow"></frame></frameset>');
-                    $(eulaWindow).on("message", function(ev) {
-                        eulaWindow.close();
-                        window.location.reload();
-                    });
-                    eulaWindow.addEventListener("beforeunload", function (e) {
-                        window.location.href = window.location.href;
-                    });
-                });
-
-                $(identifier).submit();
-            }
-        });
     }
 
     function getLoadingGif() {
@@ -142,27 +124,23 @@ jQuery(document).ready(function($) {
         });
     }
 
-    // Open the document viewer within a frame in a new tab
-    function openDV(dvtype, submission_id, coursemoduleid) {
-        $.ajax({
-            type: "POST",
-            url: "../../plagiarism/turnitin/ajax.php",
-            dataType: "html",
-            data: {action: dvtype, submission: submission_id, cmid: coursemoduleid},
-            success: function(data) {
+    // Open the DV in a new window in such a way as to not be blocked by popups.
+    function openDV(dvtype, submission_id, coursemoduleid, url) {
+        var url = url+'&viewcontext=box&cmd='+dvtype+'&submissionid='+submission_id+'&sesskey='+M.cfg.sesskey;
 
-                $("."+dvtype+"_form_"+submission_id).html(data);
-                $("."+dvtype+"_form_"+submission_id).children("form").on("submit", function(event) {
-                    dvWindow = window.open('/', 'dv_'+submission_id);
-                    dvWindow.document.write('<frameset><frame id="dvWindow" name="dvWindow"></frame></frameset>');
-                    dvWindow.document.close();
-                    $(dvWindow).bind('beforeunload', function() {
-                        refreshScores(submission_id, coursemoduleid);
-                    });
-                });
-                $("."+dvtype+"_form_"+submission_id).children("form").submit();
-                $("."+dvtype+"_form_"+submission_id).html("");
-            }
+        var dvWindow = window.open(url, 'dv_'+submission_id);
+        var width = $(window).width();
+        var height = $(window).height();
+        dvWindow.document.write('<iframe id="dvWindow" name="dvWindow" width="'+width+'" height="'+height+'" sandbox="allow-same-origin allow-top-navigation allow-forms allow-scripts"></iframe>');
+        dvWindow.document.write('<script>document.body.style = \'margin: 0 0;\';</script'+'>'); 
+        dvWindow.document.getElementById('dvWindow').src = url;
+        dvWindow.document.close();
+        $(dvWindow).bind('beforeunload', function() {
+            refreshScores(submission_id, coursemoduleid);
+        });
+        // Previous event does not work in Safari.
+        $(dvWindow).bind('unload', function() {
+            refreshScores(submission_id, coursemoduleid);
         });
     }
 

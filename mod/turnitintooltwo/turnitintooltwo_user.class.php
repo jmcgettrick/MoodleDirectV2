@@ -82,8 +82,11 @@ class turnitintooltwo_user {
         $this->lastname = $user->lastname;
         $this->email = $user->email;
         $this->username = $user->username;
-        $this->instructor_rubrics = (!empty($user->instructor_rubrics)) ? json_decode($user->instructor_rubrics) : array();
 
+        $turnitintooltwouser = $DB->get_record('turnitintooltwo_users', array('userid' => $this->id));
+
+        $this->instructor_rubrics = (!empty($turnitintooltwouser->instructor_rubrics)) ?
+                                    (array)json_decode($turnitintooltwouser->instructor_rubrics) : array();
         return $user;
     }
 
@@ -201,53 +204,6 @@ class turnitintooltwo_user {
 
         } catch (Exception $e) {
             $turnitincomms->handle_exceptions($e, 'userfinderror');
-        }
-    }
-
-    /**
-     * Get the details of a user registered on Turnitin
-     *
-     * @param type $tiiuserid
-     * @param type $tiiclassid
-     * @return array of user details stored with Turnitin
-     */
-    public function get_tii_user($tiiuserid, $tiiclassid = null) {
-
-        $turnitincomms = new turnitintooltwo_comms();
-        $turnitincall = $turnitincomms->initialise_api();
-
-        // Edge case fix to support legacy API expired users that do not have an entry in account table in Tii.
-        if ( !is_null( $tiiclassid ) ) {
-            try {
-                $membership = new TiiMembership();
-                $membership->setUserId($tiiuserid);
-                $membership->setClassId($tiiclassid);
-                $membership->setRole($this->role);
-                $turnitincall->createMembership($membership);
-            } catch ( Exception $e ) {
-                // We don't care about the exception too much, it is likely the user already belongs to the class
-                // The API function joins them to the account in any case which if what we want.
-            }
-        }
-
-        $user = new TiiUser();
-        $user->setUserId($tiiuserid);
-
-        try {
-            $response = $turnitincall->readUser($user);
-            $readuser = $response->getUser();
-
-            $tiiuser = array(
-                "id" => $readuser->getUserId(),
-                "firstname" => $readuser->getFirstName(),
-                "lastname" => $readuser->getLastName(),
-                "email" => $readuser->getEmail()
-            );
-
-            return $tiiuser;
-
-        } catch (Exception $e) {
-            $turnitincomms->handle_exceptions($e, 'tiiusergeterror');
         }
     }
 
@@ -470,6 +426,15 @@ class turnitintooltwo_user {
             $this->usermessages = $readuser->getUserMessages();
             $this->save_instructor_rubrics($readuser->getInstructorRubrics());
 
+            $tiiuser = array(
+                "id" => $readuser->getUserId(),
+                "firstname" => $readuser->getFirstName(),
+                "lastname" => $readuser->getLastName(),
+                "email" => $readuser->getEmail()
+            );
+
+            return $tiiuser;
+
         } catch (Exception $e) {
             try {
                 // We need to join the user to the account, we can only do that by adding the user to a class
@@ -513,10 +478,11 @@ class turnitintooltwo_user {
             $rubricarray[$rubric->getRubricId()] = $rubric->getRubricName();
         }
 
-        $turnitintooltwouser = new object;
-        $turnitintooltwouser->id = $this->id;
-        $turnitintooltwouser->instructor_rubrics = json_encode($rubricarray);
-        $DB->update_record('turnitintooltwo_users', $turnitintooltwouser);
+        if ($turnitintooltwouser = $DB->get_record("turnitintooltwo_users", array("userid" => $this->id))) {
+            $turnitintooltwouser->id = $turnitintooltwouser->id;
+            $turnitintooltwouser->instructor_rubrics = json_encode($rubricarray);
+            $DB->update_record('turnitintooltwo_users', $turnitintooltwouser);
+        }
 
         $this->instructor_rubrics = $rubricarray;
     }
