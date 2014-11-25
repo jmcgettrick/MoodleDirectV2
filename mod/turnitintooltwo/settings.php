@@ -20,16 +20,16 @@
  */
 
 if ($ADMIN->fulltree) {
-    include_once($CFG->dirroot.'/mod/turnitintooltwo/lib.php');
+    include_once(__DIR__.'/lib.php');
+    require_once(__DIR__."/turnitintooltwo_view.class.php");
 
-    require_once("turnitintooltwo_view.class.php");
     $turnitintooltwoview = new turnitintooltwo_view();
 
     $config = turnitintooltwo_admin_config();
 
     $library_warning = '';
     if (!extension_loaded('XMLWriter')) {
-        $library_warning = html_writer::tag('div', get_string('noxmlwriterlibrary', 'turnitintooltwo'), 
+        $library_warning = html_writer::tag('div', get_string('noxmlwriterlibrary', 'turnitintooltwo'),
                                                 array('class' => 'library_not_present_warning'));
     }
 
@@ -53,10 +53,10 @@ if ($ADMIN->fulltree) {
     }
 
     $version = (empty($module->version)) ? $module->versiondisk : $module->version;
-    $upgrade = html_writer::tag('span', get_string('checkupgrade', 'turnitintooltwo'), 
+    $upgrade = html_writer::tag('span', get_string('checkupgrade', 'turnitintooltwo'),
                     array('class' => 'tii_upgrade_check', 'id' => 'version_'.$version));
     $upgrade .= html_writer::tag('span', $OUTPUT->pix_icon('loader', get_string('checkingupgrade', 'turnitintooltwo'),
-                                                    'mod_turnitintooltwo')." ".get_string('checkingupgrade', 'turnitintooltwo'), 
+                                                    'mod_turnitintooltwo')." ".get_string('checkingupgrade', 'turnitintooltwo'),
                                                     array('class' => 'tii_upgrading_check'));
 
     // Offline mode provided by Androgogic. Set tiioffline in config.php.

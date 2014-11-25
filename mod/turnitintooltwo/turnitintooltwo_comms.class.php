@@ -19,7 +19,7 @@
  * and open the template in the editor.
  */
 
-require_once($CFG->dirroot.'/mod/turnitintooltwo/sdk/api.class.php');
+require_once(__DIR__.'/sdk/api.class.php');
 
 class turnitintooltwo_comms {
 

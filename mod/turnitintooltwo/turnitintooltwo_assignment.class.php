@@ -19,9 +19,9 @@
  * @copyright 2012 iParadigms LLC *
  */
 
-require_once($CFG->dirroot . '/mod/turnitintooltwo/turnitintooltwo_comms.class.php');
-require_once($CFG->dirroot . '/mod/turnitintooltwo/turnitintooltwo_user.class.php');
-require_once($CFG->dirroot . '/mod/turnitintooltwo/turnitintooltwo_submission.class.php');
+require_once(__DIR__.'/turnitintooltwo_comms.class.php');
+require_once(__DIR__.'/turnitintooltwo_user.class.php');
+require_once(__DIR__.'/turnitintooltwo_submission.class.php');
 
 class turnitintooltwo_assignment {
 
@@ -848,7 +848,7 @@ class turnitintooltwo_assignment {
         }
 
         // Define grade settings.
-        @include_once($CFG->dirroot . "/lib/gradelib.php");
+        @include_once($CFG->libdir . "/gradelib.php");
         $params = array('deleted' => 1);
         grade_update('mod/turnitintooltwo', $turnitintooltwo->course, 'mod', 'turnitintooltwo', $id, 0, null, $params);
 
