@@ -1,3 +1,4 @@
+2014-11-28 : Turnitin Assignment inbox can now be sorted by similarity score and grade
 2014-11-17 : DV opening fixed for Moodle 2.3.
 2014-11-17 : Cron scores update in the Plagiarism plugin are now split by submission type.
 2014-11-17 : Post date stored correctly for PP assignment (thanks to Michael Aherne).

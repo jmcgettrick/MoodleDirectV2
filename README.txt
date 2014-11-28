@@ -7,6 +7,14 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
+Date:       2014-November-28
+Release:    v2014012411
+
+- Fixes:
+	> Turnitin Assignment inbox can now be sorted by similarity score and grade.
+
+####################################################################################
+
 Date:       2014-November-17
 Release:    v2014012410
 
