@@ -10,6 +10,7 @@ Moodle Direct v2 Release Notes
 Date:       2014-November-28
 Release:    v2014012411
 
+- Performance logging of curl calls (provided by Androgogic).
 - Fixes:
 	> Turnitin Assignment inbox can now be sorted by similarity score and grade.
 
