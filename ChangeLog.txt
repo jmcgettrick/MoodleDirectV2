@@ -1,3 +1,4 @@
+2014-11-28 : Hard errors changed to soft errors when the cron is run.
 2014-11-28 : Performance logging of curl calls (provided by Androgogic).
 2014-11-28 : Turnitin Assignment inbox can now be sorted by similarity score and grade.
 2014-11-17 : DV opening fixed for Moodle 2.3.
