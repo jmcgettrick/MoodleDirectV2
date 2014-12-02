@@ -13,7 +13,9 @@ Release:    v2014012411
 - Performance logging of curl calls (provided by Androgogic).
 - Fixes:
 	> Turnitin Assignment inbox can now be sorted by similarity score and grade.
-	> Hard errors changed to soft errors when the cron is run.
+	> Hard errors changed to soft errors when the PP cron is run.
+	> Instructors no longer override other instructors rubrics in PP.
+	> If a PP submission has been attempted 5 times and errors each time it will be removed from the queue.
 
 ####################################################################################
 

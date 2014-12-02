@@ -1,3 +1,5 @@
+2014-11-28 : Instructors no longer override other instructors rubrics in PP.
+2014-11-28 : If a PP submission has been attempted 5 times and errors each time it will be removed from the queue.
 2014-11-28 : Hard errors changed to soft errors when the cron is run.
 2014-11-28 : Performance logging of curl calls (provided by Androgogic).
 2014-11-28 : Turnitin Assignment inbox can now be sorted by similarity score and grade.
