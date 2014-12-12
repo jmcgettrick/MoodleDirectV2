@@ -1,3 +1,5 @@
+2014-11-28 : Print original submission from DV Window.
+2014-11-28 : DV Window resizable.
 2014-11-28 : Incorrect grade calculation (Null grades from previous submissions no longer included) fixed in PP.
 2014-11-28 : Multiple attempts are handled properly.
 2014-11-28 : Instructors no longer override other instructors rubrics in PP.
