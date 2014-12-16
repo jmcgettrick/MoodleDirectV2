@@ -1,3 +1,12 @@
+2014-11-28 : Print original submission from DV Window.
+2014-11-28 : DV Window resizable.
+2014-11-28 : Incorrect grade calculation (Null grades from previous submissions no longer included) fixed in PP.
+2014-11-28 : Multiple attempts are handled properly.
+2014-11-28 : Instructors no longer override other instructors rubrics in PP.
+2014-11-28 : If a PP submission has been attempted 5 times and errors each time it will be removed from the queue.
+2014-11-28 : Hard errors changed to soft errors when the cron is run.
+2014-11-28 : Performance logging of curl calls (provided by Androgogic).
+2014-11-28 : Turnitin Assignment inbox can now be sorted by similarity score and grade.
 2014-11-17 : DV opening fixed for Moodle 2.3.
 2014-11-17 : Cron scores update in the Plagiarism plugin are now split by submission type.
 2014-11-17 : Post date stored correctly for PP assignment (thanks to Michael Aherne).

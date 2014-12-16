@@ -7,6 +7,22 @@ Moodle Direct v2 Release Notes
 
 ####################################################################################
 
+Date:       2014-November-28
+Release:    v2014012411
+
+- Performance logging of curl calls (provided by Androgogic).
+- Fixes:
+	> Turnitin Assignment inbox can now be sorted by similarity score and grade.
+	> Hard errors changed to soft errors when the PP cron is run.
+	> Instructors no longer override other instructors rubrics in PP.
+	> If a PP submission has been attempted 5 times and errors each time it will be removed from the queue.
+	> Multiple attempts are handled properly - except text content where previous attempts can not be viewed.
+	> Incorrect grade calculation (Null grades from previous submissions no longer included) fixed in PP.
+	> DV Window resizable.
+	> Print original submission from DV Window.
+
+####################################################################################
+
 Date:       2014-November-17
 Release:    v2014012410
 

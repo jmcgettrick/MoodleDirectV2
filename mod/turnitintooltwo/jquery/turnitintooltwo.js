@@ -231,7 +231,7 @@ jQuery(document).ready(function($) {
         } else if (i == 4 || i == 5) {
             submissionsDataTableColumnDefs.push({"sClass": "right", "aTargets": [ i ]});
         } else if ((i == 7 && showOrigReport) || ((i == 7 && !showOrigReport) || (i == 9 && useGrademark))) {
-            submissionsDataTableColumnDefs.push({"sClass": "right", "aTargets": [ i ], "iDataSort": [ i-1 ], "sType":"numeric"});
+            submissionsDataTableColumnDefs.push({"sClass": "right", "aTargets": [ i ], "iDataSort": i-1, "sType":"numeric"});
         } else if (i == 1 || ((i >= 6 && !showOrigReport && !useGrademark)
                                 || (i >= 8 && ((!showOrigReport && useGrademark) || (showOrigReport && !useGrademark))) 
                                 || (i >= 10 && showOrigReport && useGrademark))) {
@@ -454,17 +454,24 @@ jQuery(document).ready(function($) {
             var dvWindow = window.open(url, 'dv_'+idStr[1]);
             var width = $(window).width();
             var height = $(window).height();
-            dvWindow.document.write('<iframe id="dvWindow" name="dvWindow" width="'+width+'" height="'+height+'" sandbox="allow-same-origin allow-top-navigation allow-forms allow-scripts"></iframe>');
-            dvWindow.document.write('<script>document.body.style = \'margin: 0 0;\';</script'+'>'); 
+            if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+                dvWindow.document.write('<iframe id="dvWindow" name="dvWindow" width="'+width+'" height="'+height+'" sandbox="allow-same-origin allow-top-navigation allow-forms allow-scripts"></iframe>');
+            } else {
+                dvWindow.document.write('<frameset><frame id="dvWindow" name="dvWindow"></frame></frameset>');
+            }
+            dvWindow.document.write('<script>document.body.style = \'margin: 0 0;\';</script'+'>');
             dvWindow.document.getElementById('dvWindow').src = url;
             dvWindow.document.close();
-            $(dvWindow).bind('beforeunload', function() {
-                refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
-            });
-            // Previous event does not work in Safari.
-            $(dvWindow).bind('unload', function() {
-                refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
-            });
+            if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+                // beforeunload event does not work in Safari.
+                $(dvWindow).bind('unload', function() {
+                    refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+                });
+            } else {
+                $(dvWindow).bind('beforeunload', function() {
+                    refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+                });
+            }
         }
     });
 
@@ -975,10 +982,13 @@ jQuery(document).ready(function($) {
                 if (submission_id != 0) {
                     $('#export_links').removeClass('hidden_class');
                 }
-                $("#"+link+"_"+part_id+'_'+user_id).parent().parent().children().each(function() {
-                    i++;
-                    $(this).html(data.row[i]);
-                });
+
+                // Delete the row and re-add.
+                oTable = $('table#'+part_id).dataTable();
+                var tr = $("#"+link+"_"+part_id+'_'+user_id).parent().parent();
+                var rowindex = tr.index();
+                oTable.fnDeleteRow(tr);
+                oTable.fnAddData(data.row);
 
                 initialiseUploadBox("row", data.submission_id, part_id, user_id);
                 initialiseDVLaunchers("row", data.submission_id, part_id, user_id);
