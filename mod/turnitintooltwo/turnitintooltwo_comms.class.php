@@ -20,6 +20,7 @@
  */
 
 require_once($CFG->dirroot.'/mod/turnitintooltwo/sdk/api.class.php');
+require_once($CFG->dirroot.'/mod/turnitintooltwo/turnitintooltwo_perflog.class.php');
 
 class turnitintooltwo_comms {
 
@@ -52,7 +53,7 @@ class turnitintooltwo_comms {
      * @return object \APITurnitin
      */
     public function initialise_api( $istestingconnection = false ) {
-        global $CFG;
+        global $CFG, $tiipp;
 
         $api = new TurnitinAPI($this->tiiaccountid, $this->tiiapiurl, $this->tiisecretkey,
                                 $this->tiiintegrationid, $this->langcode);
@@ -91,10 +92,12 @@ class turnitintooltwo_comms {
             $api->setSSLCertificate($certificate);
         }
 
-        // Moving to 2014012410
-        // if (!empty($CFG->tiioffline) && !$istestingconnection) {
-        //     turnitintooltwo_print_error('turnitintoolofflineerror', 'turnitintooltwo');
-        // }
+        // Offline mode provided by Androgogic
+        if (!empty($CFG->tiioffline) && !$istestingconnection && empty($tiipp->in_use)) {
+            turnitintooltwo_print_error('turnitintoolofflineerror', 'turnitintooltwo');
+        }
+        $api->setIsTestingConnection($istestingconnection);
+        $api->setPerflog(new turnitintooltwo_perflog());
 
         return $api;
     }
