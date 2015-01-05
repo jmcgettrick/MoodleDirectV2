@@ -1,6 +1,3 @@
-Changelog
-==============================
----
 ### Date:       2014-November-28
 ### Release:    v2014012411
 
@@ -14,6 +11,7 @@ Changelog
 	- Incorrect grade calculation (Null grades from previous submissions no longer included) fixed in PP.
 	- DV Window resizable.
 	- Print original submission from DV Window.
+
 ---
 
 ### Date:       2014-November-17
@@ -28,6 +26,7 @@ Changelog
 	- Post date stored correctly for PP assignment (thanks to Michael Aherne).
 	- Post dates not updated for future PP assignments.
 	- DV opening fixed for Moodle 2.3.
+
 ---
 
 ### Date:       2014-October-08
@@ -63,6 +62,7 @@ Changelog
 	- Editable date boxes now re-enable after esc is pressed while one is active.
 	- Document viewer no longer hangs in Safari and is no longer blocked by popups.
 	- Student can delete a submission that hasn’t gone to Turnitin in a Turnitin assignment.
+
 ---
 
 ### Date:       2014-September-22
@@ -88,6 +88,7 @@ Changelog
 	- Assignment Grade (PP) table no longer populated if grade is null when cron runs.
 	- Encoding issue with module description fixed.
 	- Anonymous marking no longer set if not enabled in settings (Thanks to Dan Marsden).
+
 ---
 
 ###Date:       2014-August-19
@@ -108,6 +109,7 @@ Changelog
 	- Cron in PP changed to check for scores when ORcapable is 1.
 	- Course Migration query fixed when creating class.
 	- Course migration error fixed when no Turnitin courses to link to exist.
+
 ---
 
 ###Date:       2014-June-11
@@ -204,6 +206,7 @@ Changelog
 	- Submit nothing link removed if submission has been made to Moodle but not yet processed by Turnitin
 	- Incorrect grade scale calculation.
 	- Previous Turnitin users were not being joined to account on Plagiarism plugin.
+
 ---
 
 ###Date:       2014-January-24
