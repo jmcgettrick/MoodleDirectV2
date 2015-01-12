@@ -67,10 +67,12 @@ class turnitinplugin_view {
         $elements[] = array('advcheckbox', 'turnitin_use', get_string('useturnitin', 'turnitintooltwo'), '', array(0, 1));
 
         // Enable Turnitin for specific modules
-        $supported_mods = array('assign', 'forum', 'workshop');
-        foreach ($supported_mods as $mod) {
-            $elements[] = array('checkbox', 'turnitin_use_mod_'.$mod, get_string('useturnitin_mod', 'turnitintooltwo', $mod), '', 
-                                '', '', '', array('turnitin_use', '==', 1));
+        if ($CFG->branch > 23) {
+            $supported_mods = array('assign', 'forum', 'workshop');
+            foreach ($supported_mods as $mod) {
+                $elements[] = array('checkbox', 'turnitin_use_mod_' . $mod, get_string('useturnitin_mod', 'turnitintooltwo', $mod), '',
+                    '', '', '', array('turnitin_use', '==', 1));
+            }
         }
 
         $elements[] = array('html', get_string('pp_configuredesc', 'turnitintooltwo', $CFG->wwwroot));
