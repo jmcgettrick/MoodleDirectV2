@@ -230,15 +230,15 @@ jQuery(document).ready(function($) {
     for (var i=0; i < noOfColumns; i++) {
         if (i == 2 || i == 3) {
             submissionsDataTableColumnDefs.push({"aTargets": [ i ]});
-        } else if (i == 4 || i == 5) {
+        } else if (i == 4) {
             submissionsDataTableColumnDefs.push({"sClass": "right", "aTargets": [ i ]});
-        } else if ((i == 7 && showOrigReport) || ((i == 7 && !showOrigReport) || (i == 9 && useGrademark))) {
+        } else if (i == 6 || (i == 8 && showOrigReport) || ((i == 8 && !showOrigReport) || (i == 10 && useGrademark))) {
             submissionsDataTableColumnDefs.push({"sClass": "right", "aTargets": [ i ], "iDataSort": i-1, "sType":"numeric"});
-        } else if (i == 1 || ((i >= 6 && !showOrigReport && !useGrademark)
-                                || (i >= 8 && ((!showOrigReport && useGrademark) || (showOrigReport && !useGrademark))) 
-                                || (i >= 10 && showOrigReport && useGrademark))) {
+        } else if (i == 1 || ((i >= 7 && !showOrigReport && !useGrademark)
+                                || (i >= 9 && ((!showOrigReport && useGrademark) || (showOrigReport && !useGrademark))) 
+                                || (i >= 11 && showOrigReport && useGrademark))) {
             submissionsDataTableColumnDefs.push({"sClass": "center", "bSortable": false, "aTargets": [ i ]});
-        } else if ((i == 0) || (i == 6 && showOrigReport) || ((i == 6 && !showOrigReport) || (i == 8 && useGrademark))) {
+        } else if ((i == 0) || (i == 5) || (i == 7 && showOrigReport) || ((i == 7 && !showOrigReport) || (i == 9 && useGrademark))) {
             submissionsDataTableColumnDefs.push({"bVisible": false, "aTargets": [ i ]});
         }
     }
@@ -253,7 +253,7 @@ jQuery(document).ready(function($) {
         partTables[part_id] = $('table#'+part_id).dataTable({
             "bProcessing": true,
             "aoColumnDefs": submissionsDataTableColumnDefs,
-            "aaSorting": [[ 3, "desc" ],[1, "asc"]],
+            "aaSorting": [[ 2, "asc" ],[ 4, "asc" ]],
             "sAjaxSource": "ajax.php",
             "oLanguage": dataTablesLang,
             "sDom": "r<\"top navbar\"lf><\"dt_pagination\"pi>t<\"bottom\"><\"dt_pagination\"pi>",
