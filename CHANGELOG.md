@@ -1,3 +1,29 @@
+### Date:       2015-January-22
+### Release:    v2014012412
+
+- Moodle event logging added for Turnitin Assignments.
+- Submission title in Turnitin Assignment inbox now opens the Document viewer.
+- Fixes:
+	- Pop-ups within Document viewer no longer blocked.
+	- Plugin upgrade check hidden in admin search results.
+	- Filenames are shortened to less than 200 characters before being sent to Turnitin.
+	- PP Class reset query fixed for Postgres databases.
+	- Export options no longer hidden when viewing Turnitin Assignments with Anonymous Marking enabled.
+	- Cron in PP no longer checks for similarity scores where a report is not expected.
+	- All students in a group submission to a Moodle assignments can now see the similarity score.
+	- Grades for group submissions to Moodle assignments are now applied to all students in the group.
+	- Overall grade is now updated in the gradebook if a part is deleted from a multi-part Turnitin Assignment.
+	- Moodle exception thrown if non admin user accesses unlink users page. (Thanks to Dr Joseph Baxter)
+	- Grademark links no longer shown in PP if Moodle assignment is not to be graded.
+	- Grade item entry no longer checked for if Moodle assignment is not to be graded.
+	- Check for Turnitin connection before checking EULA acceptance in PP. (Thanks to Tony Butler)
+	- Sort by submission date corrected in Turnitin Assignment.
+	- PP enable checkboxes removed from Moodle 2.3 as only assignment is available.
+	- PP submission area decluttered when Javascript is not enabled.
+	- Grademark warning for non submitting users now shows on subsequent clicks
+
+---
+
 ### Date:       2014-November-28
 ### Release:    v2014012411
 
@@ -23,7 +49,7 @@
 	- Incorrect repository value fixed when synching assignments in Plagiarism plugin.
 	- Assignment title length check added on Turnitin assignments.
 	- Resubmission grade warning no longer shown when resubmission is not possible.
-	- Post date stored correctly for PP assignment (thanks to Michael Aherne).
+	- Post date stored correctly for PP assignment (Thanks to Michael Aherne).
 	- Post dates not updated for future PP assignments.
 	- DV opening fixed for Moodle 2.3.
 
