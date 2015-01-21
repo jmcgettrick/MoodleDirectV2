@@ -20,7 +20,8 @@
 	- Sort by submission date corrected in Turnitin Assignment.
 	- PP enable checkboxes removed from Moodle 2.3 as only assignment is available.
 	- PP submission area decluttered when Javascript is not enabled.
-	- Grademark warning for non submitting users now shows on subsequent clicks
+	- Grademark warning for non submitting users now shows on subsequent clicks.
+    - Reset PP submission error code and msg when file successfully submitted.
 
 ---
 
