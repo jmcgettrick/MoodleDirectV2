@@ -52,9 +52,20 @@ switch ($action) {
 
                 case "dtstart":
                 case "dtdue":
+                    $fieldvalue = required_param('value', PARAM_RAW);
+                    $fieldvalue = strtotime($fieldvalue);
+                    break;
+
                 case "dtpost":
                     $fieldvalue = required_param('value', PARAM_RAW);
                     $fieldvalue = strtotime($fieldvalue);
+
+                    if ( $turnitintooltwoassignment->turnitintooltwo->anon AND $fieldvalue < time() ) {
+                       $anon_assignment = new stdClass();
+                       $anon_assignment->id = required_param('assignment', PARAM_INT);
+                       $anon_assignment->anon = 0;
+                       $DB->update_record('turnitintooltwo', $anon_assignment, $bulk=false);
+                    }
                     break;
             }
 
