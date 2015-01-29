@@ -21,7 +21,7 @@
     display:none;
 }
 
-.tii_links_container .pp_origreport_open, .tii_links_container .grade_icon, .tii_links_container .tii_error_icon,
+.tii_links_container .pp_origreport, .tii_links_container .grade_icon, .tii_links_container .tii_error_icon,
 .tii_links_container .row_rubric_view, .tii_links_container .row_peermark_reviews {
     float: left;
 }
@@ -29,7 +29,6 @@
 .tii_links_container .grade_icon {
 	font-size: 8px;
 	position: relative;
-    top:4px;
 }
 
 .forumpost .attachments .tii_links_container {
@@ -76,17 +75,18 @@
 
 .tii_links_container .pp_grademark_open, .tii_links_container .pp_origreport_open {
     cursor:pointer;
-    margin-bottom:6px;
 }
 
 .tii_links_container .pp_grademark_open {
     padding-top:6px;
+    margin-bottom:6px;
 }
 
-.tii_links_container .pp_origreport_open {
+.tii_links_container .pp_origreport {
     position:relative;
     top:4px;
     display:inline;
+    margin-bottom:6px;
 }
 
 .tii_links_container .score_colour {
@@ -192,6 +192,21 @@
 	font-size: 14px;
 	font-weight: bold;
 	display: block;
+}
+
+.pp_turnitin_ula {
+	display: none;
+}
+
+noscript.turnitin_ula_noscript {
+    border: 1px solid #CC0000;
+    padding: 8px;
+    background: #FFE9E8;
+    width: 99%;
+    text-align:center;
+    display:block;
+    margin:16px 6px;
+	line-height: 28px;
 }
 
 .tii_links_container .turnitin_submit_error {

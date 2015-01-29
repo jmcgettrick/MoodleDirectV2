@@ -47,7 +47,7 @@ switch ($action) {
                     break;
 
                 case "maxmarks":
-                    $fieldvalue = required_param('value', PARAM_INT);
+                    $fieldvalue = required_param('value', PARAM_RAW);
                     break;
 
                 case "dtstart":
@@ -62,6 +62,11 @@ switch ($action) {
         } else {
             $return["aaData"] = '';
         }
+
+        $partdetails = $turnitintooltwoassignment->get_parts();
+
+        $return['export_option'] = ($turnitintooltwoassignment->turnitintooltwo->anon == 0 || time() > $partdetails[$partid]->dtpost) ?
+                                    "tii_export_options_show" : "tii_export_options_hide";
 
         echo json_encode($return);
         break;
@@ -148,6 +153,8 @@ switch ($action) {
         $PAGE->set_context(context_system::instance());
         if (is_siteadmin()) {
             echo json_encode(turnitintooltwo_getusers());
+        } else {
+            throw new moodle_exception('accessdenied', 'admin');
         }
         break;
 

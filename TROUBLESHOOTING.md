@@ -9,6 +9,7 @@ Moodle Direct V2 Troubleshooting
 
 4) There have been very isolated reports of the settings not showing for the Plagiarism plugin despite it being enabled, this is due to it not showing in Moodle cache. The solution is for an administrator to purge all caches and it should then appear.
 
+
 cURL
 ----
 

@@ -23,10 +23,12 @@ jQuery(document).ready(function($) {
         $(this).addClass('disabled');
         var part_id = $(this).prop('id').split('_')[2];
         var student_id = $(this).prop('id').split('_')[3];
-        var message = $('.nothingsubmit_warning').first().html().replace(/<br>/g, "\n");
+        var message = M.str.turnitintooltwo.submitnothingwarning.replace(/<br>/g, "\n").replace(/&#39;/g, "\'");
         var cookieseen = $.cookie('submitnothingaccept');
         if ( cookieseen || confirm( message ) ) {
             submitNothing(student_id, part_id);
+        } else {
+            $(this).removeClass("disabled");
         }
         return;
     });
@@ -220,24 +222,30 @@ jQuery(document).ready(function($) {
     // There are tabs to toggle which part table is displayed.
 
     // Define column definitions as there can be different number of columns
-    var submissionsDataTableColumnDefs = [];
+    var submissionsDataTableColumns = [];
+    var visibleCols = [];
     var noOfColumns = $('table.submissionsDataTable th').length / $('table.submissionsDataTable').length;
     var showOrigReport = ($('table.submissionsDataTable th.creport').length > 0) ? true : false;
     var useGrademark = ($('table.submissionsDataTable th.cgrade').length > 0) ? true : false;
     var multipleParts = ($('table.submissionsDataTable th.coverallgrade').length > 0) ? true : false;
     for (var i=0; i < noOfColumns; i++) {
         if (i == 2 || i == 3) {
-            submissionsDataTableColumnDefs.push({"aTargets": [ i ]});
-        } else if (i == 4 || i == 5) {
-            submissionsDataTableColumnDefs.push({"sClass": "right", "aTargets": [ i ]});
-        } else if ((i == 7 && showOrigReport) || ((i == 7 && !showOrigReport) || (i == 9 && useGrademark))) {
-            submissionsDataTableColumnDefs.push({"sClass": "right", "aTargets": [ i ], "iDataSort": i-1, "sType":"numeric"});
-        } else if (i == 1 || ((i >= 6 && !showOrigReport && !useGrademark)
-                                || (i >= 8 && ((!showOrigReport && useGrademark) || (showOrigReport && !useGrademark))) 
-                                || (i >= 10 && showOrigReport && useGrademark))) {
-            submissionsDataTableColumnDefs.push({"sClass": "center", "bSortable": false, "aTargets": [ i ]});
-        } else if ((i == 0) || (i == 6 && showOrigReport) || ((i == 6 && !showOrigReport) || (i == 8 && useGrademark))) {
-            submissionsDataTableColumnDefs.push({"bVisible": false, "aTargets": [ i ]});
+            submissionsDataTableColumns.push(null);
+            visibleCols.push(true);
+        } else if (i == 4) {
+            submissionsDataTableColumns.push({"sClass": "right"});
+            visibleCols.push(true);
+        } else if (i == 6 || (i == 8 && showOrigReport) || ((i == 8 && !showOrigReport) || (i == 10 && useGrademark))) {
+            submissionsDataTableColumns.push({"sClass": "right", "iDataSort": i-1, "sType":"numeric"});
+            visibleCols.push(true);
+        } else if (i == 1 || ((i >= 7 && !showOrigReport && !useGrademark)
+                                || (i >= 9 && ((!showOrigReport && useGrademark) || (showOrigReport && !useGrademark))) 
+                                || (i >= 11 && showOrigReport && useGrademark))) {
+            submissionsDataTableColumns.push({"sClass": "center", "bSortable": false});
+            visibleCols.push(true);
+        } else if ((i == 0) || (i == 5) || (i == 7 && showOrigReport) || ((i == 7 && !showOrigReport) || (i == 9 && useGrademark))) {
+            submissionsDataTableColumns.push({"bVisible": false});
+            visibleCols.push(false);
         }
     }
 
@@ -250,8 +258,8 @@ jQuery(document).ready(function($) {
 
         partTables[part_id] = $('table#'+part_id).dataTable({
             "bProcessing": true,
-            "aoColumnDefs": submissionsDataTableColumnDefs,
-            "aaSorting": [[ 3, "desc" ],[1, "asc"]],
+            "aoColumns": submissionsDataTableColumns,
+            "aaSorting": [[ 2, "asc" ],[ 4, "asc" ]],
             "sAjaxSource": "ajax.php",
             "oLanguage": dataTablesLang,
             "sDom": "r<\"top navbar\"lf><\"dt_pagination\"pi>t<\"bottom\"><\"dt_pagination\"pi>",
@@ -273,15 +281,21 @@ jQuery(document).ready(function($) {
             "bStateSave": true,
             "fnStateSave": function (oSettings, oData) {
                 try {
-                    localStorage.setItem( uid+'DataTables', JSON.stringify(oData) );
+                    localStorage.setItem( part_id+'DataTables', JSON.stringify(oData) );
                 } catch ( e ) {
                 }
             },
+            "fnStateSaveParams": function(oSettings, oData) {
+                oData.abVisCols = visibleCols;
+            },
             "fnStateLoad": function (oSettings) {
                 try {
-                    return JSON.parse( localStorage.getItem(uid+'DataTables') );
+                    return JSON.parse( localStorage.getItem(part_id+'DataTables') );
                 } catch ( e ) {
                 }
+            },
+            "fnStateLoadParams": function(oSettings, oData) {
+                oData.abVisCols = visibleCols;
             },
             "fnDrawCallback":  function( oSettings ) {
                 initialiseDVLaunchers("all", 0, part_id, 0);
@@ -440,7 +454,7 @@ jQuery(document).ready(function($) {
     }
 
     // Open the DV in a new window in such a way as to not be blocked by popups.
-    $(document).on('click', '.origreport_open, .grademark_open', function() {
+    $(document).on('click', '.default_open, .origreport_open, .grademark_open', function() {
         var proceed = true;
         if ($(this).hasClass('graded_warning')) {
             if (!confirm(M.str.turnitintooltwo.resubmissiongradewarn)) {
@@ -451,15 +465,16 @@ jQuery(document).ready(function($) {
         if (proceed) {
             var idStr = $(this).attr("id").split("_");
             var url = $('#'+idStr[0]+'_url_'+idStr[1]).html()+'&viewcontext=box&do='+idStr[0]+'&submissionid='+idStr[1]+'&sesskey='+M.cfg.sesskey;
-            var dvWindow = window.open(url, 'dv_'+idStr[1]);
+            var dvWindow = window.open('about:blank', 'dv_'+idStr[1]);
             var width = $(window).width();
             var height = $(window).height();
+            dvWindow.document.write('<title>Document Viewer</title>');
+            dvWindow.document.write('<style>html, body { margin: 0; padding: 0; border: 0; }</style>');
             if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
-                dvWindow.document.write('<iframe id="dvWindow" name="dvWindow" width="'+width+'" height="'+height+'" sandbox="allow-same-origin allow-top-navigation allow-forms allow-scripts"></iframe>');
+                dvWindow.document.write('<iframe id="dvWindow" name="dvWindow" width="'+width+'" height="'+height+'" sandbox="allow-popups allow-same-origin allow-top-navigation allow-forms allow-scripts"></iframe>');
             } else {
                 dvWindow.document.write('<frameset><frame id="dvWindow" name="dvWindow"></frame></frameset>');
             }
-            dvWindow.document.write('<script>document.body.style = \'margin: 0 0;\';</script'+'>');
             dvWindow.document.getElementById('dvWindow').src = url;
             dvWindow.document.close();
             if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
@@ -505,6 +520,11 @@ jQuery(document).ready(function($) {
             }
         });
 
+        if ( $('#export_options').hasClass('tii_export_options_hide') ) {
+            $('#export_options').hide();
+            $('.export_data').append('<span class="empty-dash">--</span>');
+        }
+
         var theDate = new Date();
         $('.editable_date').editable({
             'type': 'combodate',
@@ -521,6 +541,14 @@ jQuery(document).ready(function($) {
                     return response.msg;
                 } else {
                     $('#refresh_'+response.partid).click();
+
+                    if (response.export_option == "tii_export_options_hide") {
+                        $('#export_options').hide();
+                        $('.export_data').append('<span class="empty-dash">--</span>');
+                    } else {
+                        $('.empty-dash').remove();
+                        $('#export_options').show();
+                    }
                 }
             }
         });
@@ -538,11 +566,9 @@ jQuery(document).ready(function($) {
         });
 
         // Enable other editable fields when an editable form is closed
-        $('.editable_date, .editable_text').on('hidden', function(e, reason) {
-            if (reason == 'nochange' || reason == 'manual') {
-                var current = ($(this).prop('id'));
-                $('.editable_date, .editable_text').not('#'+current).editable('enable');
-            }
+        $('.editable_date, .editable_text').on('hidden', function() {
+            var current = ($(this).prop('id'));
+            $('.editable_date, .editable_text').not('#'+current).editable('enable');
         });
     }
 
