@@ -1,8 +1,9 @@
-### Date:       2015-January-22
+### Date:       2015-January-29
 ### Release:    v2014012412
 
 - Moodle event logging added for Turnitin Assignments.
 - Submission title in Turnitin Assignment inbox now opens the Document viewer.
+- Group submissions are now partially supported in the Plagiarism plugin. There are limitations with being able to display the Turnitin document viewer for text content submissions, particularly from the default group.
 - Fixes:
 	- Pop-ups within Document viewer no longer blocked.
 	- Plugin upgrade check hidden in admin search results.
