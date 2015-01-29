@@ -99,5 +99,54 @@ function xmldb_plagiarism_turnitin_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014012406, 'plagiarism', 'turnitin');
     }
 
+    if ($oldversion < 2015012701) {
+        $table = new xmldb_table('plagiarism_turnitin_files');
+        $field1 = new xmldb_field('transmatch', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'legacyteacher');
+        $field2 = new xmldb_field('lastmodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'transmatch');
+        $field3 = new xmldb_field('grade', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'lastmodified');
+        $field4 = new xmldb_field('submissiontype', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'grade');
+        $field5 = new xmldb_field('similarityscore', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, NULL, 'statuscode');
+
+        if (!$dbman->field_exists($table, $field1)) {
+            $dbman->add_field($table, $field1);
+        }
+        else {
+            $dbman->change_field_precision($table, $field1);
+        }
+
+        if (!$dbman->field_exists($table, $field2)) {
+            $dbman->add_field($table, $field2);
+        }
+        else {
+            $dbman->change_field_precision($table, $field2);
+        }
+
+        if (!$dbman->field_exists($table, $field3)) {
+            $dbman->add_field($table, $field3);
+        }
+        else {
+            $dbman->change_field_precision($table, $field3);
+        }
+
+
+        if (!$dbman->field_exists($table, $field4)) {
+            $dbman->add_field($table, $field4);
+        }
+        else {
+            $dbman->change_field_precision($table, $field4);
+        }
+
+
+        if (!$dbman->field_exists($table, $field5)) {
+            $dbman->add_field($table, $field5);
+        } else {
+            $dbman->change_field_type($table, $field5);
+            $dbman->change_field_default($table, $field5);
+            $dbman->change_field_precision($table, $field5);
+        }
+
+        upgrade_plugin_savepoint(true, 2015012701, 'plagiarism', 'turnitin');
+    }
+
     return $result;
 }
