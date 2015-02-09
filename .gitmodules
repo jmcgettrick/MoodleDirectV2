@@ -1,0 +1,3 @@
+[submodule "block/turnitin"]
+	path = block/turnitin
+	url = https://jmcgettrick@github.com/jmcgettrick/moodle-block_turnitin.git
