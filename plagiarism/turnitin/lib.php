@@ -23,6 +23,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); // It must be included from a Moodle page.
 }
 
+define('PLAGIARISM_TURNITIN_NUM_RECORDS_RETURN', 500);
+
 global $tiipp;
 $tiipp = new stdClass();
 $tiipp->in_use = true;
@@ -1653,9 +1655,8 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
         if (count($submissionids) > 0) {
 
-            // Process submissions in batches of 500, which is the maximum number
-            // of submissions the TI service will return.
-            $submissionbatches = array_chunk($submissionids, 500);
+            // Process submissions in batches, depending on the max. number of submissions the Turnitin API returns.
+            $submissionbatches = array_chunk($submissionids, PLAGIARISM_TURNITIN_NUM_RECORDS_RETURN);
             foreach ($submissionbatches as $submissionsbatch) {
 
                 // Initialise Comms Object.
@@ -2404,7 +2405,26 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         }
 
         // Read the stored file/content into a temp file for submitting.
-        $tempfile = turnitintooltwo_tempfile("_".$filename);
+        $submission_title = explode('.', $title);
+
+        $file_string = array(
+            $submission_title[0],
+            $cm->id
+        );
+
+        $modulepluginsettings = $this->get_settings($cm->id);
+
+        if ( ! $modulepluginsettings["plagiarism_anonymity"]) {
+            $user_details = array(
+                $user->id,
+                $user->firstname,
+                $user->lastname
+            );
+
+            $file_string = array_merge($user_details, $file_string);
+        }
+
+        $tempfile = turnitintooltwo_tempfile($file_string, $filename);
         $fh = fopen($tempfile, "w");
         fwrite($fh, $textcontent);
         fclose($fh);
