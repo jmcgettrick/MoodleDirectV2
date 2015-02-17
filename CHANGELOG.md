@@ -1,3 +1,22 @@
+### Date:       2015-February-23
+### Release:    v2014012413
+
+- Block split into separate github repository.
+- EULA modal window resized in Turnitin Assignment.
+- Close banner added to modal windows.
+- Index created on externalid in plagiarism_turnitin_files table.
+- Uploaded files renamed to include useful information.
+- Use Grademark config setting used as main grademark setting rather than by assignment.
+- Fixes:
+	- Voice comments are now recordable in Safari.
+	- Database installer fixed for Moodle 2.3. (Thanks to Jeff Kerzner)
+	- Help text wrapping inconsistency on Turnitin assignment settings page.
+	- Editing dates in Turnitin Assignment inbox accounts for environments with set time zones. (Thanks to NeillM)
+	- Page URLs changed to proper URLs. (Thanks to Matt Gibson and Skylar Kelty)
+	- Anonymous marking setting fixed to false if post date is revelaed after submissions have been made.
+
+---
+
 ### Date:       2015-January-29
 ### Release:    v2014012412
 
@@ -32,7 +51,7 @@
 - Performance logging of curl calls (provided by Androgogic).
 - Fixes:
 	- Turnitin Assignment inbox can now be sorted by similarity score and grade.
-	- ard errors changed to soft errors when the PP cron is run.
+	- Hard errors changed to soft errors when the PP cron is run.
 	- Instructors no longer override other instructors rubrics in PP.
 	- If a PP submission has been attempted 5 times and errors each time it will be removed from the queue.
 	- Multiple attempts are handled properly - except text content where previous attempts can not be viewed.
