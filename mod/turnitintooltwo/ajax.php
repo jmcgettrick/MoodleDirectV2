@@ -27,6 +27,17 @@ require_login();
 $action = required_param('action', PARAM_ALPHAEXT);
 
 switch ($action) {
+    case "check_anon":
+        $assignmentid = required_param('assignment', PARAM_INT);
+        $turnitintooltwoassignment = new turnitintooltwo_assignment($assignmentid);
+
+        $anonData = array(
+            'anon' => $turnitintooltwoassignment->turnitintooltwo->anon,
+            'submitted' => $turnitintooltwoassignment->turnitintooltwo->submitted
+        );
+        echo json_encode($anonData);
+        break;
+
     case "edit_field":
         if (!confirm_sesskey()) {
             throw new moodle_exception('invalidsesskey', 'error');
@@ -70,6 +81,26 @@ switch ($action) {
                     }
 
                     $fieldvalue = strtotime($fieldvalue.' '.$usertimezone);
+
+                    if ($fieldname == "dtpost" &&
+                        $turnitintooltwoassignment->turnitintooltwo->anon &&
+                        $turnitintooltwoassignment->turnitintooltwo->submitted == 1 &&
+                        $fieldvalue < time()) 
+                    {
+                        // Get the Turnitin course id
+                        $turnitin_cid = $turnitintooltwoassignment->get_course_data($turnitintooltwoassignment->turnitintooltwo->course)->turnitin_cid;
+                        
+                        // Disable anonymous marking in Turnitin
+                        $assignment = new TiiAssignment();
+                        $assignment->setClassId($turnitin_cid);
+                        $assignment->setAnonymousMarking(0);
+                        
+                        // Update it in Moodle
+                        $anon_assignment = new stdClass();
+                        $anon_assignment->id = required_param('assignment', PARAM_INT);
+                        $anon_assignment->anon = 0;
+                        $DB->update_record('turnitintooltwo', $anon_assignment);
+                    }
                     break;
             }
 
