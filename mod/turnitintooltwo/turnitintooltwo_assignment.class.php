@@ -1018,17 +1018,19 @@ class turnitintooltwo_assignment {
         $return["field"] = $fieldname;
         switch ($fieldname) {
             case "partname":
-                $partnames = $DB->get_records('turnitintooltwo_parts', array('turnitintooltwoid' => $partdetails->turnitintooltwoid), '', 'partname');
+                $partnames = $DB->get_records_select('turnitintooltwo_parts', 
+                                                    ' turnitintooltwoid = ? AND id != ? ',
+                                                    array($partdetails->turnitintooltwoid, $partid), '', 'partname');
 
                 $names = array();
-                foreach ($partnames as $name => $other) {
-                    $names[] = strtolower($name);
+                foreach ($partnames as $part) {
+                    $names[] = strtolower($part->partname);
                 }
 
                 if (empty($fieldvalue) || ctype_space($fieldvalue)) {
                     $return['success'] = false;
                     $return['msg'] = get_string('partnameerror', 'turnitintooltwo');
-                } else if (in_array(strtolower($fieldvalue), $names)) {
+                } else if (in_array(trim(strtolower($fieldvalue)), $names)) {
                     $return['success'] = false;
                     $return['msg'] = get_string('uniquepartname', 'turnitintooltwo');
                 } else if (strlen($fieldvalue) > 40) {
