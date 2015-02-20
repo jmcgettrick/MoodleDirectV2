@@ -1028,7 +1028,7 @@ class turnitintooltwo_assignment {
                 if (empty($fieldvalue) || ctype_space($fieldvalue)) {
                     $return['success'] = false;
                     $return['msg'] = get_string('partnameerror', 'turnitintooltwo');
-                } else if (in_array(strtolower($fieldvalue), $names)) {
+                } else if (in_array(strtolower(trim($fieldvalue)), $names)) {
                     $return['success'] = false;
                     $return['msg'] = get_string('uniquepartname', 'turnitintooltwo');
                 } else if (strlen($fieldvalue) > 40) {
