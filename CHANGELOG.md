@@ -7,13 +7,18 @@
 - Index created on externalid in plagiarism_turnitin_files table.
 - Uploaded files renamed to include useful information.
 - Use Grademark config setting used as main grademark setting rather than by assignment.
+- Papers transferred in Turnitin are now accounted for when refreshing individual submissions.
+- Administrators can now specify whether assignments always go to Standard or No Repository.
 - Fixes:
 	- Voice comments are now recordable in Safari.
 	- Database installer fixed for Moodle 2.3. (Thanks to Jeff Kerzner)
+	- Cron request to update submissions now performed in batches. (Thanks to Jeff Kerzner)
 	- Help text wrapping inconsistency on Turnitin assignment settings page.
 	- Editing dates in Turnitin Assignment inbox accounts for environments with set time zones. (Thanks to NeillM)
 	- Page URLs changed to proper URLs. (Thanks to Matt Gibson and Skylar Kelty)
-	- Anonymous marking setting fixed to false if post date is revelaed after submissions have been made.
+	- Anonymous marking setting fixed to false if post date is revealed after submissions have been made.
+	- Validation added so that part names must be unique.
+	- Plagiarism plugin now works with blog and single forum types.
 
 ---
 
