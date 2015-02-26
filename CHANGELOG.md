@@ -16,7 +16,6 @@
 	- Help text wrapping inconsistency on Turnitin assignment settings page.
 	- Editing dates in Turnitin Assignment inbox accounts for environments with set time zones. (Thanks to NeillM)
 	- Page URLs changed to proper URLs. (Thanks to Matt Gibson and Skylar Kelty)
-	- Anonymous marking setting fixed to false if post date is revealed after submissions have been made.
 	- Validation added so that part names must be unique.
 	- Plagiarism plugin now works with blog and single forum types.
 
