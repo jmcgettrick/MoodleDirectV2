@@ -237,6 +237,16 @@
     text-align:center !important;
 }
 
+.mod_turnitintooltwo .centered_cb_cell {
+    padding-right:8px;
+    padding-left:8px;
+}
+
+body[class*='-moodle23'] .mod_turnitintooltwo  .centered_cb_cell input {
+    position: relative;
+    left: -1px;
+}
+
 .mod_turnitintooltwo .enrolledMembers .left, .mod_turnitintooltwo .submissionsDataTable .left, 
 .mod_turnitintooltwo .partDetails .left {
     text-align:left;
@@ -293,10 +303,83 @@
 }
 
 .mod_turnitintooltwo .turnitin_ula {
-    padding-left:15%;
-    padding-top:24px;
+    width: 355px;
+    margin: 0 auto;
     cursor:pointer;
     text-decoration: underline;
+}
+
+#colorbox {
+    margin-top: 60px;
+    outline: 0 !important;
+    overflow: visible !important;
+}
+
+#cboxContent {
+    margin-top: 0 !important;
+}
+
+#tii_close_bar {
+    position: fixed;
+    z-index: 9999;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 45px;
+    background: rgba(0, 0, 0, .3);
+}
+
+#tii_close_bar a {
+    color: #fff;
+    display: block;
+    background: #000;
+    width: 100px;
+    text-align: center;
+    float: right;
+    text-decoration: none;
+    height: 45px;
+    line-height: 43px;
+}
+
+.cboxIframe {
+    border-radius: 5px;
+}
+
+#page-mod-turnitintooltwo-view div {
+    margin-bottom: 0;
+}
+
+#page-mod-turnitintooltwo-view .region-content {
+    padding: 0;
+}
+
+.turnitin_ula_text {
+    padding-top: 15px;
+    text-align: center;
+}
+
+.turnitin_ula input[type="submit"] {
+    margin: 0;
+}
+
+#cboxContent {
+    margin-top: 0;
+}
+
+h3.main {
+    line-height: 40px;
+}
+
+.tii_upgrade_check,
+.tii_upgrading_check {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+}
+.tii_upgrade_check img,
+.tii_upgrading_check img {
+    padding: 0 0 5px 5px;
+    vertical-align: middle;
 }
 
 .mod_turnitintooltwo .fitem_fbutton {
@@ -531,6 +614,10 @@
 
 .mod_turnitintooltwo .tii_upgrade_check {
     text-decoration: underline;
+    cursor: pointer;
+}
+
+.default_open {
     cursor: pointer;
 }
 

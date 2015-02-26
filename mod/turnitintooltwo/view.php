@@ -46,12 +46,11 @@ $do = optional_param('do', "submissions", PARAM_ALPHAEXT);
 $action = optional_param('action', "", PARAM_ALPHA);
 $viewcontext = optional_param('view_context', "window", PARAM_ALPHAEXT);
 
+$notice = null;
 if (isset($_SESSION["notice"])) {
     $notice = $_SESSION["notice"];
     $notice["type"] = (empty($_SESSION["notice"]["type"])) ? "general" : $_SESSION["notice"]["type"];
     unset($_SESSION["notice"]);
-} else {
-    $notice = null;
 }
 
 if ($id) {
@@ -77,22 +76,20 @@ if ($id) {
 }
 
 // If opening DV then $viewcontext needs to be set to box
-if ($do == "origreport" || $do == "grademark") {
-    $viewcontext = "box";
-}
+$viewcontext = ($do == "origreport" || $do == "grademark") ? "box" : $viewcontext;
 
 require_login($course->id);
 turnitintooltwo_activitylog('view.php?id='.$id.'&do='.$do, "REQUEST");
 
 // Settings for page navigation
 if ($viewcontext == "window") {
-    // This adds "general" to navbar which we don't want.
-    // $PAGE->set_cm($cm, $course);
     $PAGE->set_course($course);
-
-    // We will stick with a full width layout for now.
-    // $PAGE->set_pagelayout('incourse');
 }
+
+// Configure URL correctly.
+$urlparams = array('id' => $id, 'a' => $a, 'part' => $part, 'user' => $user, 'do' => $do, 'action' => $action, 
+                    'view_context' => $viewcontext);
+$url = new moodle_url('/mod/turnitintooltwo/view.php', $urlparams);
 
 // Load Javascript and CSS.
 $turnitintooltwoview->load_page_components();
@@ -233,12 +230,6 @@ if (!empty($action)) {
                             $turnitintooltwosubmission->delete_submission();
                             $_SESSION["notice"]["message"] = $doupload["message"];
                             $do = "submitpaper";
-                        } else {
-                            // Lock the assignment setting for anon marking.
-                            $locked_assignment = new object();
-                            $locked_assignment->id = $turnitintooltwoassignment->turnitintooltwo->id;
-                            $locked_assignment->submitted = 1;
-                            $DB->update_record('turnitintooltwo', $locked_assignment);
                         }
                     } else if ($post['submissiontype'] == 2) {
                         $turnitintooltwosubmission->prepare_text_submission($cm, $post);
@@ -247,6 +238,12 @@ if (!empty($action)) {
                         if ($digitalreceipt = $turnitintooltwosubmission->do_tii_submission($cm, $turnitintooltwoassignment)) {
                             $_SESSION["digital_receipt"] = $digitalreceipt;
                         }
+
+                        $locked_assignment = new stdClass();
+                        $locked_assignment->id = $turnitintooltwoassignment->turnitintooltwo->id;
+                        $locked_assignment->submitted = 1;
+                        $DB->update_record('turnitintooltwo', $locked_assignment);
+
                         $extraparams = array();
                         unset($_SESSION['form_data']);
                     }
@@ -295,7 +292,7 @@ if (!empty($action)) {
 if ($viewcontext == "box" || $viewcontext == "box_solid") {
     $turnitintooltwoview->output_header($cm,
             $course,
-            $_SERVER["REQUEST_URI"],
+            $url,
             '',
             '',
             array(),
@@ -314,7 +311,7 @@ if ($viewcontext == "box" || $viewcontext == "box_solid") {
 
     $turnitintooltwoview->output_header($cm,
             $course,
-            $_SERVER["REQUEST_URI"],
+            $url,
             $turnitintooltwoassignment->turnitintooltwo->name,
             $SITE->fullname,
             $extranavigation,

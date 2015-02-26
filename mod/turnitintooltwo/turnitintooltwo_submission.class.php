@@ -77,7 +77,7 @@ class turnitintooltwo_submission {
         $this->submission_objectid = null;
         $this->submissionunanon = 0;
 
-        $submission = new object();
+        $submission = new stdClass();
         $submission->userid = $data['studentsname'];
         $submission->turnitintooltwoid = $this->turnitintooltwoid;
         $submission->submission_part = $data['submissionpart'];
@@ -369,7 +369,7 @@ class turnitintooltwo_submission {
             $response = $turnitincall->createNothingSubmission($newsubmission);
             $newsubmission = $response->getSubmission();
 
-            $submission = new object();
+            $submission = new stdClass();
             $submission->userid = $userid;
             $submission->turnitintooltwoid = $turnitintooltwoassignment->turnitintooltwo->id;
             $submission->submission_part = $partid;
@@ -385,6 +385,11 @@ class turnitintooltwo_submission {
             if (!$this->id = $DB->insert_record('turnitintooltwo_submissions', $submission)) {
                 return get_string('submissionupdateerror', 'turnitintooltwo');
             } else {
+                $assignment = new stdClass();
+                $assignment->id = $turnitintooltwoassignment->turnitintooltwo->id;
+                $assignment->submitted = 1;
+                $DB->update_record('turnitintooltwo', $assignment);
+                
                 return array( "submission_id" => $newsubmission->getSubmissionId() );
             }
 
@@ -415,8 +420,28 @@ class turnitintooltwo_submission {
         $fs = get_file_storage();
         $files = $fs->get_area_files($context->id, 'mod_turnitintooltwo', 'submissions', $this->id, "timecreated", false);
         $tempfile = "";
+
         foreach ($files as $file) {
-            $tempfile = turnitintooltwo_tempfile("_".$file->get_filename());
+
+            $filename = array(
+                $this->submission_title,
+                $cm->id
+            );
+
+            if ( ! $turnitintooltwoassignment->turnitintooltwo->anon) {
+                $user_details = array(
+                    $this->userid,
+                    $user->firstname,
+                    $user->lastname
+                );
+
+                $filename = array_merge($user_details, $filename);
+            }
+
+            $suffix = $file->get_filename();
+
+            $tempfile = turnitintooltwo_tempfile($filename, $suffix);
+
             $fh = fopen($tempfile, "w");
             fwrite($fh, $file->get_content());
             fclose($fh);
@@ -458,7 +483,7 @@ class turnitintooltwo_submission {
                 $newsubmission = $response->getSubmission();
 
                 // Save the submission.
-                $submission = new object();
+                $submission = new stdClass();
                 $submission->id = $this->id;
                 $submission->userid = $this->userid;
                 $submission->turnitintooltwoid = $this->turnitintooltwoid;
@@ -525,7 +550,7 @@ class turnitintooltwo_submission {
             $response = $turnitincall->readSubmission($submission);
             $readsubmission = $response->getSubmission();
 
-            $this->save_updated_submission_data($readsubmission, '', false, $save);
+            $this->save_updated_submission_data($readsubmission, false, $save);
             $this->get_submission_details();
         } catch (Exception $e) {
             $turnitincomms->handle_exceptions($e, 'tiisubmissiongeterror', false);
@@ -538,20 +563,21 @@ class turnitintooltwo_submission {
      * @global type $DB
      * @param type $tiisubmissiondata
      * @param type $bulk
-     * @param type $save - save in db regradlesss of changes
+     * @param type $save - save in db regardless of changes
      * @return type
      */
-    public function save_updated_submission_data($tiisubmissiondata, $turnitintooltwoassignment = "", 
-                                                    $bulk = false, $save = false) {
+    public function save_updated_submission_data($tiisubmissiondata, $bulk = false, $save = false) {
         global $DB, $CFG;
 
-        if (empty($turnitintooltwoassignment)) {
-            $turnitintooltwoassignment = new turnitintooltwo_assignment($this->turnitintooltwoid);
+        static $part;
+        if (empty($part)) {
+            $part = $DB->get_record("turnitintooltwo_parts", array("tiiassignid" => $tiisubmissiondata->getAssignmentId()));
         }
+        $turnitintooltwoassignment = new turnitintooltwo_assignment($part->turnitintooltwoid);
 
-        $sub = new object();
+        $sub = new stdClass();
         $sub->submission_title = $tiisubmissiondata->getTitle();
-        $sub->submission_part = $this->submission_part;
+        $sub->submission_part = $part->id;
         $sub->submission_objectid = $tiisubmissiondata->getSubmissionId();
         $sub->turnitintooltwoid = $turnitintooltwoassignment->turnitintooltwo->id;
 
@@ -583,7 +609,7 @@ class turnitintooltwo_submission {
         // If save not passed in then only update if certain items have changed to save on database load.
         if ($this->submission_grade != $sub->submission_grade || $this->submission_score != $sub->submission_score ||
             $this->submission_modified != $sub->submission_modified || $this->submission_attempts != $sub->submission_attempts ||
-            $this->submission_unanon != $sub->submission_unanon) {
+            $this->submission_unanon != $sub->submission_unanon || $this->submission_part != $sub->submission_part) {
             $save = true;
         }
 

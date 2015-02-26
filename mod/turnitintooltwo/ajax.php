@@ -27,6 +27,17 @@ require_login();
 $action = required_param('action', PARAM_ALPHAEXT);
 
 switch ($action) {
+    case "check_anon":
+        $assignmentid = required_param('assignment', PARAM_INT);
+        $turnitintooltwoassignment = new turnitintooltwo_assignment($assignmentid);
+
+        $anonData = array(
+            'anon' => $turnitintooltwoassignment->turnitintooltwo->anon,
+            'submitted' => $turnitintooltwoassignment->turnitintooltwo->submitted
+        );
+        echo json_encode($anonData);
+        break;
+
     case "edit_field":
         if (!confirm_sesskey()) {
             throw new moodle_exception('invalidsesskey', 'error');
@@ -54,7 +65,22 @@ switch ($action) {
                 case "dtdue":
                 case "dtpost":
                     $fieldvalue = required_param('value', PARAM_RAW);
-                    $fieldvalue = strtotime($fieldvalue);
+                    // We need to work out the users timezone or GMT offset.
+                    $usertimezone = get_user_timezone();
+
+                    if (is_numeric($usertimezone)) {
+                        if ($usertimezone > 13) {
+                            $usertimezone = "";
+                        } else if ($usertimezone <= 13 && $usertimezone > 0) {
+                            $usertimezone = "GMT+$usertimezone";
+                        } else if ($usertimezone < 0) {
+                            $usertimezone = "GMT$usertimezone";
+                        } else {
+                            $usertimezone = 'GMT';
+                        }
+                    }
+
+                    $fieldvalue = strtotime($fieldvalue.' '.$usertimezone);
                     break;
             }
 
@@ -89,7 +115,7 @@ switch ($action) {
         $turnitin_user = $DB->get_record('turnitintooltwo_users', array('userid' => $eula_user_id));
 
         // Build user object for update
-        $eula_user = new object();
+        $eula_user = new stdClass();
         $eula_user->id += $turnitin_user->id;
         $eula_user->userid = $eula_user_id;
         $eula_user->user_agreement_accepted = 1;
@@ -278,6 +304,15 @@ switch ($action) {
             $submission = $turnitintooltwoassignment->get_user_submissions($userid, $assignmentid, $partid);
             $submissionid = current(array_keys($submission));
 
+            if (!empty($submissionid)) {
+                $submission = new turnitintooltwo_submission($submissionid);
+                $submission->update_submission_from_tii(true);
+
+                // Get the submission details again in case the submission has been transferred within Turnitin.
+                $submission = $turnitintooltwoassignment->get_user_submissions($userid, $assignmentid, $partid);
+                $submissionid = current(array_keys($submission));
+            }
+
             $submission = new turnitintooltwo_submission($submissionid);
             if (empty($submissionid)) {
                 $user = new turnitintooltwo_user($userid, 'Learner', false);
@@ -285,18 +320,17 @@ switch ($action) {
                 $submission->firstname = $user->firstname;
                 $submission->lastname = $user->lastname;
                 $submission->userid = $user->id;
-            } else {
-                $submission->update_submission_from_tii(true);
             }
+
             $useroverallgrades = array();
 
             $PAGE->set_context(context_module::instance($cm->id));
 
             $turnitintooltwoview = new turnitintooltwo_view();
+            $submissionrow["submission_id"] = $submission->submission_objectid;
             $submissionrow["row"] = $turnitintooltwoview->get_submission_inbox_row($cm, $turnitintooltwoassignment, $parts,
                                                                                 $partid, $submission, $useroverallgrades,
                                                                                 $istutor, 'refresh_row');
-            $submissionrow["submission_id"] = $submission->submission_objectid;
 
             echo json_encode($submissionrow);
         }
@@ -471,7 +505,7 @@ switch ($action) {
                 $i++;
             }
 
-            $result = new object();
+            $result = new stdClass();
             $result->completed = $i;
             $result->total = count($classids);
             $msg = get_string('recreatemulticlassescomplete', 'turnitintooltwo', $result);
@@ -516,7 +550,7 @@ switch ($action) {
             $tiicourseid = optional_param('tii_course_id', 0, PARAM_INT);
             $coursetolink = optional_param('course_to_link', 0, PARAM_INT);
 
-            $turnitincourse = new object();
+            $turnitincourse = new stdClass();
             $turnitincourse->courseid = $coursetolink;
             $turnitincourse->ownerid = $USER->id;
             $turnitincourse->turnitin_cid = $tiicourseid;
@@ -610,8 +644,7 @@ switch ($action) {
         if (is_siteadmin()) {
             $data = turnitintooltwo_updateavailable($current_version);
         }
-
-        echo $data;
+        echo json_encode($data);
         break;
 
     case "test_connection":

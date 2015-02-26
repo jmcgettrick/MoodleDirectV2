@@ -346,7 +346,7 @@ function turnitintooltwo_duplicate_recycle($courseid, $action) {
                 $assignment->setAnonymousMarking($turnitintooltwoassignment->turnitintooltwo->anon);
             }
             $assignment->setLateSubmissionsAllowed($turnitintooltwoassignment->turnitintooltwo->allowlate);
-            if ($config->userepository) {
+            if ($config->repositoryoption == 1) {
                 $assignment->setInstitutionCheck((isset($turnitintooltwoassignment->turnitintooltwo->institution_check)) ?
                                 $turnitintooltwoassignment->turnitintooltwo->institution_check : 0);
             }
@@ -581,11 +581,16 @@ function turnitintooltwo_filetype_array($setup = true) {
 /**
  * Creates a temp file for submission to Turnitin, uses a random number suffixed with the stored filename
  *
+ * @param array $filename Used to build a more readable filename
  * @param string $suffix The file extension for the upload
  * @return string $file The filepath of the temp file
  */
-function turnitintooltwo_tempfile($suffix) {
+function turnitintooltwo_tempfile(array $filename, $suffix) {
     global $CFG;
+
+    $filename = implode('_', $filename);
+    $filename = str_replace(' ', '_', $filename);
+    
     $fp = false;
     $tempdir = $CFG->dataroot.'/temp/turnitintooltwo';
     if (!file_exists($tempdir)) {
@@ -594,12 +599,14 @@ function turnitintooltwo_tempfile($suffix) {
     // Get file extension and shorten filename if too long.
     $pathparts = explode('.', $suffix);
     $ext = array_pop($pathparts);
-    $filename = implode('.', $pathparts);
+
     $permittedstrlength = TURNITINTOOLTWO_MAX_FILENAME_LENGTH - strlen($tempdir.DIRECTORY_SEPARATOR);
     if (strlen($filename) > $permittedstrlength) {
         $filename = substr($filename, 0, $permittedstrlength);
     }
-    $filename = mt_rand().$filename.'.'.$ext;
+
+    // filename with random string at the end
+    $filename = $filename . '_' . mt_rand() . '.'.$ext;
 
     while (!$fp) {
         $file = $tempdir.DIRECTORY_SEPARATOR.$filename;
@@ -618,7 +625,7 @@ function turnitintooltwo_tempfile($suffix) {
 function turnitintooltwo_updateavailable($current_version) {
     global $CFG;
 
-    $returnvalue = get_string('usinglatest', 'mod_turnitintooltwo');
+    $updateneeded['update'] = 0;
 
     try {
         // Open connection.
@@ -646,7 +653,8 @@ function turnitintooltwo_updateavailable($current_version) {
         $xml = simplexml_load_string($result);
         if ((isset($xml)) AND (isset($xml->version))) {
             if ($xml->version > $current_version) {
-                $returnvalue = html_writer::link($xml->filename, get_string("upgradeavailable", "turnitintooltwo"));
+                $updateneeded['update'] = 1;
+                $updateneeded['file'] = $xml->filename;
             }
         }
 
@@ -654,7 +662,7 @@ function turnitintooltwo_updateavailable($current_version) {
         turnitintooltwo_comms::handle_exceptions($e, 'checkupdateavailableerror', false);
     }
 
-    return $returnvalue;
+    return $updateneeded;
 }
 
 /**

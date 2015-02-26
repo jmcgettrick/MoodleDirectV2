@@ -5,6 +5,10 @@ Please be aware that the **Develop** branch should not be considered production 
 
 To see what has changed in recent versions of Moodle Direct V2, see the [CHANGELOG](https://github.com/jmcgettrick/MoodleDirectV2/blob/master/CHANGELOG.md).
 
+If you would like to contribute to the plugin please see our [CONTRIBUTIONS](https://github.com/jmcgettrick/MoodleDirectV2/blob/master/CONTRIBUTIONS.md) page.
+
+If you are having issues, please consult our [TROUBLE SHOOTING](https://github.com/jmcgettrick/MoodleDirectV2/blob/master/TROUBLESHOOTING.md) page.
+
 
 Installation
 ------------

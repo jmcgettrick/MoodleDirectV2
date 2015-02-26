@@ -148,6 +148,9 @@ class turnitintooltwo_view {
         $PAGE->requires->string_for_js('membercheckerror', 'turnitintooltwo');
         $PAGE->requires->string_for_js('resubmissiongradewarn', 'turnitintooltwo');
         $PAGE->requires->string_for_js('submitnothingwarning', 'turnitintooltwo');
+        $PAGE->requires->string_for_js('maxmarkserror', 'turnitintooltwo');
+        $PAGE->requires->string_for_js('disableanonconfirm', 'turnitintooltwo');
+        $PAGE->requires->string_for_js('closebutton', 'turnitintooltwo');
     }
 
     /**
@@ -393,8 +396,9 @@ class turnitintooltwo_view {
             $ula = "";
             if ($userid == $USER->id) {
                 if (!$eulaaccepted) {
-                    $ula = html_writer::tag('div', turnitintooltwo_view::output_dv_launch_form("useragreement", 0, $user->tii_user_id,
-                                "Learner", get_string('turnitinula', 'turnitintooltwo'), false),
+                    $ula = html_writer::tag('p', get_string('turnitinula', 'turnitintooltwo'), array('class' => 'turnitin_ula_text'));
+                    $ula .= html_writer::tag('div', turnitintooltwo_view::output_dv_launch_form("useragreement", 0, $user->tii_user_id,
+                                "Learner", get_string('turnitinula_btn', 'turnitintooltwo'), false),
                                     array('class' => 'turnitin_ula', 'data-userid' => $userid));
 
                     $noscriptula = html_writer::tag('noscript',
@@ -475,7 +479,7 @@ class turnitintooltwo_view {
         }
 
         $origreportenabled = ($turnitintooltwoassignment->turnitintooltwo->studentreports) ? 1 : 0;
-        $grademarkenabled = ($config->usegrademark && $turnitintooltwoassignment->turnitintooltwo->usegrademark) ? 1 : 0;
+        $grademarkenabled = ($config->usegrademark) ? 1 : 0;
 
         // Do the table headers.
         $cells = array();
@@ -728,7 +732,9 @@ class turnitintooltwo_view {
                         userdate($partdetails[$partid]->dtpost, '%d %h %Y - %H:%M');
         if ($istutor) {
             $datefield = html_writer::link('#', $datefield,
-                                            array('class' => 'editable_date editable_date_'.$partid,
+                                            array('data-anon' => $turnitintooltwoassignment->turnitintooltwo->anon,
+                                                'data-submitted' => $turnitintooltwoassignment->turnitintooltwo->submitted,
+                                                'class' => 'editable_postdue editable_date editable_date_'.$partid,
                                                 'data-pk' => $partid, 'data-name' => 'dtpost', 'id' => 'date_post_'.$partid,
                                                 'data-params' => "{ 'assignment': ".
                                                                     $turnitintooltwoassignment->turnitintooltwo->id.", ".
@@ -1129,7 +1135,7 @@ class turnitintooltwo_view {
         }
 
         // Show grade and link to DV.
-        if ($config->usegrademark && $turnitintooltwoassignment->turnitintooltwo->usegrademark) {
+        if ($config->usegrademark) {
             if (isset($submission->submission_objectid) && ($istutor || (!$istutor && $parts[$partid]->dtpost < time()))) {
                 $submissiongrade = (!is_null($submission->submission_grade)) ? $submission->submission_grade : '';
 
@@ -1225,11 +1231,22 @@ class turnitintooltwo_view {
 
             $uploadtext = (!$istutor) ? html_writer::tag('span', get_string('submitpaper', 'turnitintooltwo')) : '';
 
+            $launcheula = false;
+
+            if ($submission->userid == $USER->id) {
+                $submission_user = new turnitintooltwo_user($submission->userid, "Learner");
+                $coursedata = $turnitintooltwoassignment->get_course_data($turnitintooltwoassignment->turnitintooltwo->course);
+                $submission_user->join_user_to_class($coursedata->turnitin_cid);
+                $eulaaccepted = (!$submission_user->user_agreement_accepted) ? $submission_user->get_accepted_user_agreement() : $submission_user->user_agreement_accepted;
+
+                $launcheula = ( ! $eulaaccepted) ? 1 : 0;
+            }
+
             $upload = html_writer::link($CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id.'&part='.$partid.'&user='.
                                         $submission->userid.'&do=submitpaper&view_context=box_solid', $uploadtext.
                                         $OUTPUT->pix_icon('file-upload', get_string('submittoturnitin', 'turnitintooltwo'),
                                             'mod_turnitintooltwo'),
-                                        array("class" => "upload_box", "id" => "upload_".$submission->submission_objectid.
+                                        array("class" => "upload_box", "data-launch-eula" => $launcheula, "id" => "upload_".$submission->submission_objectid.
                                                             "_".$partid."_".$submission->userid));
         } else {
             $upload = "&nbsp;";
@@ -1296,7 +1313,7 @@ class turnitintooltwo_view {
             $data[] = $rawscore;
             $data[] = $score;
         }
-        if ($config->usegrademark AND $turnitintooltwoassignment->turnitintooltwo->usegrademark == 1) {
+        if ($config->usegrademark) {
             $data[] = $rawgrade;
             $data[] = $grade;
             if (count($parts) > 1 || $turnitintooltwoassignment->turnitintooltwo->grade < 0) {

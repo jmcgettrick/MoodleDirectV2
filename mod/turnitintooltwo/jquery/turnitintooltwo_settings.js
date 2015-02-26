@@ -26,7 +26,8 @@ jQuery(document).ready(function($) {
     	}
     });
 
-    $('.tii_upgrade_check').click(function() {
+    $('.tii_upgrade_check').click(function(e) {
+    	e.preventDefault();
     	// Change Url depending on Settings page
 	    var url = "ajax.php";
 	    if ($('.settingsform fieldset div.formsettingheading').length > 0) {
@@ -34,7 +35,7 @@ jQuery(document).ready(function($) {
 	    }
 
 	    $('.tii_upgrade_check').hide();
-	    $('.tii_upgrading_check').show();
+	    $('.tii_upgrading_check').css('display', 'inline-block');
 	    var current_version = $(this).attr('id').split('_')[1];
 
     	$.ajax({
@@ -43,9 +44,16 @@ jQuery(document).ready(function($) {
 	        dataType: "html",
 	        data: {action: "check_upgrade", current_version: current_version, sesskey: M.cfg.sesskey},
 	        success: function(data) {
-	        	$('.tii_upgrade_check').show();
-	        	$('.tii_upgrading_check').hide();
-	            $('.tii_upgrade_check').html(data);
+	        	var data = $.parseJSON(data)
+
+				if (data['update'] === 1) {
+					$('.tii_upgrade_check').hide();
+					$('.tii_upgrading_check').hide();
+					$('.tii_no_upgrade').html('<a href="' + data['file'][0] + '">' + M.str.turnitintooltwo.upgradeavailable + '</a>');
+	        	} else {
+	        		$('.tii_upgrading_check').hide();
+	        		$('.tii_upgrade_check').show();
+	        	}
 	        }
 	    });
     });

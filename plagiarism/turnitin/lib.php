@@ -23,6 +23,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); // It must be included from a Moodle page.
 }
 
+define('PLAGIARISM_TURNITIN_NUM_RECORDS_RETURN', 500);
+
 global $tiipp;
 $tiipp = new stdClass();
 $tiipp->in_use = true;
@@ -416,8 +418,15 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
         // Set static variables.
         static $cm;
+        static $forum;
         if (empty($cm)) {
             $cm = get_coursemodule_from_id('', $linkarray["cmid"]);
+
+            if ($cm->modname == 'forum') {
+                if (! $forum = $DB->get_record("forum", array("id" => $cm->instance))) {
+                    print_error('invalidforumid', 'forum');
+                }
+            }
         }
 
         static $config;
@@ -504,7 +513,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         // If a text submission has been made, we can only display links for current attempts so don't show links previous attempts.
         // This will need to be reworked when linkarray contains submission id.
         static $contentdisplayed;
-        if (!empty($linkarray["content"]) && $contentdisplayed == true) {
+        if ($cm->modname == 'assign' && !empty($linkarray["content"]) && $contentdisplayed == true) {
             return $output;
         }
 
@@ -577,28 +586,53 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                         break;
                     case 'forum':
                         static $discussionid;
+                        // Use query string id to check whether we are on forum home page.
+                        $querystrid = optional_param('id', 0, PARAM_INT);
+
+                        // Work out the discussion id from query string.
                         if (empty($discussionid)) {
                             $discussionid = optional_param('d', 0, PARAM_INT);
                         }
+
                         if (empty($discussionid)) {
                             $reply   = optional_param('reply', 0, PARAM_INT);
                             $edit    = optional_param('edit', 0, PARAM_INT);
                             $delete  = optional_param('delete', 0, PARAM_INT);
-                            if (!$parent = forum_get_post_full($reply)) {
-                                if (!$parent = forum_get_post_full($edit)) {
-                                    if (!$parent = forum_get_post_full($delete)) {
-                                        print_error('invalidparentpostid', 'forum');
-                                    }
-                                }
+
+                            $parent = '';
+                            if ($reply != 0) {
+                                $parent = forum_get_post_full($reply);
+                            } else if ($edit != 0) {
+                                $parent = forum_get_post_full($edit);
+                            } else if ($delete != 0) {
+                                $parent = forum_get_post_full($delete);
                             }
-                            if (!$discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
+
+                            if (!empty($parent)) {
+                                $discussionid = $parent->discussion;
+                            }
+                        }
+
+                        // Some forum types don't pass in certain values on main forum page.
+                        if ((empty($discussionid) || $querystrid != 0) && 
+                            ($forum->type == 'blog' || $forum->type == 'single')) {
+                            if (!$discussion = $DB->get_record_sql('SELECT FD.id 
+                                                                    FROM {forum_posts} FP JOIN {forum_discussions} FD 
+                                                                    ON FP.discussion = FD.id
+                                                                    WHERE FD.forum = ? AND FD.course = ? 
+                                                                    AND FP.userid = ? AND FP.message LIKE ? ',
+                                                                    array($forum->id, $forum->course, 
+                                                                        $linkarray["userid"], $linkarray["content"])
+                                                                    )) {
                                 print_error('notpartofdiscussion', 'forum');
                             }
                             $discussionid = $discussion->id;
                         }
+
                         $submission = $DB->get_record_select('forum_posts', 
                                                 " userid = ? AND message LIKE ? AND discussion = ? ",
                                                 array($linkarray["userid"], $linkarray["content"], $discussionid));
+
                         $itemid = $submission->id;
                         $submission->timemodified = $submission->modified;
                         $content = $linkarray["content"];
@@ -1332,7 +1366,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         $assignment->setSubmittedDocumentsCheck($modulepluginsettings["plagiarism_compare_student_papers"]);
         $assignment->setInternetCheck($modulepluginsettings["plagiarism_compare_internet"]);
         $assignment->setPublicationsCheck($modulepluginsettings["plagiarism_compare_journals"]);
-        if ($config->userepository) {
+        if ($config->repositoryoption == 1) {
             $institutioncheck = (isset($modulepluginsettings["plagiarism_compare_institution"])) ?
                                         $modulepluginsettings["plagiarism_compare_institution"] : 0;
             $assignment->setInstitutionCheck($institutioncheck);
@@ -1652,53 +1686,70 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         }
 
         if (count($submissionids) > 0) {
-            // Initialise Comms Object.
-            $turnitincomms = new turnitintooltwo_comms();
-            $turnitincall = $turnitincomms->initialise_api();
 
-            try {
-                $submission = new TiiSubmission();
-                $submission->setSubmissionIds($submissionids);
+            // Process submissions in batches, depending on the max. number of submissions the Turnitin API returns.
+            $submissionbatches = array_chunk($submissionids, PLAGIARISM_TURNITIN_NUM_RECORDS_RETURN);
+            foreach ($submissionbatches as $submissionsbatch) {
 
-                $response = $turnitincall->readSubmissions($submission);
-                $readsubmissions = $response->getSubmissions();
+                // Initialise Comms Object.
+                $turnitincomms = new turnitintooltwo_comms();
+                $turnitincall = $turnitincomms->initialise_api();
 
-                foreach ($readsubmissions as $readsubmission) {
-                    $tiisubmissionid = (int)$readsubmission->getSubmissionId();
+                try {
+                    $submission = new TiiSubmission();
 
-                    $currentsubmission = $DB->get_record('plagiarism_turnitin_files', array('externalid' => $tiisubmissionid),
-                                                                                            'id, cm, externalid, userid');
-                    if ($cm = get_coursemodule_from_id('', $currentsubmission->cm)) {
+                    // Use $submissionsbatch array instead of original $submissionids.
+                    $submission->setSubmissionIds($submissionsbatch);
 
-                        $plagiarismfile = new object();
-                        $plagiarismfile->id = $currentsubmission->id;
-                        $plagiarismfile->externalid = $tiisubmissionid;
-                        $plagiarismfile->similarityscore = (is_numeric($readsubmission->getOverallSimilarity())) ?
-                                                                        $readsubmission->getOverallSimilarity() : null;
-                        $plagiarismfile->grade = (is_numeric($readsubmission->getGrade())) ? $readsubmission->getGrade() : null;
-                        $plagiarismfile->orcapable = ($readsubmission->getOriginalityReportCapable() == 1) ? 1 : 0;
-                        $plagiarismfile->transmatch = 0;
-                        if (is_int($readsubmission->getTranslatedOverallSimilarity()) &&
-                                $readsubmission->getTranslatedOverallSimilarity() > $readsubmission->getOverallSimilarity()) {
-                            $plagiarismfile->similarityscore = $readsubmission->getTranslatedOverallSimilarity();
-                            $plagiarismfile->transmatch = 1;
+                    $response = $turnitincall->readSubmissions($submission);
+                    $readsubmissions = $response->getSubmissions();
+
+                    foreach ($readsubmissions as $readsubmission) {
+
+                        // Catch exceptions thrown by getSubmissionId to allow rest of the
+                        // submissions to get processed.
+                        try {
+                            $tiisubmissionid = (int)$readsubmission->getSubmissionId();
+
+                            $currentsubmission = $DB->get_record('plagiarism_turnitin_files', array('externalid' => $tiisubmissionid),
+                                                                                                    'id, cm, externalid, userid');
+                            if ($cm = get_coursemodule_from_id('', $currentsubmission->cm)) {
+
+                                $plagiarismfile = new object();
+                                $plagiarismfile->id = $currentsubmission->id;
+                                $plagiarismfile->externalid = $tiisubmissionid;
+                                $plagiarismfile->similarityscore = (is_numeric($readsubmission->getOverallSimilarity())) ?
+                                                                                $readsubmission->getOverallSimilarity() : null;
+                                $plagiarismfile->grade = (is_numeric($readsubmission->getGrade())) ? $readsubmission->getGrade() : null;
+                                $plagiarismfile->orcapable = ($readsubmission->getOriginalityReportCapable() == 1) ? 1 : 0;
+                                $plagiarismfile->transmatch = 0;
+                                if (is_int($readsubmission->getTranslatedOverallSimilarity()) &&
+                                        $readsubmission->getTranslatedOverallSimilarity() > $readsubmission->getOverallSimilarity()) {
+                                    $plagiarismfile->similarityscore = $readsubmission->getTranslatedOverallSimilarity();
+                                    $plagiarismfile->transmatch = 1;
+                                }
+
+                                if (!$DB->update_record('plagiarism_turnitin_files', $plagiarismfile)) {
+                                    mtrace("File failed to update: ".$plagiarismfile->id);
+                                } else {
+                                    mtrace("File updated: ".$plagiarismfile->id);
+                                }
+
+                                if (!is_null($plagiarismfile->grade)) {
+                                    $this->update_grade($cm, $readsubmission, $currentsubmission->userid);
+                                }
+                            }
+                        } catch (Exception $e) {
+                            mtrace("An exception was thrown while attempting to read submission $tiisubmissionid: "
+                                   . $e->getMessage() . '(' . $e->getFile() . ':' . $e->getLine() . ')');
                         }
 
-                        if (!$DB->update_record('plagiarism_turnitin_files', $plagiarismfile)) {
-                            mtrace("File failed to update: ".$plagiarismfile->id);
-                        } else {
-                            mtrace("File updated: ".$plagiarismfile->id);
-                        }
-
-                        if (!is_null($plagiarismfile->grade)) {
-                            $this->update_grade($cm, $readsubmission, $currentsubmission->userid);
-                        }
                     }
+                } catch (Exception $e) {
+                    mtrace(get_string('tiisubmissionsgeterror', 'turnitintooltwo'));
+                    $turnitincomms->handle_exceptions($e, 'tiisubmissionsgeterror', false);
+                    // Do not return false if a batch fails - another one might work.
                 }
-            } catch (Exception $e) {
-                mtrace(get_string('tiisubmissionsgeterror', 'turnitintooltwo'));
-                $turnitincomms->handle_exceptions($e, 'tiisubmissionsgeterror', false);
-                return false;
             }
         }
 
@@ -2386,7 +2437,26 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         }
 
         // Read the stored file/content into a temp file for submitting.
-        $tempfile = turnitintooltwo_tempfile("_".$filename);
+        $submission_title = explode('.', $title);
+
+        $file_string = array(
+            $submission_title[0],
+            $cm->id
+        );
+
+        $modulepluginsettings = $this->get_settings($cm->id);
+
+        if ( ! $modulepluginsettings["plagiarism_anonymity"]) {
+            $user_details = array(
+                $user->id,
+                $user->firstname,
+                $user->lastname
+            );
+
+            $file_string = array_merge($user_details, $file_string);
+        }
+
+        $tempfile = turnitintooltwo_tempfile($file_string, $filename);
         $fh = fopen($tempfile, "w");
         fwrite($fh, $textcontent);
         fclose($fh);
