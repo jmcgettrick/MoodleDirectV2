@@ -4,9 +4,46 @@
     Author     : John McGettrick
 */
 
+.ccheckbox {
+    text-align: center;
+    padding: 8px 10px 2px !important;
+}
+
+.tii_digital_receipt {
+    display: inline-block;
+    width: 150px;
+}
+#tii_digital_receipt_box {
+    padding: 20px;
+    background: #fff;
+}
+
+#tii_digital_receipt_box .generaltable {
+    width: 100%;
+}
+
+#tii_digital_receipt_box .logo {
+    display: block;
+    margin: 0 auto;
+}
+
+#tii_receipt_print {
+    text-align: right;
+    display: block;
+}
+
+#tii_digital_receipt_icon {
+    margin-top: -3px;
+    margin-right: 5px;
+}
+
 .mod_turnitintooltwo .submit_nothing img {
     padding-right: 8px;
     cursor: pointer;
+}
+
+.mod_turnitintooltwo .submission_form_container, .mod_turnitintooltwo .class_recreation {
+    padding: 0 24px;
 }
 
 .mod_turnitintooltwo .row_score, .mod_turnitintooltwo .row_peermark_manager, .mod_turnitintooltwo .row_peermark_reviews {
@@ -202,6 +239,10 @@
 
 .mod_turnitintooltwo .submissionsDataTable {
     width:100%;
+}
+
+.mod_turnitintooltwo .submissionsDataTable a {
+    text-decoration: none;
 }
 
 .mod_turnitintooltwo .score_colour {
@@ -432,6 +473,15 @@ h3.main {
     margin-bottom:6px;
 }
 
+.mod_turnitintooltwo .submission_failure_msg, .mod_turnitintooltwo .box_receipt {
+    padding: 16px;
+}
+
+.mod_turnitintooltwo .submission_failure_msg .general_warning {
+    margin-top: 16px;
+    width: auto;
+}
+
 .mod_turnitintooltwo #enrolling_error {
     margin-top: 8px;
 }
@@ -634,7 +684,6 @@ h3.main {
 }
 
 #page-admin-setting-modsettingturnitintooltwo #test_link, #page-admin-setting-modsettingturnitintooltwo #testing_container {
-    float:left;
     margin-bottom:8px;
 }
 
@@ -644,9 +693,9 @@ h3.main {
 }
 
 #page-admin-setting-modsettingturnitintooltwo #test_result {
-    float:left;
     margin: 4px 0 0;
-    padding:2px 6px;
+    padding: 5px 10px;
+    width: 300px;
 }
 
 #page-admin-setting-modsettingturnitintooltwo .test_link_success {
@@ -666,6 +715,18 @@ h3.main {
 #page-admin-setting-modsettingturnitintooltwo #testing_container img {
     position: relative;
     top:2px;
+}
+
+#page-admin-setting-modsettingturnitintooltwo fieldset.error div.form-item {
+    border: 1px solid red;
+    padding-top: 12px;
+    background-color: #F2DEDE;
+    border-color: #EED3D7;
+}
+
+#page-admin-setting-modsettingturnitintooltwo fieldset.error div.form-item,
+#page-admin-setting-modsettingturnitintooltwo fieldset.error div.form-description {
+    color: #B94A48;
 }
 
 .mod_turnitintooltwo .tabtree {

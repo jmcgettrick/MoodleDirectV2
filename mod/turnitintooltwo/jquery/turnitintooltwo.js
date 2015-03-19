@@ -3,12 +3,6 @@ jQuery(document).ready(function($) {
     $(".js_required").show();
     $(".js_hide").hide();
 
-    // Hide the header and footer on the modal boxes
-    if ($("#view_context").html() == "box" || $("#view_context").html() == "box_solid") {
-        $("#page-header").hide();
-        $("#page-footer").hide();
-    }
-
     // Configure submit paper form elements depending on what submission type is allowed
     if ($("#id_submissiontype").val() == 1) {
         $("#id_submissiontext").parent().parent().hide();
@@ -254,6 +248,7 @@ jQuery(document).ready(function($) {
         partTables[part_id] = $('table#'+part_id).dataTable({
             "bProcessing": true,
             "aoColumns": submissionsDataTableColumns,
+            "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "aaSorting": [[ 2, "asc" ],[ 4, "asc" ]],
             "sAjaxSource": "ajax.php",
             "oLanguage": dataTablesLang,
@@ -293,6 +288,7 @@ jQuery(document).ready(function($) {
                 oData.abVisCols = visibleCols;
             },
             "fnDrawCallback":  function( oSettings ) {
+                initialiseDigitalReceipt();
                 initialiseDVLaunchers("all", 0, part_id, 0);
                 initialiseRefreshRow("all", 0, part_id, 0);
                 initialiseUploadBox("all", 0, 0, 0);
@@ -361,6 +357,7 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Resize window after submitting EULA.
     $('.turnitin_ula input[type="submit"]').click(function() {
         $(this).hide();
         $(this).parent().parent().parent().find("p").hide();
@@ -369,6 +366,14 @@ jQuery(document).ready(function($) {
             height: "565px"
         });
     });
+
+    // Resize window if submission has failed.
+    if ($('.submission_failure_msg').length > 0) {
+        window.parent.$('.upload_box').colorbox.resize({
+            width: "800px",
+            height: "240px"
+        });
+    }
 
     // Enrol all students link on the enrolled students page
     $(".enrol_link").click(function () {
@@ -504,6 +509,8 @@ jQuery(document).ready(function($) {
     // Open the DV in a new window in such a way as to not be blocked by popups.
     $(document).on('click', '.default_open, .origreport_open, .grademark_open', function() {
         var proceed = true;
+
+        // Show resubmission grade warning.
         if ($(this).hasClass('graded_warning')) {
             if (!confirm(M.str.turnitintooltwo.resubmissiongradewarn)) {
                 proceed = false;
@@ -524,11 +531,11 @@ jQuery(document).ready(function($) {
             if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
                 // beforeunload event does not work in Safari.
                 $(dvWindow).bind('unload', function() {
-                    refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+                    $("#refresh_"+idStr[2]).click();
                 });
             } else {
                 $(dvWindow).bind('beforeunload', function() {
-                    refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+                    $("#refresh_"+idStr[2]).click();
                 });
             }
         }
@@ -565,6 +572,9 @@ jQuery(document).ready(function($) {
                     return response.msg;
                 } else if (response.field == "maxmarks") {
                     $('#refresh_'+response.partid).click();
+                } else if (response.field == "partname") {
+                    var tabId = $(this).parentsUntil('.ui-tabs-panel').parent().attr('aria-labelledby');
+                    $('#'+tabId).text(newValue);
                 }
             }
         });
@@ -580,7 +590,7 @@ jQuery(document).ready(function($) {
                 type: "POST",
                 url: "ajax.php",
                 dataType: "json",
-                data: {action: 'check_anon', assignment: $('#assignment_id').html()},
+                data: {action: 'check_anon', part: $this.data('pk'), assignment: $('#assignment_id').html()},
                 success: function(data) {
                     $this.data('anon', data['anon']);
                     $this.data('submitted', data['submitted']);
@@ -841,7 +851,7 @@ jQuery(document).ready(function($) {
                         success: function(data) {
                             eval(data);
                             if (data.status == "success") {
-                                parent.$.fn.colorbox.close();
+                                $.colorbox.close()
                                 $('#submission_'+submission_id).attr('href', M.cfg.wwwroot+"/user/view.php?id="+data.userid+"&course="+data.courseid);
                                 $('#submission_'+submission_id).html(data.name);
                                 $('#submission_'+submission_id).removeClass('unanonymise cboxElement');
@@ -953,6 +963,26 @@ jQuery(document).ready(function($) {
         $('body').append('<div id="tii_close_bar"><a href="#" onclick="$.colorbox.close(); return false;">' + M.str.turnitintooltwo.closebutton + '</a></div>');
     }
 
+    function initialiseDigitalReceipt() {
+        if ($('.tii_digital_receipt').length > 0) {
+            $('.tii_digital_receipt').colorbox({
+                iframe:true, width:"832px", height:"482px", opacity: "0.7", className: "rubric_view", transition: "none",
+                onLoad: function() {
+                    lightBoxCloseButton();
+                    getLoadingGif();
+                },
+                onCleanup: function() {
+                    $('#tii_close_bar').remove();
+                    hideLoadingGif();
+                }
+            });
+        }
+    }
+
+    $('#tii_receipt_print').click(function() {
+        window.print();
+    });
+
     function initialiseHiddenZipDownloads(part_id) {
         // Unbind the event first to stop it being binded multiple times
         $('#tabs-'+part_id+' .origchecked_zip_open').unbind("click");
@@ -1028,6 +1058,8 @@ jQuery(document).ready(function($) {
     // Open the document viewer within a frame in a new tab
     function openDV(dvtype, submission_id, part_id, user_id) {
         var proceed = true;
+
+        // Show resubmission grade warning.
         if ($('#grademark_'+submission_id+'_'+part_id+'_'+user_id).hasClass('graded_warning') && dvtype != 'downloadoriginal') {
             if (!confirm(M.str.turnitintooltwo.resubmissiongradewarn)) {
                 proceed = false;
@@ -1152,4 +1184,16 @@ jQuery(document).ready(function($) {
             }
         }
     }
+
+    $('#select_all_checkbox').on('click', function() {
+        if ($(this).is(':checked')) {
+            $('.inbox_checkbox').each(function() {
+                $(this).prop('checked', true);
+            });
+        } else {
+            $('.inbox_checkbox').each(function() {
+                $(this).prop('checked', false);
+            });
+        }
+    });
 });

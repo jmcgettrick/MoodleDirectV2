@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot.'/mod/turnitintooltwo/turnitintooltwo_assignment.class.php');
+require_once(__DIR__.'/turnitintooltwo_assignment.class.php');
 
 // Constants.
 define('TURNITINTOOLTWO_MAX_FILE_UPLOAD_SIZE', 20971520);
@@ -152,8 +152,25 @@ function turnitintooltwo_activitylog($string, $activity) {
  * @param  boolean $nullifnone
  */
 function turnitintooltwo_update_grades($turnitintooltwo, $userid = 0, $nullifnone = true) {
+    global $DB, $USER;
+
     $turnitintooltwoassignment = new turnitintooltwo_assignment($turnitintooltwo->id);
-    $turnitintooltwoassignment->edit_moodle_assignment();
+    $turnitintooltwoassignment->edit_moodle_assignment(false);
+
+    // Update events in the calendar.
+    $parts = $DB->get_records_select("turnitintooltwo_parts", " turnitintooltwoid = ? ",
+                                        array($turnitintooltwo->id), 'id ASC');
+    foreach ($parts as $part) {
+        $event = $DB->get_record_select("event",
+                                        " modulename = 'turnitintooltwo' AND instance = ? AND courseid = ? AND name LIKE ? ",
+                                        array($turnitintooltwo->id, $turnitintooltwo->course, '% - '.$part->partname));
+        $updatedevent = new stdClass();
+        $updatedevent->id = $event->id;
+        $updatedevent->userid = $USER->id;
+        $updatedevent->name = $turnitintooltwo->name." - ".$part->partname;
+
+        $DB->update_record('event', $updatedevent);
+    }
 }
 
 /**
@@ -1020,7 +1037,7 @@ function turnitintooltwo_getfiles($moduleid) {
             $assignment = html_writer::tag("span", get_string('assigngeterror', 'turnitintooltwo'),
                                             array("class" => "italic bold"));
         } else {
-            $assignment = html_writer::link($CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$file->cmid.'&do=submissions',
+            $assignment = html_writer::link($CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$file->cmid,
                                     $file->coursetitle . ' (' . $file->courseshort . ') - ' . $file->activity);
         }
 
@@ -1056,6 +1073,41 @@ function turnitintooltwo_getfiles($moduleid) {
     }
 
     return $return;
+}
+
+/**
+ * Serves submitted files.
+ *
+ * @param mixed $course course or id of the course
+ * @param mixed $cm course module or id of the course module
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options additional options affecting the file serving
+ * @return bool false if file not found, does not return if found - just send the file
+ */
+function turnitintooltwo_pluginfile($course, 
+                $cm,
+                context $context,
+                $filearea,
+                $args,
+                $forcedownload,
+                array $options=array()) {
+    global $CFG;
+
+    $itemid = (int)array_shift($args);
+    $relativepath = implode('/', $args);
+    $fullpath = "/{$context->id}/mod_turnitintooltwo/$filearea/$itemid/$relativepath";
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**
@@ -1144,7 +1196,7 @@ function turnitintooltwo_getusers() {
         }
 
         $return["aaData"][] = array($checkbox, ($user->turnitin_uid == 0) ?
-                                '' : $user->turnitin_uid, format_string($user->lastname), 
+                                '' : $user->turnitin_uid, format_string($user->lastname),
                                         format_string($user->firstname), $pseudoemail);
     }
     $return["sEcho"] = $secho;
@@ -1264,7 +1316,7 @@ function turnitintooltwo_show_browser_new_course_form() {
     $elements[] = array('header', 'create_course_fieldset', get_string('createcourse', 'turnitintooltwo'));
     $displaylist = array();
     $parentlist = array();
-    require_once("../../course/lib.php");
+    require_once($CFG->dirroot."/course/lib.php");
 
     if (file_exists($CFG->libdir.'/coursecatlib.php')) {
         require_once($CFG->libdir.'/coursecatlib.php');
@@ -1411,4 +1463,22 @@ function turnitintooltwo_show_edit_course_end_date_form() {
     $optionsform = new turnitintooltwo_form('', $customdata);
 
     return html_writer::tag('div', $output.$optionsform->display(), array('class' => 'edit_course_end_date_form'));
+}
+
+/**
+ * Moodle participation report hooks for views with Moodle 2.6-
+ *
+ * @return array Array of available log labels
+ */
+function turnitintooltwo_get_view_actions() {
+    return array('view');
+}
+
+/**
+ * Moodle participation report hooks for views with Moodle 2.6-
+ *
+ * @return array Array of available log labels
+ */
+function turnitintooltwo_get_post_actions() {
+    return array('submit');
 }
