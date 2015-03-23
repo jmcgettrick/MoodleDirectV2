@@ -42,8 +42,7 @@
     cursor: pointer;
 }
 
-.mod_turnitintooltwo .submission_form_container, .mod_turnitintooltwo .class_recreation, 
-.mod_turnitintooltwo #digital_receipt {
+.mod_turnitintooltwo .submission_form_container, .mod_turnitintooltwo .class_recreation {
     padding: 0 24px;
 }
 
@@ -308,20 +307,22 @@ body[class*='-moodle23'] .mod_turnitintooltwo  .centered_cb_cell input {
 }
 
 .mod_turnitintooltwo .enrol_link, .mod_turnitintooltwo .enrolling_container, 
-.mod_turnitintooltwo .refresh_link, .mod_turnitintooltwo .messages_inbox {
+.mod_turnitintooltwo .refresh_link, .mod_turnitintooltwo .refreshing_link, .mod_turnitintooltwo .messages_inbox {
     float:right;
+    width: 190px;
 }
 
 .mod_turnitintooltwo .messages_inbox {
     text-decoration: none;
     padding: 2px 4px 6px 0px;
+    width: 215px;
 }
 
 .mod_turnitintooltwo .enrol_link {
     padding: 6px 18px 0 0;
 }
 
-.mod_turnitintooltwo .refresh_link {
+.mod_turnitintooltwo .refresh_link, .mod_turnitintooltwo .refreshing_link {
     padding: 2px 16px 0 12px;
 }
 
@@ -329,7 +330,7 @@ body[class*='-moodle23'] .mod_turnitintooltwo  .centered_cb_cell input {
     padding: 4px 18px 0 0;
 }
 
-.mod_turnitintooltwo .refresh_link img, .mod_turnitintooltwo .enrol_link img, 
+.mod_turnitintooltwo .refresh_link img, .mod_turnitintooltwo .refreshing_link img, .mod_turnitintooltwo .enrol_link img, 
 .mod_turnitintooltwo .enrolling_container img, .mod_turnitintooltwo .messages_inbox img {
     position: relative;
     top:4px;
@@ -464,7 +465,7 @@ h3.main {
 }
 
 .mod_turnitintooltwo noscript.warning, .mod_turnitintooltwo .library_not_present_warning,
-.mod_turnitintooltwo .general_warning, .mod_turnitintooltwo #error {
+.mod_turnitintooltwo .general_warning {
     border: 1px solid #CC0000;
     padding: 8px;
     background: #FFE9E8;
@@ -472,12 +473,6 @@ h3.main {
     text-align:center;
     display:block;
     margin-bottom:6px;
-}
-
-.mod_turnitintooltwo #error {
-    margin-left:24px;
-    margin-right:24px;
-    width:96%;
 }
 
 .mod_turnitintooltwo .submission_failure_msg, .mod_turnitintooltwo .box_receipt {

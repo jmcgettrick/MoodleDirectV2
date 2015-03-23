@@ -316,6 +316,7 @@ jQuery(document).ready(function($) {
     $('.dataTables_length').after(tii_table_functions);
     $('.messages_inbox').show();
     $('.refresh_link').show();
+    $('.refreshing_link').hide();
 
     var zip_downloads = $("#zip_downloads");
     $('#zip_downloads').remove();
@@ -328,6 +329,10 @@ jQuery(document).ready(function($) {
     // When the refresh submissions link is clicked, the data in each datatable needs to be reloaded
     $(".refresh_link").click(function () {
         $(this).hide();
+
+        var part_id = $(this).attr("id").split("_")[1]; 
+        $('#refreshing_' + part_id).show();
+
         $('table.submissionsDataTable').each(function() {
             refreshRequested[$(this).attr("id")] = 1;
             partTables[$(this).attr("id")].fnReloadAjax();
@@ -716,6 +721,7 @@ jQuery(document).ready(function($) {
                     getSubmissions(table, assignment_id, part_id, start, refresh_requested, result.total);
                 } else {
                     $('#'+part_id+"_processing").attr('style', 'visibility: hidden');
+                    $('#refreshing_' + part_id).hide();
                     $('#refresh_'+part_id).show();
                     enableEditingText(part_id);
                 }
@@ -1196,39 +1202,4 @@ jQuery(document).ready(function($) {
             });
         }
     });
-
-    // Settings page parts warning
-    $('[id^=id_partdates] [id^=fitem_id_dtpost] select').change(function() {
-        // Get part id from title
-        var dataEl = $(this).parent().parent().parent();
-        var post_date = buildUnixDate('#fitem_id_dtpost', dataEl.data('partId'));
-
-        if ( post_date < moment().unix() && dataEl.data('anon') == 1 && dataEl.data('unanon') == 0 && dataEl.data('submitted') == 1 ) {
-            alert(M.str.turnitintooltwo.anonalert);
-        }
-
-    });
-
-    var buildUnixDate = function(el, part_id) {
-        // option id's
-        var start = [ '_day', '_month', '_year', '_hour', '_minute' ];
-        
-        $this = $(el + part_id);
-
-        // build date:time string
-        var date = '';
-        $.each(start, function(k, v) {
-            date += $this.find('[id$=' + part_id + v + '] option:selected').text();
-            if (v === '_year') {
-                date += ' ';
-            } else if (v === '_hour') {
-                date += ':';
-            } else if ( v !== '_minute') {
-                date += '-';
-            }
-        });
-
-        // return converted moment object
-        return moment(date).unix();
-    }
 });
