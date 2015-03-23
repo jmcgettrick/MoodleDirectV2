@@ -623,13 +623,19 @@ class turnitintooltwo_view {
                 }
 
                 // Link to refresh submissions with latest data from Turnitin.
-                $refreshlink = html_writer::tag('div', $OUTPUT->pix_icon('refresh',
-                                                get_string('turnitinrefreshsubmissions', 'turnitintooltwo'),
-                                                        'mod_turnitintooltwo')." ".
+                $refreshlink = html_writer::tag('div', html_writer::tag('i', '', array('class' => 'fa fa-refresh fa-lg',
+                                                    'title' => get_string('turnitinrefreshingsubmissions', 'turnitintooltwo')))." ".
                                                     get_string('turnitinrefreshsubmissions', 'turnitintooltwo'),
                                                         array('class' => 'refresh_link', 'id' => 'refresh_'.$partid));
 
-                $output .= $OUTPUT->box($messagesinbox.$refreshlink, '', 'tii_table_functions');
+                // Link which appears during the refresh of submissions.
+                $refreshinglink = html_writer::tag('div', html_writer::tag('i', '', array('class' => 'fa fa-spinner fa-spin fa-lg',
+                                                    'title' => get_string('turnitinrefreshingsubmissions', 'turnitintooltwo')))." ".
+                                                    get_string('turnitinrefreshingsubmissions', 'turnitintooltwo'),
+                                                        array('class' => 'refreshing_link', 'id' => 'refreshing_'.$partid));
+
+                //Output the links.
+                $output .= $OUTPUT->box($messagesinbox.$refreshlink.$refreshinglink, '', 'tii_table_functions');
             }
         }
 
@@ -1090,7 +1096,7 @@ class turnitintooltwo_view {
         //submission title
         if ( !empty($submission->submission_objectid) AND !empty($submission->submission_objectid) ) {
             $title = $OUTPUT->box_start('default_open', 'default_'.$submission->submission_objectid.'_'.$partid.'_'.$moodleuserid);
-            $title .= $OUTPUT->box(format_string($submission->submission_title), 'submission_title');
+            $title .= $OUTPUT->box(format_string($submission->submission_title));
             $title .= $OUTPUT->box($CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id, 'dv_url', 'default_url_'.$submission->submission_objectid);
             $title .= $OUTPUT->box_end(true);
         } else {
