@@ -19,22 +19,22 @@
  * @copyright 2012 iParadigms LLC
  */
 
-require_once("../../config.php");
-require_once("lib.php");
-require_once("../../lib/formslib.php");
-require_once("../../lib/form/text.php");
-require_once("../../lib/form/datetimeselector.php");
-require_once("../../lib/form/hidden.php");
-require_once("../../lib/form/button.php");
-require_once("../../lib/form/submit.php");
-require_once($CFG->dirroot."/lib/uploadlib.php");
+require_once(__DIR__."/../../config.php");
+require_once(__DIR__."/lib.php");
+require_once($CFG->libdir."/formslib.php");
+require_once($CFG->libdir."/form/text.php");
+require_once($CFG->libdir."/form/datetimeselector.php");
+require_once($CFG->libdir."/form/hidden.php");
+require_once($CFG->libdir."/form/button.php");
+require_once($CFG->libdir."/form/submit.php");
+require_once($CFG->libdir."/uploadlib.php");
 
 // Offline mode provided by Androgogic. Set tiioffline in config.php.
 if (!empty($CFG->tiioffline)) {
     turnitintooltwo_print_error('turnitintoolofflineerror', 'turnitintooltwo');
 }
 
-require_once("turnitintooltwo_view.class.php");
+require_once(__DIR__."/turnitintooltwo_view.class.php");
 $turnitintooltwoview = new turnitintooltwo_view();
 
 // Get/Set variables and work out which function to perform.
@@ -76,7 +76,7 @@ if ($id) {
 }
 
 // If opening DV then $viewcontext needs to be set to box
-$viewcontext = ($do == "origreport" || $do == "grademark") ? "box" : $viewcontext;
+$viewcontext = ($do == "origreport" || $do == "grademark" || $do == "default") ? "box" : $viewcontext;
 
 require_login($course->id);
 turnitintooltwo_activitylog('view.php?id='.$id.'&do='.$do, "REQUEST");
@@ -227,23 +227,33 @@ if (!empty($action)) {
                         // Upload file.
                         $doupload = $turnitintooltwosubmission->do_file_upload($cm, $turnitintooltwofileuploadoptions);
                         if (!$doupload["result"]) {
-                            $turnitintooltwosubmission->delete_submission();
+                            if (!$prevsubmission) {
+                                $turnitintooltwosubmission->delete_submission();
+                            }
                             $_SESSION["notice"]["message"] = $doupload["message"];
+                            $_SESSION["notice"]["type"] = "error";
                             $do = "submitpaper";
                         }
                     } else if ($post['submissiontype'] == 2) {
                         $turnitintooltwosubmission->prepare_text_submission($cm, $post);
                     }
                     if ($do == "submission_success") {
-                        if ($digitalreceipt = $turnitintooltwosubmission->do_tii_submission($cm, $turnitintooltwoassignment)) {
-                            $_SESSION["digital_receipt"] = $digitalreceipt;
+                        $tiisubmission = $turnitintooltwosubmission->do_tii_submission($cm, $turnitintooltwoassignment);
+                        $_SESSION["digital_receipt"] = $tiisubmission;
+
+                        if ($tiisubmission['success'] == true) {
+                            $locked_assignment = new stdClass();
+                            $locked_assignment->id = $turnitintooltwoassignment->turnitintooltwo->id;
+                            $locked_assignment->submitted = 1;
+                            $DB->update_record('turnitintooltwo', $locked_assignment);
+
+                            $locked_part = new stdClass();
+                            $locked_part->id = $post['submissionpart'];
+                            $locked_part->submitted = 1;
+                            $DB->update_record('turnitintooltwo_parts', $locked_part);
+                        } else {
+                            $do = "submission_failure";
                         }
-
-                        $locked_assignment = new stdClass();
-                        $locked_assignment->id = $turnitintooltwoassignment->turnitintooltwo->id;
-                        $locked_assignment->submitted = 1;
-                        $DB->update_record('turnitintooltwo', $locked_assignment);
-
                         $extraparams = array();
                         unset($_SESSION['form_data']);
                     }
@@ -290,6 +300,9 @@ if (!empty($action)) {
 
 // Show header and navigation
 if ($viewcontext == "box" || $viewcontext == "box_solid") {
+
+    $PAGE->set_pagelayout('embedded');
+
     $turnitintooltwoview->output_header($cm,
             $course,
             $url,
@@ -362,6 +375,40 @@ switch ($do) {
         }
         echo $digitalreceipt;
         unset($_SESSION["digital_receipt"]);
+        break;
+
+    case "submission_failure":
+
+        $output = $OUTPUT->box($OUTPUT->pix_icon('icon', get_string('turnitin', 'turnitintooltwo'),
+                                                    'mod_turnitintooltwo'), 'centered_div');
+
+        $output .= html_writer::tag("div", $_SESSION["digital_receipt"]["message"], array("class" => "general_warning"));
+        if ($viewcontext == "box_solid") {
+            $output = html_writer::tag("div", $output, array("class" => "submission_failure_msg"));
+        }
+        echo $output;
+        unset($_SESSION["digital_receipt"]);
+        break;
+
+    case "digital_receipt":
+        $submissionid = required_param('submissionid', PARAM_INT);
+        $submission = new turnitintooltwo_submission($submissionid, 'turnitin');
+
+        $table = new html_table();
+        $table->data = array(
+            array(get_string('submissionauthor', 'turnitintooltwo'), $submission->firstname . ' ' . $submission->lastname),
+            array(get_string('turnitinpaperid', 'turnitintooltwo') . ' <small>(' . get_string('refid', 'turnitintooltwo') . ')</small>', $submissionid),
+            array(get_string('submissiontitle', 'turnitintooltwo'), $submission->submission_title),
+            array(get_string('receiptassignmenttitle', 'turnitintooltwo'), $turnitintooltwoassignment->turnitintooltwo->name),
+            array(get_string('submissiondate', 'turnitintooltwo'), date("d/m/y, H:i", $submission->submission_modified))
+        );
+
+        $digitalreceipt = $OUTPUT->pix_icon('tii-logo', get_string('turnitin', 'turnitintooltwo'), 'mod_turnitintooltwo', array('class' => 'logo'));
+        $digitalreceipt .= '<h2>'.get_string('digitalreceipt', 'turnitintooltwo').'</h2>';
+        $digitalreceipt .= '<p>'.get_string('receiptparagraph', 'turnitintooltwo').'</p>';
+        $digitalreceipt .= html_writer::table($table);
+        $digitalreceipt .= '<a href="#" id="tii_receipt_print">' . $OUTPUT->pix_icon('printer', get_string('turnitin', 'turnitintooltwo'), 'mod_turnitintooltwo') . ' ' . get_string('print', 'turnitintooltwo') .'</a>';
+        echo html_writer::tag("div", $digitalreceipt, array("id" => "tii_digital_receipt_box"));
         break;
 
     case "submitpaper":

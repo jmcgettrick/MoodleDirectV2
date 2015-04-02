@@ -3,12 +3,6 @@ jQuery(document).ready(function($) {
     $(".js_required").show();
     $(".js_hide").hide();
 
-    // Hide the header and footer on the modal boxes
-    if ($("#view_context").html() == "box" || $("#view_context").html() == "box_solid") {
-        $("#page-header").hide();
-        $("#page-footer").hide();
-    }
-
     // Configure submit paper form elements depending on what submission type is allowed
     if ($("#id_submissiontype").val() == 1) {
         $("#id_submissiontext").parent().parent().hide();
@@ -17,6 +11,24 @@ jQuery(document).ready(function($) {
     if ($("#id_submissiontype").val() == 2) {
         $("#id_submissionfile").parent().parent().hide();
     }
+
+    //Disable assignment submission if a submission agreement exists and is not checked.
+    if (($("#id_submissionagreement").length)) {
+        $('#id_submitbutton').attr('disabled', 'disabled');
+    }
+
+    //Disable/enable assignment submission when the submission checkbox is checked/unchecked.
+    $('#id_submissionagreement').on('click', function() {
+        if ($(this).is(':checked')) {
+            $('#id_submissionagreement').each(function() {
+                $('#id_submitbutton').removeAttr('disabled');
+            });
+        } else {
+            $('#id_submissionagreement').each(function() {
+                $('#id_submitbutton').attr('disabled', 'disabled');
+            });
+        }
+    });
 
     $(document).on('click', '.submit_nothing', function() {
         if ( $(this).hasClass("disabled") ) return;
@@ -59,6 +71,7 @@ jQuery(document).ready(function($) {
         if (validated) {
 
             $("#general").slideUp('slow');
+            $(".mod_turnitintooltwo .noticebox").slideUp('slow');
             $(".submission_form_container form").slideUp('slow');
             $("#submitting_loader").slideDown('slow');
 
@@ -254,6 +267,7 @@ jQuery(document).ready(function($) {
         partTables[part_id] = $('table#'+part_id).dataTable({
             "bProcessing": true,
             "aoColumns": submissionsDataTableColumns,
+            "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             "aaSorting": [[ 2, "asc" ],[ 4, "asc" ]],
             "sAjaxSource": "ajax.php",
             "oLanguage": dataTablesLang,
@@ -293,6 +307,7 @@ jQuery(document).ready(function($) {
                 oData.abVisCols = visibleCols;
             },
             "fnDrawCallback":  function( oSettings ) {
+                initialiseDigitalReceipt();
                 initialiseDVLaunchers("all", 0, part_id, 0);
                 initialiseRefreshRow("all", 0, part_id, 0);
                 initialiseUploadBox("all", 0, 0, 0);
@@ -320,10 +335,15 @@ jQuery(document).ready(function($) {
     $('.dataTables_length').after(tii_table_functions);
     $('.messages_inbox').show();
     $('.refresh_link').show();
+    $('.refreshing_link').hide();
 
-    var zip_downloads = $("#zip_downloads");
-    $('#zip_downloads').remove();
-    $('.dataTables_length').after(zip_downloads);
+    var zip_downloads = $(".zip_downloads");
+
+    $.each(zip_downloads, function() {
+        var part_id = $(this).attr('id').split('_')[1];
+        $(this).remove();
+        $('#' + part_id + '_length').after($(this));
+    });
 
     if ($("#user_role").html() == "Learner") {
         $(".dataTables_length, .dataTables_filter, .dt_pagination").hide();
@@ -332,6 +352,10 @@ jQuery(document).ready(function($) {
     // When the refresh submissions link is clicked, the data in each datatable needs to be reloaded
     $(".refresh_link").click(function () {
         $(this).hide();
+
+        var part_id = $(this).attr("id").split("_")[1]; 
+        $('#refreshing_' + part_id).show();
+
         $('table.submissionsDataTable').each(function() {
             refreshRequested[$(this).attr("id")] = 1;
             partTables[$(this).attr("id")].fnReloadAjax();
@@ -361,6 +385,7 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Resize window after submitting EULA.
     $('.turnitin_ula input[type="submit"]').click(function() {
         $(this).hide();
         $(this).parent().parent().parent().find("p").hide();
@@ -369,6 +394,14 @@ jQuery(document).ready(function($) {
             height: "565px"
         });
     });
+
+    // Resize window if submission has failed.
+    if ($('.submission_failure_msg').length > 0) {
+        window.parent.$('.upload_box').colorbox.resize({
+            width: "800px",
+            height: "240px"
+        });
+    }
 
     // Enrol all students link on the enrolled students page
     $(".enrol_link").click(function () {
@@ -504,6 +537,8 @@ jQuery(document).ready(function($) {
     // Open the DV in a new window in such a way as to not be blocked by popups.
     $(document).on('click', '.default_open, .origreport_open, .grademark_open', function() {
         var proceed = true;
+
+        // Show resubmission grade warning.
         if ($(this).hasClass('graded_warning')) {
             if (!confirm(M.str.turnitintooltwo.resubmissiongradewarn)) {
                 proceed = false;
@@ -524,11 +559,11 @@ jQuery(document).ready(function($) {
             if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
                 // beforeunload event does not work in Safari.
                 $(dvWindow).bind('unload', function() {
-                    refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+                    $("#refresh_"+idStr[2]).click();
                 });
             } else {
                 $(dvWindow).bind('beforeunload', function() {
-                    refreshInboxRow(idStr[0], idStr[1], idStr[2], idStr[3]);
+                    $("#refresh_"+idStr[2]).click();
                 });
             }
         }
@@ -565,6 +600,9 @@ jQuery(document).ready(function($) {
                     return response.msg;
                 } else if (response.field == "maxmarks") {
                     $('#refresh_'+response.partid).click();
+                } else if (response.field == "partname") {
+                    var tabId = $(this).parentsUntil('.ui-tabs-panel').parent().attr('aria-labelledby');
+                    $('#'+tabId).text(newValue);
                 }
             }
         });
@@ -580,9 +618,10 @@ jQuery(document).ready(function($) {
                 type: "POST",
                 url: "ajax.php",
                 dataType: "json",
-                data: {action: 'check_anon', assignment: $('#assignment_id').html()},
+                data: {action: 'check_anon', part: $this.data('pk'), assignment: $('#assignment_id').html()},
                 success: function(data) {
                     $this.data('anon', data['anon']);
+                    $this.data('unanon', data['unanon']);
                     $this.data('submitted', data['submitted']);
                 }
             });
@@ -604,6 +643,7 @@ jQuery(document).ready(function($) {
                 if( value.format("X") < moment().unix() && 
                     $(this).hasClass('editable_postdue') &&
                     $(this).data('anon') == 1 &&
+                    $(this).data('unanon') == 0 &&
                     $(this).data('submitted') == 1 )
                 {
                     if ( ! confirm(M.str.turnitintooltwo.disableanonconfirm)) { 
@@ -706,6 +746,7 @@ jQuery(document).ready(function($) {
                     getSubmissions(table, assignment_id, part_id, start, refresh_requested, result.total);
                 } else {
                     $('#'+part_id+"_processing").attr('style', 'visibility: hidden');
+                    $('#refreshing_' + part_id).hide();
                     $('#refresh_'+part_id).show();
                     enableEditingText(part_id);
                 }
@@ -841,7 +882,7 @@ jQuery(document).ready(function($) {
                         success: function(data) {
                             eval(data);
                             if (data.status == "success") {
-                                parent.$.fn.colorbox.close();
+                                $.colorbox.close()
                                 $('#submission_'+submission_id).attr('href', M.cfg.wwwroot+"/user/view.php?id="+data.userid+"&course="+data.courseid);
                                 $('#submission_'+submission_id).html(data.name);
                                 $('#submission_'+submission_id).removeClass('unanonymise cboxElement');
@@ -932,7 +973,7 @@ jQuery(document).ready(function($) {
                             var submission_ids = "";
                             var i = 0;
 
-                            $('.inbox_checkbox:checked').each(function(i){
+                            $('#tabs-' + part_id + ' .inbox_checkbox:checked').each(function(i){
                                 submission_ids += "&submission_id"+i+"="+$(this).val();
                                 i++;
                             });
@@ -952,6 +993,26 @@ jQuery(document).ready(function($) {
     function lightBoxCloseButton() {
         $('body').append('<div id="tii_close_bar"><a href="#" onclick="$.colorbox.close(); return false;">' + M.str.turnitintooltwo.closebutton + '</a></div>');
     }
+
+    function initialiseDigitalReceipt() {
+        if ($('.tii_digital_receipt').length > 0) {
+            $('.tii_digital_receipt').colorbox({
+                iframe:true, width:"832px", height:"482px", opacity: "0.7", className: "rubric_view", transition: "none",
+                onLoad: function() {
+                    lightBoxCloseButton();
+                    getLoadingGif();
+                },
+                onCleanup: function() {
+                    $('#tii_close_bar').remove();
+                    hideLoadingGif();
+                }
+            });
+        }
+    }
+
+    $('#tii_receipt_print').click(function() {
+        window.print();
+    });
 
     function initialiseHiddenZipDownloads(part_id) {
         // Unbind the event first to stop it being binded multiple times
@@ -1007,7 +1068,7 @@ jQuery(document).ready(function($) {
     function downloadZipFile(downloadtype, part_id) {
         var submission_ids = [];
         if (downloadtype == "origchecked_zip" || downloadtype == "gmpdf_zip") {
-            $('.inbox_checkbox:checked').each(function(i){
+            $('#tabs-' + part_id + ' .inbox_checkbox:checked').each(function(i){
                 submission_ids[i] = $(this).val();
             });
         }
@@ -1028,6 +1089,8 @@ jQuery(document).ready(function($) {
     // Open the document viewer within a frame in a new tab
     function openDV(dvtype, submission_id, part_id, user_id) {
         var proceed = true;
+
+        // Show resubmission grade warning.
         if ($('#grademark_'+submission_id+'_'+part_id+'_'+user_id).hasClass('graded_warning') && dvtype != 'downloadoriginal') {
             if (!confirm(M.str.turnitintooltwo.resubmissiongradewarn)) {
                 proceed = false;
@@ -1073,6 +1136,7 @@ jQuery(document).ready(function($) {
             success: function(data) {
                 eval(data);
                 $.cookie( 'submitnothingaccept', true, { expires: 365 } );
+                $('table#' + part_id + ' .select_all_checkbox').attr('checked', false);
             },
             error: function(data) {
                 $("#submitnothing_0_"+part_id+"_"+user_id+" img").attr('src','pix/icon-edit-grey.png');
@@ -1094,6 +1158,7 @@ jQuery(document).ready(function($) {
             data: {action: "refresh_submission_row", assignment: $('#assignment_id').html(),
                     part: part_id, user: user_id, sesskey: M.cfg.sesskey},
             success: function(data) {
+                $('table#' + part_id + ' .select_all_checkbox').attr('checked', false);
                 eval(data);
                 var i = 0;
                 if (submission_id == 0) {
@@ -1127,17 +1192,22 @@ jQuery(document).ready(function($) {
 
     // Show download links when checkboxes have been ticked
     function initialiseCheckboxes(submission_id, part_id) {
-        var identifier = 'input.inbox_checkbox';
+        var identifier = '#tabs-' + part_id + ' .inbox_checkbox';
         if (submission_id != 0) {
             identifier = 'check_'+submission_id;
         }
-        $(document).on('click', identifier, function() {
-            if ($('.inbox_checkbox:checked').length > 0) {
-                $('#zip_downloads').slideDown();
+
+        $('#tabs-' + part_id + ' .inbox_checkbox').click(function() {
+            $('table#' + part_id + ' .select_all_checkbox').attr('checked', false);
+        });
+
+        $(document).on('click', identifier + ', .select_all_checkbox', function() {
+            if ($('#tabs-' + part_id + ' .inbox_checkbox:checked').length > 0) {
+                $('#tabs-' + part_id + ' .zip_downloads').slideDown();
                 initialiseHiddenZipDownloads(part_id)
             } else {
                 $('#tabs-'+part_id+' .origchecked_zip_open').unbind('click');
-                $('#zip_downloads').slideUp();
+                $('#tabs-' + part_id + ' .zip_downloads').slideUp();
             }
         });
     }
@@ -1151,5 +1221,60 @@ jQuery(document).ready(function($) {
                 $('fieldset[id$="partdates'+i+'"]').slideUp();
             }
         }
+    }
+
+    $('.select_all_checkbox').on('click', function() {
+        var id = $(this).parent().parent().parent().parent().attr('id');
+
+        if ($(this).is(':checked')) {
+            if ( $('#' + id + ' .inbox_checkbox').length ) {
+                $('#tabs-' + id + ' .zip_downloads').slideDown();
+            }
+            $('#' + id + ' .inbox_checkbox').each(function() {
+                $(this).prop('checked', true);
+            });
+        } else {
+            $('#' + id + ' .inbox_checkbox').each(function() {
+                $(this).prop('checked', false);
+            });
+            if ( $('#' + id + ' .inbox_checkbox').length ) {
+                $('#tabs-' + id + ' .zip_downloads').slideUp();
+            }
+        }
+    });
+
+    // Settings page parts warning
+    $('[id^=fitem_id_dtpost] select').change(function() {
+        // Get part id from title
+        var dataEl = $(this).parent().parent().parent();
+        var post_date = buildUnixDate('#fitem_id_dtpost', dataEl.data('partId'));
+
+        if ( post_date < moment().unix() && dataEl.data('anon') == 1 && dataEl.data('unanon') == 0 && dataEl.data('submitted') == 1 ) {
+            alert(M.str.turnitintooltwo.anonalert);
+        }
+
+    });
+
+    var buildUnixDate = function(el, part_id) {
+        // option id's
+        var start = [ '_day', '_month', '_year', '_hour', '_minute' ];
+        
+        $this = $(el + part_id);
+
+        // build date:time string
+        var date = '';
+        $.each(start, function(k, v) {
+            date += $this.find('[id$=' + part_id + v + '] option:selected').text();
+            if (v === '_year') {
+                date += ' ';
+            } else if (v === '_hour') {
+                date += ':';
+            } else if ( v !== '_minute') {
+                date += '-';
+            }
+        });
+
+        // return converted moment object
+        return moment(date, "DD-MMMM-YYYY hh:mm").unix();
     }
 });

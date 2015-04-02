@@ -4,9 +4,47 @@
     Author     : John McGettrick
 */
 
+.ccheckbox {
+    text-align: center;
+    padding: 8px 10px 2px !important;
+}
+
+.tii_digital_receipt {
+    display: inline-block;
+    width: 150px;
+}
+#tii_digital_receipt_box {
+    padding: 20px;
+    background: #fff;
+}
+
+#tii_digital_receipt_box .generaltable {
+    width: 100%;
+}
+
+#tii_digital_receipt_box .logo {
+    display: block;
+    margin: 0 auto;
+}
+
+#tii_receipt_print {
+    text-align: right;
+    display: block;
+}
+
+#tii_digital_receipt_icon {
+    margin-top: -3px;
+    margin-right: 5px;
+}
+
 .mod_turnitintooltwo .submit_nothing img {
     padding-right: 8px;
     cursor: pointer;
+}
+
+.mod_turnitintooltwo .submission_form_container, .mod_turnitintooltwo .class_recreation, 
+.mod_turnitintooltwo #digital_receipt {
+    padding: 0 24px;
 }
 
 .mod_turnitintooltwo .row_score, .mod_turnitintooltwo .row_peermark_manager, .mod_turnitintooltwo .row_peermark_reviews {
@@ -18,24 +56,24 @@
     display:inline;
 }
 
-.mod_turnitintooltwo #zip_downloads {
+.mod_turnitintooltwo .zip_downloads {
     float:left;
     position:relative;
     top:4px;
     height:22px;
 }
 
-.mod_turnitintooltwo #zip_downloads img {
+.mod_turnitintooltwo .zip_downloads img {
     position:relative;
     top:4px;
     left:-2px;
 }
 
-.mod_turnitintooltwo #zip_downloads a.gmpdfzip_box {
+.mod_turnitintooltwo .zip_downloads a.gmpdfzip_box {
     padding-left:16px;
 }
 
-.mod_turnitintooltwo #zip_downloads div.origchecked_zip_open {
+.mod_turnitintooltwo .zip_downloads div.origchecked_zip_open {
     padding-left:16px;
 }
 
@@ -46,7 +84,7 @@
 .mod_turnitintooltwo .hidden_class, .mod_turnitintooltwo #user_role, .mod_turnitintooltwo .launch_form, 
 .mod_turnitintooltwo #useragreement_form form, .mod_turnitintooltwo #assignment_id, .mod_turnitintooltwo #course_id, 
 .mod_turnitintooltwo #submission_id, .mod_turnitintooltwo #tii_course_id, .mod_turnitintooltwo #tii_course_name, 
-.mod_turnitintooltwo .enrolling_container, .mod_turnitintooltwo #zip_downloads, .mod_turnitintooltwo #view_context, 
+.mod_turnitintooltwo .enrolling_container, .mod_turnitintooltwo .zip_downloads, .mod_turnitintooltwo #view_context, 
 .mod_turnitintooltwo #inbox_form, .mod_turnitintooltwo .unanonymise_form, .mod_turnitintooltwo .edit_course_end_date_form, 
 .mod_turnitintooltwo #course_category, .mod_turnitintooltwo #class_ids, .mod_turnitintooltwo #create_assignments,
 .mod_turnitintooltwo .row_peermark_reviews, .mod_turnitintooltwo .peermark_instructions, 
@@ -204,6 +242,10 @@
     width:100%;
 }
 
+.mod_turnitintooltwo .submissionsDataTable a {
+    text-decoration: none;
+}
+
 .mod_turnitintooltwo .score_colour {
     background-image:url(../pix/gradback.jpg);
     width:36px;
@@ -266,20 +308,22 @@ body[class*='-moodle23'] .mod_turnitintooltwo  .centered_cb_cell input {
 }
 
 .mod_turnitintooltwo .enrol_link, .mod_turnitintooltwo .enrolling_container, 
-.mod_turnitintooltwo .refresh_link, .mod_turnitintooltwo .messages_inbox {
+.mod_turnitintooltwo .refresh_link, .mod_turnitintooltwo .refreshing_link, .mod_turnitintooltwo .messages_inbox {
     float:right;
+    width: 190px;
 }
 
 .mod_turnitintooltwo .messages_inbox {
     text-decoration: none;
     padding: 2px 4px 6px 0px;
+    width: 215px;
 }
 
 .mod_turnitintooltwo .enrol_link {
     padding: 6px 18px 0 0;
 }
 
-.mod_turnitintooltwo .refresh_link {
+.mod_turnitintooltwo .refresh_link, .mod_turnitintooltwo .refreshing_link {
     padding: 2px 16px 0 12px;
 }
 
@@ -287,7 +331,7 @@ body[class*='-moodle23'] .mod_turnitintooltwo  .centered_cb_cell input {
     padding: 4px 18px 0 0;
 }
 
-.mod_turnitintooltwo .refresh_link img, .mod_turnitintooltwo .enrol_link img, 
+.mod_turnitintooltwo .refresh_link img, .mod_turnitintooltwo .refreshing_link img, .mod_turnitintooltwo .enrol_link img, 
 .mod_turnitintooltwo .enrolling_container img, .mod_turnitintooltwo .messages_inbox img {
     position: relative;
     top:4px;
@@ -422,7 +466,7 @@ h3.main {
 }
 
 .mod_turnitintooltwo noscript.warning, .mod_turnitintooltwo .library_not_present_warning,
-.mod_turnitintooltwo .general_warning {
+.mod_turnitintooltwo .general_warning, .mod_turnitintooltwo #error {
     border: 1px solid #CC0000;
     padding: 8px;
     background: #FFE9E8;
@@ -430,6 +474,21 @@ h3.main {
     text-align:center;
     display:block;
     margin-bottom:6px;
+}
+
+.mod_turnitintooltwo #error {
+    margin-left:24px;
+    margin-right:24px;
+    width:96%;
+}
+
+.mod_turnitintooltwo .submission_failure_msg, .mod_turnitintooltwo .box_receipt {
+    padding: 16px;
+}
+
+.mod_turnitintooltwo .submission_failure_msg .general_warning {
+    margin-top: 16px;
+    width: auto;
 }
 
 .mod_turnitintooltwo #enrolling_error {
@@ -634,7 +693,6 @@ h3.main {
 }
 
 #page-admin-setting-modsettingturnitintooltwo #test_link, #page-admin-setting-modsettingturnitintooltwo #testing_container {
-    float:left;
     margin-bottom:8px;
 }
 
@@ -644,9 +702,9 @@ h3.main {
 }
 
 #page-admin-setting-modsettingturnitintooltwo #test_result {
-    float:left;
     margin: 4px 0 0;
-    padding:2px 6px;
+    padding: 5px 10px;
+    width: 300px;
 }
 
 #page-admin-setting-modsettingturnitintooltwo .test_link_success {
@@ -666,6 +724,18 @@ h3.main {
 #page-admin-setting-modsettingturnitintooltwo #testing_container img {
     position: relative;
     top:2px;
+}
+
+#page-admin-setting-modsettingturnitintooltwo fieldset.error div.form-item {
+    border: 1px solid red;
+    padding-top: 12px;
+    background-color: #F2DEDE;
+    border-color: #EED3D7;
+}
+
+#page-admin-setting-modsettingturnitintooltwo fieldset.error div.form-item,
+#page-admin-setting-modsettingturnitintooltwo fieldset.error div.form-description {
+    color: #B94A48;
 }
 
 .mod_turnitintooltwo .tabtree {

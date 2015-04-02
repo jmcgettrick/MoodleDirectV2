@@ -1,3 +1,41 @@
+### Date:       2015-April-01
+### Release:    v2015040101
+
+- Inputting API URL is now actioned via a select box.
+- Old files removed from files table in Plagiarism plugin if no longer part of a submission.
+- Updating part names in inbox edits the part tab straightaway.
+- Turnitin connection can be tested without having to save first.
+- Student can now view digital receipt now from inbox.
+- Anonymous marking explanation added to Plagiarism plugin settings.
+- Test connection call in Plagiarism plugin cron changed to be static.
+- Index on submission_objectid added to turnitintooltwo_submissions table.
+- Locks added to Plagiarism plugin defaults. (Thanks to Brendan Heywood).
+- Select all option added to Turnitin Assignment inbox.
+- Fixes:
+	- Modals reworked to use embedded template and handle Turnitin errors without showing theme.
+	- Help text corrected in Turnitin Assignment.
+	- Account Id is trimmed when saved in configuration.
+	- File downloads through settings area.
+	- Updating module name in course page no longer creates duplicate event.
+	- Course participation report in 2.6 no longer throws error.
+	- Anonymous Marking close box closes. (Thanks to Dr. Joseph Baxter).
+	- Incorrect variable name in Settings changed. (Thanks to Trevor Cunningham).
+	- Pending OR scores no longer launch DV.
+	- Instructors can submit to a Turnitin Assignment after the due date.
+	- Include paths consiolidated. (Thanks to eviweb).
+	- If disclaimer is enabled, then the student can not click submit until they have checked the disclaimer.
+	- Only allow Plagiarism plugin modules to have a due date one year ahead when created in Turnitin.
+	- Unnecessary PeerMark refreshing removed and print_overview reworked. (Thanks to Dr. Joseph Baxter).
+	- Overall grades not displayed to students until last post date has passed.
+	- When DV closes in Plagiarism plugin and Turnitin Assignment, all modified grades are updated.
+	- Anonymous marking can no longer be turned on and off if a submission has been made.
+	- User given warning when attempting to move post date on an Anonymous marking assignment.
+	- Spinner added when refreshing submissions in Turnitin Assignment.
+	- Refresh submissions button added to Plagiarism plugin settings.
+	- Empty resubmission can no longer be sent.
+
+---
+
 ### Date:       2015-February-23
 ### Release:    v2014012413
 

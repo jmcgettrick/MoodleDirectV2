@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(dirname(__FILE__)) . '/../config.php');
+require_once(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/plagiarismlib.php');
 require_once($CFG->dirroot.'/mod/turnitintooltwo/lib.php');
-require_once($CFG->dirroot.'/plagiarism/turnitin/lib.php');
+require_once(__DIR__.'/lib.php');
+require_once(__DIR__."/turnitinplugin_view.class.php");
 
-require_once("turnitinplugin_view.class.php");
 $turnitinpluginview = new turnitinplugin_view();
 
 require_login();
@@ -74,7 +74,7 @@ if (!empty($action)) {
                 }
             }
 
-            // Allow Turnitin to be on for Individual modules. 
+            // Allow Turnitin to be on for Individual modules.
             foreach ($supported_mods as $mod) {
                 $turnitinuse = ($CFG->branch > 23) ? optional_param('turnitin_use_mod_'.$mod, 0, PARAM_INT) : 1;
                 $turnitinuse = ($turnitinoveralluse == 0) ? 0 : $turnitinuse;
@@ -100,13 +100,24 @@ if (!empty($action)) {
             break;
 
         case "defaults":
-            $settingsfields = $plagiarismpluginturnitin->get_settings_fields();
+            $fields = $plagiarismpluginturnitin->get_settings_fields();
+
+            $settingsfields = array();
+            foreach ($fields as $field) {
+                array_push($settingsfields, $field);
+                array_push($settingsfields, $field . '_lock');
+            }
+            array_push($settingsfields, 'plagiarism_locked_message');
 
             foreach ($settingsfields as $field) {
                 $defaultfield = new object();
                 $defaultfield->cm = 0;
                 $defaultfield->name = $field;
-                $defaultfield->value = optional_param($field, '', PARAM_ALPHANUMEXT);
+                if ($field == 'plagiarism_locked_message'){
+                    $defaultfield->value = optional_param($field, '', PARAM_TEXT);
+                } else {
+                    $defaultfield->value = optional_param($field, '', PARAM_ALPHANUMEXT);
+                }
 
                 if (isset($plugindefaults[$field])) {
                     $defaultfield->id = $DB->get_field('plagiarism_turnitin_config', 'id',

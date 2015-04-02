@@ -19,9 +19,9 @@
  * @copyright 2012 iParadigms LLC *
  */
 
-require_once($CFG->dirroot . '/mod/turnitintooltwo/turnitintooltwo_comms.class.php');
-require_once($CFG->dirroot . '/mod/turnitintooltwo/turnitintooltwo_user.class.php');
-require_once($CFG->dirroot . '/mod/turnitintooltwo/turnitintooltwo_submission.class.php');
+require_once(__DIR__.'/turnitintooltwo_comms.class.php');
+require_once(__DIR__.'/turnitintooltwo_user.class.php');
+require_once(__DIR__.'/turnitintooltwo_submission.class.php');
 
 class turnitintooltwo_assignment {
 
@@ -868,7 +868,7 @@ class turnitintooltwo_assignment {
         }
 
         // Define grade settings.
-        @include_once($CFG->dirroot . "/lib/gradelib.php");
+        @include_once($CFG->libdir . "/gradelib.php");
         $params = array('deleted' => 1);
         grade_update('mod/turnitintooltwo', $turnitintooltwo->course, 'mod', 'turnitintooltwo', $id, 0, null, $params);
 
@@ -934,13 +934,16 @@ class turnitintooltwo_assignment {
      * Get the assignment parts for this assignment
      *
      * @global type $DB
+     * @param bool $peermarks get peer mark assignments
      * @return array Returns the parts or empty array if no parts are found
      */
-    public function get_parts() {
+    public function get_parts($peermarks = true) {
         global $DB;
         if ($parts = $DB->get_records("turnitintooltwo_parts", array("turnitintooltwoid" => $this->turnitintooltwo->id))) {
-            foreach ($parts as $part) {
-                $parts[$part->id]->peermark_assignments = $this->get_peermark_assignments($part->tiiassignid);
+            if ($peermarks) {
+                foreach ($parts as $part) {
+                    $parts[$part->id]->peermark_assignments = $this->get_peermark_assignments($part->tiiassignid);
+                }
             }
             return $parts;
         } else {
@@ -1052,44 +1055,41 @@ class turnitintooltwo_assignment {
                 break;
 
             case "dtstart":
-            case "dtdue":
-            case "dtpost":
-                switch ($fieldname) {
-                    case "dtstart":
-                        if ($fieldvalue <= strtotime('1 year ago')) {
-                            $return['success'] = false;
-                            $return['msg'] = get_string('startdatenotyearago', 'turnitintooltwo');
-                        } else if ($fieldvalue >= $partdetails->dtdue) {
-                            $return['success'] = false;
-                            $return['msg'] = get_string('partdueerror', 'turnitintooltwo');
-                        } else if ($fieldvalue > $partdetails->dtpost) {
-                            $return['success'] = false;
-                            $return['msg'] = get_string('partposterror', 'turnitintooltwo');
-                        }
-
-                        $setmethod = "setStartDate";
-                        break;
-
-                    case "dtdue":
-                        if ($fieldvalue <= $partdetails->dtstart) {
-                            $return['success'] = false;
-                            $return['msg'] = get_string('partdueerror', 'turnitintooltwo');
-                        }
-
-                        $setmethod = "setDueDate";
-                        break;
-
-                    case "dtpost":
-                        if ($fieldvalue < $partdetails->dtstart) {
-                            $return['success'] = false;
-                            $return['msg'] = get_string('partposterror', 'turnitintooltwo');
-                        }
-
-                        $setmethod = "setFeedbackReleaseDate";
-
-                        break;
+                if ($fieldvalue <= strtotime('1 year ago')) {
+                    $return['success'] = false;
+                    $return['msg'] = get_string('startdatenotyearago', 'turnitintooltwo');
+                } else if ($fieldvalue >= $partdetails->dtdue) {
+                    $return['success'] = false;
+                    $return['msg'] = get_string('partdueerror', 'turnitintooltwo');
+                } else if ($fieldvalue > $partdetails->dtpost) {
+                    $return['success'] = false;
+                    $return['msg'] = get_string('partposterror', 'turnitintooltwo');
                 }
-                $assignment->$setmethod(gmdate("Y-m-d\TH:i:s\Z", $fieldvalue));
+
+                $assignment->setStartDate(gmdate("Y-m-d\TH:i:s\Z", $fieldvalue));
+                break;
+
+            case "dtdue":
+                if ($fieldvalue <= $partdetails->dtstart) {
+                    $return['success'] = false;
+                    $return['msg'] = get_string('partdueerror', 'turnitintooltwo');
+                }
+
+                $assignment->setDueDate(gmdate("Y-m-d\TH:i:s\Z", $fieldvalue));
+                break;
+
+            case "dtpost":
+                if ($fieldvalue < $partdetails->dtstart) {
+                    $return['success'] = false;
+                    $return['msg'] = get_string('partposterror', 'turnitintooltwo');
+                }
+
+                // Disable anonymous marking in Moodle if the post date has passed.
+                if ($this->turnitintooltwo->anon && $partdetails->submitted == 1 && $fieldvalue < time()) {
+                    $partdetails->unanon = 1;
+                }
+
+                $assignment->setFeedbackReleaseDate(gmdate("Y-m-d\TH:i:s\Z", $fieldvalue));
                 break;
         }
 
@@ -1143,9 +1143,10 @@ class turnitintooltwo_assignment {
      *
      * @global type $USER
      * @global type $DB
+     * @param boolean $createevent - setting to determine whether to create a calendar event.
      * @return boolean
      */
-    public function edit_moodle_assignment() {
+    public function edit_moodle_assignment($createevent = true) {
         global $USER, $DB, $CFG;
 
         $config = turnitintooltwo_admin_config();
@@ -1213,9 +1214,6 @@ class turnitintooltwo_assignment {
             $assignment->setQuotedExcluded($this->turnitintooltwo->excludequoted);
             $assignment->setSmallMatchExclusionType($this->turnitintooltwo->excludetype);
             $assignment->setSmallMatchExclusionThreshold((int) $this->turnitintooltwo->excludevalue);
-            if ($config->useanon) {
-                $assignment->setAnonymousMarking($this->turnitintooltwo->anon);
-            }
             $assignment->setLateSubmissionsAllowed($this->turnitintooltwo->allowlate);
             if ($config->repositoryoption == 1) {
                 $assignment->setInstitutionCheck((isset($this->turnitintooltwo->institution_check)) ?
@@ -1252,9 +1250,25 @@ class turnitintooltwo_assignment {
             $attribute = "partname".$i;
             $assignment->setTitle($this->turnitintooltwo->name." ".$this->turnitintooltwo->$attribute." (Moodle TT)");
 
+            // Initialise part.
+            $part = new stdClass();
+            $part->turnitintooltwoid = $this->id;
+            $part->partname = $this->turnitintooltwo->$attribute;
+            $part->deleted = 0;
+            $part->maxmarks = $assignment->getMaxGrade();
+            $part->dtstart = strtotime($assignment->getStartDate());
+            $part->dtdue = strtotime($assignment->getDueDate());
+            $part->dtpost = strtotime($assignment->getFeedbackReleaseDate());
+
             $parttiiassignid = 0;
             if ($i <= count($partids) && !empty($partids[$i - 1])) {
                 $partdetails = $this->get_part_details($partids[$i - 1]);
+                $part->submitted = $partdetails->submitted;
+                $part->unanon = $partdetails->unanon;
+                // Set anonymous marking depending on whether part has been unanonymised.
+                if ($config->useanon && $partdetails->unanon != 1) {
+                    $assignment->setAnonymousMarking($this->turnitintooltwo->anon);
+                }
                 $parttiiassignid = $partdetails->tiiassignid;
             }
 
@@ -1263,17 +1277,15 @@ class turnitintooltwo_assignment {
                 $this->edit_tii_assignment($assignment);
             } else {
                 $parttiiassignid = $this->create_tii_assignment($assignment, $this->id, $i);
+                $part->submitted = 0;
             }
 
-            $part = new stdClass();
-            $part->tiiassignid = $parttiiassignid;
-            $part->turnitintooltwoid = $this->id;
-            $part->partname = $this->turnitintooltwo->$attribute;
-            $part->deleted = 0;
-            $part->maxmarks = $assignment->getMaxGrade();
-            $part->dtstart = strtotime($assignment->getStartDate());
-            $part->dtdue = strtotime($assignment->getDueDate());
-            $part->dtpost = strtotime($assignment->getFeedbackReleaseDate());
+            $part->tiiassignid = $parttiiassignid;            
+
+            // Unanonymise part if necessary.
+            if ($part->dtpost < time() && $part->submitted == 1) {
+                $part->unanon = 1;
+            }
 
             $properties = new stdClass();
             $properties->name = $this->turnitintooltwo->name.' - '.$part->partname;
@@ -1306,7 +1318,7 @@ class turnitintooltwo_assignment {
                 // Delete existing events for this assignment part.
                 $eventname = $turnitintooltwonow->name." - ".$partnow->partname;
                 $DB->delete_records_select('event', " modulename = 'turnitintooltwo' AND instance = ? AND name = ? ",
-                                            array($this->id, $eventname));
+                                              array($this->id, $eventname));
             } else {
                 if (!$dbpart = $DB->insert_record('turnitintooltwo_parts', $part)) {
                     turnitintooltwo_print_error('partdberror', 'turnitintooltwo', null, $i, __FILE__, __LINE__);
@@ -1314,9 +1326,11 @@ class turnitintooltwo_assignment {
                 }
             }
 
-            require_once($CFG->dirroot.'/calendar/lib.php');
-            $event = new calendar_event($properties);
-            $event->update($properties, false);
+            if ($createevent == true) {
+                require_once($CFG->dirroot.'/calendar/lib.php');
+                $event = new calendar_event($properties);
+                $event->update($properties, false);
+            }
         }
 
         $this->turnitintooltwo->timemodified = time();
@@ -1350,10 +1364,10 @@ class turnitintooltwo_assignment {
      * @param int $userid
      * @return array of parts or empty array if there are none
      */
-    public function get_parts_available_to_submit($userid = 0) {
+    public function get_parts_available_to_submit($userid = 0, $istutor = null) {
         global $DB;
 
-        if ($this->turnitintooltwo->allowlate == 1) {
+        if ($this->turnitintooltwo->allowlate == 1 || $istutor) {
             $partsavailable = $DB->get_records_select('turnitintooltwo_parts', " turnitintooltwoid = ? AND dtstart < ? ",
                                         array($this->turnitintooltwo->id, time()));
         } else {
@@ -1552,7 +1566,6 @@ class turnitintooltwo_assignment {
                         $assignmentdetails->timemodified = time();
                         $assignmentdetails->intro = $readassignment->getInstructions();
                     }
-                    $assignmentdetails->anon = (int)$readassignment->getAnonymousMarking();
                     $assignmentdetails->allowlate = $readassignment->getLateSubmissionsAllowed();
                     $assignmentdetails->reportgenspeed = $readassignment->getResubmissionRule();
                     $assignmentdetails->submitpapersto = $readassignment->getSubmitPapersTo();

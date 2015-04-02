@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/turnitintooltwo/db" VERSION="20150211" COMMENT="XMLDB file for Moodle mod/turnitintooltwo"
+<XMLDB PATH="mod/turnitintooltwo/db" VERSION="20150401" COMMENT="XMLDB file for Moodle mod/turnitintooltwo"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
        >
@@ -74,7 +74,9 @@
                 <FIELD NAME="dtpost" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="dtdue" NEXT="maxmarks"/>
                 <FIELD NAME="maxmarks" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="dtpost" NEXT="deleted"/>
                 <FIELD NAME="deleted" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="maxmarks" NEXT="migrated"/>
-                <FIELD NAME="migrated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" PREVIOUS="deleted"/>
+                <FIELD NAME="migrated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" PREVIOUS="deleted" NEXT="unanon"/>
+                <FIELD NAME="unanon" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" PREVIOUS="migrated" NEXT="submitted"/>
+                <FIELD NAME="submitted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" UNSIGNED="true" SEQUENCE="false" PREVIOUS="unanon"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
@@ -149,7 +151,8 @@
             </KEYS>
             <INDEXES>
                 <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="turnitintooltwoid"/>
-                <INDEX NAME="turnitintooltwoid" UNIQUE="false" FIELDS="turnitintooltwoid" PREVIOUS="userid"/>
+                <INDEX NAME="turnitintooltwoid" UNIQUE="false" FIELDS="turnitintooltwoid" PREVIOUS="userid" NEXT="submission_objectid"/>
+                <INDEX NAME="submission_objectid" UNIQUE="false" FIELDS="submission_objectid" PREVIOUS="turnitintooltwoid"/>
             </INDEXES>
         </TABLE>
         <TABLE NAME="turnitintooltwo_peermarks" COMMENT="Turnitin Tools Peermark Assignments" PREVIOUS="turnitintooltwo_submissions">

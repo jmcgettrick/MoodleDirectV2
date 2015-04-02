@@ -15,22 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   turnitintooltwo
- * @copyright 2012 iParadigms LLC
+ * @package   plagiarism_turnitin
+ * @copyright 2012 iParadigms LLC *
  */
 
-$module->version   = 2015040101;  // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2012062500;
-$module->component = 'mod_turnitintooltwo';
-$module->maturity  = MATURITY_STABLE;
-$module->cron      = 1800;        // Period for cron to check this module in seconds
+// TODO: Split out module specific code from plagiarism/turnitin/lib.php
+class turnitin_assign {
 
-if (empty($plugin)) {
-	$plugin = new StdClass();
 }
-
-$plugin->version   = 2015040101;  // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2012062500;
-$plugin->component = 'mod_turnitintooltwo';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->cron      = 1800;        // Period for cron to check this module in seconds
