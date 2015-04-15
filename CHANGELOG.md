@@ -1,3 +1,11 @@
+### Date:       2015-April-15
+### Release:    v2015040102
+
+- Fixes:
+	- Fix continuous test connection that was impacting PP EULA.
+
+---
+
 ### Date:       2015-April-01
 ### Release:    v2015040101
 
