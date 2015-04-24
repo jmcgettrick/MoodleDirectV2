@@ -394,27 +394,6 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         return $output;
     }
 
-    private function get_max_files_allowed($moduleid, $modname) {
-        global $DB;
-        $filesallowed = 1;
-        switch($modname) {
-            case "assign":
-                $moduledata = $DB->get_record('assign_plugin_config',
-                                array('assignment' => $moduleid, 'name' => 'maxfilesubmissions'), 'value');
-                $filesallowed = $moduledata->value;
-                break;
-            case "forum":
-                $moduledata = $DB->get_record($modname, array('id' => $moduleid), 'maxattachments');
-                $filesallowed = $moduledata->maxattachments;
-                break;
-            case "workshop":
-                $moduledata = $DB->get_record($modname, array('id' => $moduleid), 'nattachments');
-                $filesallowed = $moduledata->nattachments;
-                break;
-        }
-
-        return $filesallowed;
-    }
 
     /**
      *
@@ -975,7 +954,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                     } else if ($plagiarismfile->statuscode == 'error') {
 
                         // Deal with legacy error issues.
-                        if (isset($plagiarismfile->errorcode)) {
+                        if (!isset($plagiarismfile->errorcode)) {
                             $errorcode = 0;
                             if ($submissiontype == 'file') {
                                 if ($file->get_filesize() > TURNITINTOOLTWO_MAX_FILE_UPLOAD_SIZE) {
@@ -999,7 +978,13 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                         $erroricon = html_writer::tag('div', $OUTPUT->pix_icon('x-red', $errorstring, 'mod_turnitintooltwo'),
                                                                 array('title' => $errorstring,
                                                                         'class' => 'tii_tooltip tii_error_icon'));
-                        $output .= html_writer::tag('div', $erroricon, array('class' => 'clear'));
+
+                        // If logged in as a student, attach error text after icon.
+                        if (!$istutor) {
+                            $output .= html_writer::tag('div', $erroricon.' '.$errorstring, array('class' => 'warning clear'));
+                        } else {
+                            $output .= html_writer::tag('div', $erroricon, array('class' => 'clear'));
+                        }
                     }
 
                 } else {
@@ -1643,12 +1628,26 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
      * Call functions to be run by cron
      */
     public function cron() {
-        $this->cron_update_assignments();
+
+        // Catch exceptions so entire Moodle cron does not fail.
+        // If some action in the cron_update_assignments() call fails
+        // this ensures that the entire cron run does not fail.
+        try {
+            $this->cron_update_assignments();
+        } catch (Exception $ex) {
+            error_log("Exception in TII cron while updating assigments: ".$ex);
+            mtrace("Exception in TII cron while updating assigments: ".$ex);
+        }
 
         // Update scores by separate submission type.
         $submissiontypes = array('file', 'text_content', 'forum_post');
         foreach ($submissiontypes as $submissiontype) {
-            $this->cron_update_scores($submissiontype);
+            try {
+                $this->cron_update_scores($submissiontype);
+            } catch (Exception $ex) {
+                error_log("Exception in TII cron while updating scores for '$submissiontype' submission types: ".$ex);
+                mtrace("Exception in TII cron while updating scores for '$submissiontype' submission types: ".$ex);
+            }
         }
         return true;
     }
@@ -2263,7 +2262,6 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         global $CFG, $DB, $USER;
 
         $settings = $this->get_settings($cm->id);
-        $nooffilesallowed = $this->get_max_files_allowed($cm->instance, $cm->modname);
 
         // Do not submit if 5 attempts have been made previously.
         $previoussubmissions = $DB->get_records_select('plagiarism_turnitin_files',
@@ -2462,8 +2460,8 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         // content is less than 20 words or 100 characters.
         if ($submissiontype != 'file') {
             $content = explode(' ', $textcontent);
-            if ($settings['plagiarism_allow_non_or_submissions'] != 1 &&
-                    (strlen($textcontent) < 100 || count($content) < 20)) {
+            if (($settings['plagiarism_allow_non_or_submissions'] != 1 &&
+                    (strlen($textcontent) < 100 || count($content) < 20)) || empty($textcontent)) {
                 $plagiarismfile = new object();
                 if ($submissionid != 0) {
                     $plagiarismfile->id = $submissionid;
