@@ -1,6 +1,6 @@
 <?php
 /**
- * @package   turnitintooltwo
+ * @package   plagiarismplugin
  * @copyright 2010 iParadigms LLC
  */
 
