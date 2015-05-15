@@ -362,7 +362,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
                 // Moodle strips out form and script code for forum posts so we have to do the Eula Launch differently.
                 $ula_link = html_writer::link($CFG->wwwroot.'/plagiarism/turnitin/extras.php?cmid='.$cmid.'&cmd=useragreement&view_context=box_solid',
-                                        get_string('turnitinppula', 'turnitintooltwo'),
+                                        get_string('turnitinppulapre', 'turnitintooltwo'),
                                         array("class" => "pp_turnitin_eula_link"));
 
                 $eulaignoredclass = ($eulaaccepted == 0) ? ' pp_turnitin_ula_ignored' : '';
@@ -371,7 +371,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
 
                 $noscriptula = html_writer::tag('noscript',
                                 turnitintooltwo_view::output_dv_launch_form("useragreement", 0, $user->tii_user_id,
-                                    "Learner", get_string('turnitinppula', 'turnitintooltwo'), false)." ".
+                                    "Learner", get_string('turnitinppulapre', 'turnitintooltwo'), false)." ".
                                         get_string('noscriptula', 'turnitintooltwo'),
                                             array('class' => 'warning turnitin_ula_noscript'));
             }
@@ -689,19 +689,23 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 // Condition added to test for Moodle 2.7 as it calls this function twice.
                 if ($CFG->branch >= 27 || $userid != $linkarray["userid"]) {
                     // Show EULA if necessary and we have a connection to Turnitin.
+                    static $eulashown;
+                    if (empty($eulashown)) {
+                        $eulashown = false;
+                    }
 
                     $user = new turnitintooltwo_user($USER->id, "Learner");
                     $success = $user->join_user_to_class($coursedata->turnitin_cid);
 
                     // $success is false if there is no Turnitin connection and null if user has previously been enrolled.
-                    if (is_null($success) || $success === true) {
+                    if ((is_null($success) || $success === true) && $eulashown == false) {
                         $eulaaccepted = ($user->user_agreement_accepted == 0) ? $user->get_accepted_user_agreement() : $user->user_agreement_accepted;
                         $userid = $linkarray["userid"];
 
                         if ($eulaaccepted != 1) {
                             $eula_link = html_writer::link($CFG->wwwroot.'/plagiarism/turnitin/extras.php?cmid='.$linkarray["cmid"].
                                     '&cmd=useragreement&view_context=box_solid',
-                                    get_string('turnitinppula', 'turnitintooltwo'),
+                                    get_string('turnitinppulapost', 'turnitintooltwo'),
                                     array("class" => "pp_turnitin_eula_link"));
 
                             $eula = html_writer::tag('div', $eula_link, array('class' => 'pp_turnitin_ula js_required', 'data-userid' => $user->id));
@@ -720,6 +724,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                             $eulaform = new turnitintooltwo_form($turnitincall->getApiBaseUrl().TiiLTI::EULAENDPOINT, $customdata,
                                     'POST', $target = 'eulaWindow', array('id' => 'eula_launch'));
                             $output .= $OUTPUT->box($eulaform->display(), 'tii_useragreement_form', 'useragreement_form');
+                            $eulashown = true;
                         }
                     } else {
                         $submitting = false;
