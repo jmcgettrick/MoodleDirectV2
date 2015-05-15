@@ -562,9 +562,10 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 $submitting = ($submission_status) ? true : false;
 
                 // Get plagiarism file info to check if file was previously submitted and has been modified.
-                $plagiarismfile = $DB->get_record_select('plagiarism_turnitin_files',
+                $plagiarismfiles = $DB->get_records_select('plagiarism_turnitin_files',
                                         " userid = ? AND cm = ? AND identifier = ? AND submissiontype = '".$submissiontype."' ",
                                             array($linkarray["userid"], $linkarray["cmid"], $identifier));
+                $plagiarismfile = end($plagiarismfiles);
 
                 if (!empty($plagiarismfile)) {
                     $submitting = ($file->get_timemodified() > $plagiarismfile->lastmodified) ? $submitting : false;
@@ -826,7 +827,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                     }
                 }
 
-                if ($plagiarismfile) {
+                if ($plagiarismfile && (!$submitting || !$submission_status)) {
                     if ($plagiarismfile->statuscode == 'success') {
                         if ($istutor || $linkarray["userid"] == $USER->id) {
                             $output .= html_writer::tag('div',
@@ -2362,10 +2363,11 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                 }
 
                 // Get submission method depending on whether there has been a previous submission.
+                $submissionfields = 'id, cm, externalid, identifier, statuscode, lastmodified, attempt, errorcode';
                 if ($previoussubmission = $DB->get_record_select('plagiarism_turnitin_files',
                                                     " cm = ? AND userid = ? AND submissiontype = ? AND identifier = ? ",
                                                 array($cm->id, $user->id, $submissiontype, $identifier),
-                                                    'id, cm, externalid, identifier, statuscode, lastmodified, attempt', 0, 1)) {
+                                                    $submissionfields, 0, 1)) {
 
                     $errorcode = (int)$previoussubmission->errorcode;
 
