@@ -4,6 +4,100 @@
     Author     : John McGettrick
 */
 
+.ui-widget-header {
+    background: #EFEFEF !important;
+    border: 0 !important;
+}
+
+.messages_loading_span {
+    float: none !important;
+    margin: 0 !important;
+}
+
+.listbar-container {
+    display: table;
+    width: 100%;
+}
+
+.listbar {
+    background: #fff;
+    border: 1px solid #EFEFEF;
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.listbar label,
+.listbar input,
+.listbar select {
+    margin: 0;
+}
+
+.listbar select,
+.listbar input {
+    height: 30px;
+    padding: 0 5px;
+    border: 1px solid #EFEFEF;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.clearfix:after { 
+   content: "."; 
+   visibility: hidden; 
+   display: block; 
+   height: 0; 
+   clear: both;
+}
+
+.messages_inbox {
+    float: right;
+    margin-left: 30px;
+    padding: 5px 0;
+}
+
+.messages_inbox .smallicon {
+    vertical-align: middle;
+}
+
+.refresh_link,
+.refreshing_link {
+    float: right;
+    margin-left: 30px;
+    padding: 5px 0;
+    width: 195px;
+}
+
+.dataTables_filter {
+    float: right !important;
+    text-align: left !important;
+}
+
+.dataTables_length {
+    float: left !important;
+}
+
+.dataTables_paginate a {
+    display: inline-block;
+    border: 1px solid #EFEFEF;
+    padding: 2px 5px;
+}
+
+.dataTables_paginate .current {
+    background: #EFEFEF;
+}
+
+.dataTables_paginate span a {
+    border-right: 0;
+}
+
+.dataTables_paginate .previous {
+    border-right: 0;
+}
+
 .ccheckbox {
     text-align: center;
     padding: 8px 10px 2px !important;
@@ -94,7 +188,7 @@
 #page-admin-setting-modsettingturnitintooltwo .tii_upgrading_check, #page-admin-setting-modsettingturnitintooltwo #test_link, 
 #page-admin-setting-modsettingturnitintooltwo #test_result, #page-admin-setting-modsettingturnitintooltwo .test_connection, 
 #page-admin-setting-modsettingturnitintooltwo #testing_container, .mod_turnitintooltwo .peermark_loading, 
-.mod_turnitintooltwo .messages_loading, .mod_turnitintooltwo #tii_table_functions, .mod_turnitintooltwo .refresh_row .fa-spinner, 
+.mod_turnitintooltwo .messages_loading, .mod_turnitintooltwo .tii_table_functions, .mod_turnitintooltwo .refresh_row .fa-spinner, 
 .mod_turnitintooltwo #enrolling_error, .mod_turnitintooltwo .dv_url {
     display:none;
 }
@@ -134,7 +228,7 @@
 
 .mod_turnitintooltwo .introduction, .mod_turnitintooltwo .peermark_instructions {
     padding: 6px 10px;
-    border-bottom: 1px solid #999999;
+    border-bottom: 1px solid #EFEFEF;
     display:none;
 }
 
@@ -173,16 +267,20 @@
     font-size: 13px;
     margin-bottom:0px;
     width:100%;
-    border: 1px solid #999999;
+    border: 1px solid #EFEFEF;
 }
 
 .mod_turnitintooltwo .partDetails th {
     padding: 6px 12px 6px;
-    border-bottom: 1px solid #999999;
+    border-bottom: 1px solid #EFEFEF;
+}
+
+table.dataTable thead th {
+    border-bottom: 0 !important;
 }
 
 .mod_turnitintooltwo .partDetails td {
-    border: 1px solid #999999;
+    border: 1px solid #EFEFEF;
     border-top: 0;
     padding: 12px 12px 4px;
 }
@@ -221,7 +319,7 @@
 }
 
 .mod_turnitintooltwo .peermark_assignments_container {
-    border-top: 1px solid #999999;
+    border-top: 1px solid #EFEFEF;
 }
 
 .mod_turnitintooltwo .peermark_assignments_cell .peermarkDetails td.lastcol {
@@ -234,7 +332,7 @@
 
 .mod_turnitintooltwo td a.editable-click {
     border:none;
-    background:url(../pix/edit.png) right -4px no-repeat;
+    background:url(pix/edit.png) right -4px no-repeat;
     padding-right: 24px;
 }
 
@@ -247,7 +345,7 @@
 }
 
 .mod_turnitintooltwo .score_colour {
-    background-image:url(../pix/gradback.jpg);
+    background-image:url(pix/gradback.jpg);
     width:36px;
     display:inline-block;
     float:right;
@@ -307,34 +405,12 @@ body[class*='-moodle23'] .mod_turnitintooltwo  .centered_cb_cell input {
     overflow: scroll;
 }
 
-.mod_turnitintooltwo .enrol_link, .mod_turnitintooltwo .enrolling_container, 
-.mod_turnitintooltwo .refresh_link, .mod_turnitintooltwo .refreshing_link, .mod_turnitintooltwo .messages_inbox {
-    float:right;
-    width: 190px;
-}
-
-.mod_turnitintooltwo .messages_inbox {
-    text-decoration: none;
-    padding: 2px 4px 6px 0px;
-    width: 215px;
-}
-
 .mod_turnitintooltwo .enrol_link {
     padding: 6px 18px 0 0;
 }
 
-.mod_turnitintooltwo .refresh_link, .mod_turnitintooltwo .refreshing_link {
-    padding: 2px 16px 0 12px;
-}
-
 .mod_turnitintooltwo .enrolling_container {
     padding: 4px 18px 0 0;
-}
-
-.mod_turnitintooltwo .refresh_link img, .mod_turnitintooltwo .refreshing_link img, .mod_turnitintooltwo .enrol_link img, 
-.mod_turnitintooltwo .enrolling_container img, .mod_turnitintooltwo .messages_inbox img {
-    position: relative;
-    top:4px;
 }
 
 .mod_turnitintooltwo #id_submissiontext {
@@ -466,7 +542,7 @@ h3.main {
 }
 
 .mod_turnitintooltwo noscript.warning, .mod_turnitintooltwo .library_not_present_warning,
-.mod_turnitintooltwo .general_warning, .mod_turnitintooltwo #error {
+.mod_turnitintooltwo .general_warning, .mod_turnitintooltwo #error, .mod_turnitintooltwo #full-error {
     border: 1px solid #CC0000;
     padding: 8px;
     background: #FFE9E8;
@@ -509,18 +585,15 @@ h3.main {
 
 /* Datatables styles */
 
-.mod_turnitintooltwo .partDetails .navbar .dataTables_filter {
-    float: none;
-}
-
 .mod_turnitintooltwo th.narrow, .mod_turnitintooltwo td.narrow {
     width: 60px;
 }
 
 .mod_turnitintooltwo .dataTables_wrapper table.dataTable {
     font-size: 13px;
-    border:1px solid #999999;
+    border:1px solid #EFEFEF;
     width:100% !important;
+    margin-top: 6px;
 }
 
 .mod_turnitintooltwo .dataTables_wrapper table.dataTable th {
@@ -533,7 +606,7 @@ h3.main {
 }
 
 .mod_turnitintooltwo .dataTables_wrapper table.dataTable td {
-    padding: 8px 10px 2px;
+    padding: 10px 10px;
     font-size: 13px;
     vertical-align: top;
 }
@@ -557,20 +630,16 @@ h3.main {
 }
 
 .mod_turnitintooltwo .upload_box span {
-    top: -7px;
     padding-right: 6px;
 }
 
 .mod_turnitintooltwo .student_dot_icon, .mod_turnitintooltwo .download_original_open img, .mod_turnitintooltwo .upload_box img {
     top:-3px;
+    vertical-align: middle;
 }
 
 .mod_turnitintooltwo .student_read_icon {
     top:-1px;
-}
-
-.mod_turnitintooltwo .dataTables_length, .mod_turnitintooltwo .dataTables_filter {
-    padding:6px 0;
 }
 
 .mod_turnitintooltwo .dataTables_wrapper .navbar {
@@ -743,14 +812,14 @@ h3.main {
 }
 
 .mod_turnitintooltwo .rubric_manager_launch, .mod_turnitintooltwo .rubric_view_launch {
-    background:url(../pix/rubric.png) no-repeat 0px 0px;
+    background:url(pix/rubric.png) no-repeat 0px 0px;
     padding:4px 0 4px 32px;
     line-height: 22px;
     margin-left: 6px;
 }
 
 .mod_turnitintooltwo .quickmark_manager_launch {
-    background:url(../pix/quickmark.png) no-repeat 0px 0px;
+    background:url(pix/quickmark.png) no-repeat 0px 0px;
     padding: 2px 0 2px 40px;
     height: 20px;
 }
@@ -766,11 +835,11 @@ h3.main {
 }
 
 .mod_turnitintooltwo .peermark_manager_launch {
-    background:url(../pix/peermark-settings.png) no-repeat 0px 0px;
+    background:url(pix/peermark-settings.png) no-repeat 0px 0px;
 }
 
 .mod_turnitintooltwo .peermark_reviews_launch {
-    background:url(../pix/peermark-reviews.png) no-repeat 0px 0px;
+    background:url(pix/peermark-reviews.png) no-repeat 0px 0px;
 }
 
 .mod_turnitintooltwo .editable_hide_span, .mod_turnitintooltwo .peermark_loading_span {

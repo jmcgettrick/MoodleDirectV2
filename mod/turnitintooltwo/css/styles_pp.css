@@ -140,6 +140,10 @@
     margin-bottom:6px;
 }
 
+.forumpost .tii_links_container .success {
+    width:96%;
+}
+
 .tii_links_container #ppErrors {
     width:100%;
 }
@@ -209,6 +213,7 @@
 
 .pp_turnitin_ula {
     display: none;
+    margin-bottom:16px;
 }
 
 noscript.turnitin_ula_noscript {

@@ -1,3 +1,28 @@
+### Date:       2015-May-19
+### Release:    v2015040104
+
+- Unused code and unused legacy events removed.
+- EULA can be declined in a PP assignment with submissions then only processed by Moodle and not sent to Turnitin.
+- New exception handlers added to PP cron. (Thanks to Jeff Kerzner).
+- Allow plugin installation without configuration data. (Thanks to Chris Wharton).
+- Display all option added to unlink users table.
+- PP config code refactored to use Moodle config functions. (Thanks to Michael Hughes).
+- Submission deleted box added.
+- Tidying up of Turnitin Assignment inbox.
+- A digital receipt is now sent to a student when a submission is made to Turnitin (if SMTP is setup in Moodle).
+- Fixes:
+	- Files removed from PP submission are no longer included in average grade calculation. (Thanks to Tony Butler).
+	- Document Viewer no longer hangs in Safari.
+	- Undefined offsets on my homepage removed.
+	- Submit paper link misalignment.
+	- Undefined text on Quickmark Manager closing link.
+	- Unlink users refactored to remove unnecessary connection to Turnitin.
+	- PP Text content resubmissions no longer sent if there is no content.
+	- Refresh submission links shown after refreshing of parts.
+	- Part id being set incorrectly for multi-part assignments when refreshing updated submissions in Moodle.
+
+---
+
 ### Date:       2015-April-15
 ### Release:    v2015040102
 
