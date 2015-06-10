@@ -1,3 +1,19 @@
+### Date:       2015-June-11
+### Release:    v2015040105
+
+- Plagiarism plugin support for marking workflow.
+- Logging added for resubmissions.
+- Fixes:
+	- Several database queries fixed to offer full Oracle and SQL Server support.
+	- Course end date modal box fixed in Course Migration Tool.
+	- Empty submission successful message no longer shown for unsuccessful submisisons.
+	- Manual user enrolment to courses with existing Turnitin Assignments fixed.
+	- Files added in Moodle Assignment settings no longer submitted to Turnitin.
+	- Import to course no longer creates a new Turnitin class if Turnitin Assignments already exist.
+	- Users enrolled on class in Turnitin if they are not active users on account.
+
+---
+
 ### Date:       2015-May-19
 ### Release:    v2015040104
 
