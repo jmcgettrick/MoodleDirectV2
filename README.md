@@ -20,6 +20,8 @@ The Moodle direct version 2 package contains 3 folders for each respective plugi
 
 The main plugin code is located in the zip file in **mod/turnitintooltwo** and is required by both of the other plugins to work. To install, all you need to do is copy the turnitintooltwo directory in to your moodle installations module directory /mod. You should then go to `"Site Administration" > "Notifications"` and follow the on screen instructions.
 
+If you are using a pre 2.6 version of Moodle you will have to uncomment the initialising of $module in version.php before installing.
+
 To configure the plugin go to `"Site Administration" > "Plugins" > "Activity Modules" > "Turnitin Assignment 2"` and enter your Turnitin account Id, shared key and API URL.
 
 **Note:** *The URL is different for this package to previous Turnitin plugins. It should be https://api.turnitin.com, https://submit.ac.uk. or https://sandbox.turnitin.com.*

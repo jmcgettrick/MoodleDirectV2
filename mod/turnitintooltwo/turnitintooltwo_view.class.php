@@ -385,7 +385,7 @@ class turnitintooltwo_view {
                     $elements[] = array('hidden', 'submissionagreement', 1);
                     $customdata["checkbox_label_after"] = false;
                 } else {
-                    $elements[] = array('advcheckbox', 'submissionagreement', $config->agreement, '', array(0, 1),
+                    $elements[] = array('advcheckbox', 'submissionagreement', format_string( $config->agreement ), '', array(0, 1),
                                     'required', get_string('copyrightagreementerror', 'turnitintooltwo'), PARAM_INT);
                     $customdata["checkbox_label_after"] = true;
                 }
@@ -1709,7 +1709,6 @@ class turnitintooltwo_view {
     public function init_tii_member_by_role_table($cm, $turnitintooltwoassignment, $role = "Learner") {
         global $OUTPUT;
 
-        $_SESSION["ajax"]["tii_role"] = $role;
         $cellheader = ($role == "Instructor") ? get_string('turnitintutors', 'turnitintooltwo') :
                                                 get_string('turnitinstudents', 'turnitintooltwo');
         $output = "";

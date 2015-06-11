@@ -448,7 +448,7 @@ class turnitintooltwo_submission {
     public function do_tii_submission($cm, $turnitintooltwoassignment) {
         global $DB, $USER, $CFG;
 
-        $notice = array();
+        $notice = array("success" => false);
         $context = context_module::instance($cm->id);
 
         // Check if user is a member of class, if not then join them to it.
@@ -573,13 +573,17 @@ class turnitintooltwo_submission {
                     );
 
                     $message = $this->receipt->build_message($input);
-                    
+
                     $this->receipt->send_message(
                         $this->userid,
                         $message
                     );
                 }
 
+                //Create a log entry for a resubmission.
+                if ($apimethod == "replaceSubmission") {
+                    turnitintooltwo_add_to_log($turnitintooltwoassignment->turnitintooltwo->course, "add submission", 'view.php?id='.$cm->id, get_string('addsubmissiondesc', 'turnitintooltwo') . " '" . $this->submission_title . "' (" . get_string('resubmission', 'turnitintooltwo') . ")", $cm->id, $user->id);
+                }
             } catch (Exception $e) {
                 if (!is_null($this->submission_objectid)) {
                     $errorstring = "updatesubmissionerror";

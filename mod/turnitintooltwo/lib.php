@@ -152,7 +152,7 @@ function turnitintooltwo_activitylog($string, $activity) {
  * @param  boolean $nullifnone
  */
 function turnitintooltwo_update_grades($turnitintooltwo, $userid = 0, $nullifnone = true) {
-    global $DB, $USER;
+    global $DB, $USER, $CFG;
 
     $turnitintooltwoassignment = new turnitintooltwo_assignment($turnitintooltwo->id);
     $turnitintooltwoassignment->edit_moodle_assignment(false);
@@ -161,15 +161,25 @@ function turnitintooltwo_update_grades($turnitintooltwo, $userid = 0, $nullifnon
     $parts = $DB->get_records_select("turnitintooltwo_parts", " turnitintooltwoid = ? ",
                                         array($turnitintooltwo->id), 'id ASC');
     foreach ($parts as $part) {
-        $event = $DB->get_record_select("event",
-                                        " modulename = 'turnitintooltwo' AND instance = ? AND courseid = ? AND name LIKE ? ",
-                                        array($turnitintooltwo->id, $turnitintooltwo->course, '% - '.$part->partname));
-        $updatedevent = new stdClass();
-        $updatedevent->id = $event->id;
-        $updatedevent->userid = $USER->id;
-        $updatedevent->name = $turnitintooltwo->name." - ".$part->partname;
+        $dbselect = " modulename = ? AND instance = ? AND courseid = ? AND name LIKE ? ";
+        // Moodle pre 2.5 on SQL Server errors here as queries weren't allowed on ntext fields, the relevant fields
+        // are nvarchar from 2.6 onwards so we have to cast the relevant fields in pre 2.5 SQL Server setups.
+        if ($CFG->branch <= 25 && $CFG->dbtype == "sqlsrv") {
+            $dbselect = " CAST(modulename AS nvarchar(max)) = ? AND instance = ?
+                            AND courseid = ? AND CAST(name AS nvarchar(max)) = ? ";
+        }
 
-        $DB->update_record('event', $updatedevent);
+        // Update event for assignment part
+        if ($event = $DB->get_record_select("event", $dbselect,
+                                    array('turnitintooltwo', $turnitintooltwo->id,
+                                                $turnitintooltwo->course, '% - '.$part->partname))) {
+            $updatedevent = new stdClass();
+            $updatedevent->id = $event->id;
+            $updatedevent->userid = $USER->id;
+            $updatedevent->name = $turnitintooltwo->name." - ".$part->partname;
+
+            $DB->update_record('event', $updatedevent);
+        }
     }
 }
 
@@ -1457,7 +1467,7 @@ function turnitintooltwo_init_browser_assignment_table($tiicourseid) {
  * @return html
  */
 function turnitintooltwo_show_edit_course_end_date_form() {
-    $output = html_writer::tag("span", get_string('newenddatedesc', 'turnitintooltwo'), array("id" => "edit_end_date_desc"));
+    $output = html_writer::tag("div", get_string('newenddatedesc', 'turnitintooltwo'), array("id" => "edit_end_date_desc"));
 
     $elements = array();
     $dateoptions = array('startyear' => date( 'Y', strtotime( '-6 years' )), 'stopyear' => date( 'Y', strtotime( '+6 years' )));
