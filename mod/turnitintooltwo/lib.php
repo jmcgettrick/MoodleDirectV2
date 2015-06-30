@@ -25,7 +25,7 @@
 require_once(__DIR__.'/turnitintooltwo_assignment.class.php');
 
 // Constants.
-define('TURNITINTOOLTWO_MAX_FILE_UPLOAD_SIZE', 20971520);
+define('TURNITINTOOLTWO_MAX_FILE_UPLOAD_SIZE', 41943040);
 define('TURNITINTOOLTWO_DEFAULT_PSEUDO_DOMAIN', '@tiimoodle.com');
 define('TURNITINTOOLTWO_SUBMISSION_GET_LIMIT', 100);
 define('TURNITINTOOLTWO_MAX_FILENAME_LENGTH', 180);
@@ -495,7 +495,7 @@ function turnitintooltwo_reset_course_form_definition(&$mform) {
  * A Standard Moodle function that moodle executes at the time the cron runs
  */
 function turnitintooltwo_cron() {
-    global $DB;
+    global $DB, $CFG;
 
     // get assignment that needs updating and check whether it exists
     if ($assignment = $DB->get_record('turnitintooltwo', array("needs_updating" => 1), '*', IGNORE_MULTIPLE)) {
@@ -524,6 +524,7 @@ function turnitintooltwo_cron() {
             $grades->userid = $user->id;
             $params['idnumber'] = $cm->idnumber;
 
+            @include_once($CFG->dirroot."/lib/gradelib.php");
             grade_update('mod/turnitintooltwo', $turnitintooltwoassignment->turnitintooltwo->course, 'mod',
                 'turnitintooltwo', $turnitintooltwoassignment->turnitintooltwo->id, 0, $grades, $params);
         }
@@ -617,29 +618,40 @@ function turnitintooltwo_tempfile(array $filename, $suffix) {
 
     $filename = implode('_', $filename);
     $filename = str_replace(' ', '_', $filename);
-    
-    $fp = false;
-    $tempdir = $CFG->dataroot.'/temp/turnitintooltwo';
-    if (!file_exists($tempdir)) {
-        mkdir( $tempdir, $CFG->directorypermissions, true );
-    }
-    // Get file extension and shorten filename if too long.
+
+    $tempdir = make_temp_directory('turnitintooltwo');
+
+    // Get the file extension (if there is one).
     $pathparts = explode('.', $suffix);
-    $ext = array_pop($pathparts);
+    $ext = '';
+    if (count($pathparts) > 1) {
+        $ext = '.' . array_pop($pathparts);
+    }
 
     $permittedstrlength = TURNITINTOOLTWO_MAX_FILENAME_LENGTH - strlen($tempdir.DIRECTORY_SEPARATOR);
-    if (strlen($filename) > $permittedstrlength) {
-        $filename = substr($filename, 0, $permittedstrlength);
+    $extlength = strlen('_' . mt_getrandmax() . $ext);
+    if ($extlength > $permittedstrlength) {
+        // Someone has likely used a filename with an absurdly long extension, or the
+        // tempdir path is huge, so preserve the extension as much as possible.
+        $extlength = $permittedstrlength;
     }
 
-    // filename with random string at the end
-    $filename = $filename . '_' . mt_rand() . '.'.$ext;
+    // Shorten the filename as needed, taking the extension into consideration.
+    $permittedstrlength -= $extlength;
+    $filename = substr($filename, 0, $permittedstrlength);
 
-    while (!$fp) {
-        $file = $tempdir.DIRECTORY_SEPARATOR.$filename;
-        $fp = @fopen($file, 'w');
-    }
-    fclose($fp);
+    $tries = 0;
+    do {
+        if ($tries == 10) {
+            throw new invalid_dataroot_permissions("turnitintooltwo temporary file cannot be created.");
+        }
+        $tries++;
+
+        // Filename with random string at the end.
+        $file = $tempdir . DIRECTORY_SEPARATOR . $filename .
+            substr('_' . mt_rand() . $ext, 0, $extlength);
+    } while (!touch($file));
+
     return $file;
 }
 

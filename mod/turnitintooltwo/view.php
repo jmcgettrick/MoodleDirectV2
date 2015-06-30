@@ -54,7 +54,16 @@ if (isset($_SESSION["notice"])) {
 }
 
 if ($id) {
-    if (!$cm = get_coursemodule_from_id('turnitintooltwo', $id)) {
+    //Pre 2.8 does not have the function get_course_and_cm_from_cmid.
+    if ($CFG->branch >= 28) {
+        list($course, $cm) = get_course_and_cm_from_cmid($id, 'turnitintooltwo');
+    }
+    else {
+        $cm = get_coursemodule_from_id('turnitintooltwo', $id, 0, false, MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    }
+
+    if (!$cm) {
         turnitintooltwo_print_error('coursemodidincorrect', 'turnitintooltwo');
     }
     if (!$course = $DB->get_record("course", array("id" => $cm->course))) {
@@ -78,8 +87,15 @@ if ($id) {
 // If opening DV then $viewcontext needs to be set to box
 $viewcontext = ($do == "origreport" || $do == "grademark" || $do == "default") ? "box" : $viewcontext;
 
-require_login($course->id);
+require_login($course->id, true, $cm);
 turnitintooltwo_activitylog('view.php?id='.$id.'&do='.$do, "REQUEST");
+
+//Check if the user has the capability to view the page - used when an assignment is set to hidden.
+$context = context_module::instance($cm->id);
+require_capability('mod/turnitintooltwo:view', $context);
+
+//Set the page layout to base. 
+$PAGE->set_pagelayout('base');
 
 // Settings for page navigation
 if ($viewcontext == "window") {
@@ -168,7 +184,7 @@ if (!empty($action)) {
             $post['submissiontext'] = optional_param('submissiontext', '', PARAM_TEXT);
             $post['submissiontext'] = trim($post['submissiontext']);
             $post['submissiontitle'] = optional_param('submissiontitle', '', PARAM_TEXT);
-            $post['submissiontitle'] = trim($post['submissiontitle']);
+            $post['submissiontitle'] = trim(filter_var($post['submissiontitle'], FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW));
             $post['studentsname'] = optional_param('studentsname', $USER->id, PARAM_INT);
             $post['studentsname'] = ($istutor) ? $post['studentsname'] : $USER->id;
             $post['submissionpart'] = required_param('submissionpart', PARAM_INT);
@@ -503,7 +519,8 @@ switch ($do) {
         break;
 
     case "submissions":
-        turnitintooltwo_add_to_log($turnitintooltwoassignment->turnitintooltwo->course, "list submissions", 'view.php?id='.$cm->id, get_string('listsubmissionsdesc', 'turnitintooltwo') . ": $course->id", $cm->id);
+        $listsubmissionsdesc = ($istutor) ? "listsubmissionsdesc" : "listsubmissionsdesc_student";
+        turnitintooltwo_add_to_log($turnitintooltwoassignment->turnitintooltwo->course, "list submissions", 'view.php?id='.$cm->id, get_string($listsubmissionsdesc, 'turnitintooltwo') . ": $course->id", $cm->id);
 
         if (!$istutor && !has_capability('mod/turnitintooltwo:submit', context_module::instance($cm->id))) {
             turnitintooltwo_print_error('permissiondeniederror', 'turnitintooltwo');

@@ -237,21 +237,24 @@ jQuery(document).ready(function($) {
     var useGradeMark = ($('table.submissionsDataTable th.cgrade').length > 0) ? true : false;
     var multipleParts = ($('table.submissionsDataTable th.coverallgrade').length > 0) ? true : false;
     for (var i=0; i < noOfColumns; i++) {
-        if (i == 2 || i == 3) {
+        if (i == 2) {
             submissionsDataTableColumns.push(null);
             visibleCols.push(true);
         } else if (i == 4) {
+            submissionsDataTableColumns.push({"iDataSort": i-1, "sType":"string"});
+            visibleCols.push(true);
+        } else if (i == 5) {
             submissionsDataTableColumns.push({"sClass": "right"});
             visibleCols.push(true);
-        } else if (i == 6 || (i == 8 && showOrigReport) || ((i == 8 && !showOrigReport) || (i == 10 && useGradeMark))) {
+        } else if (i == 7 || (i == 9 && showOrigReport) || ((i == 9 && !showOrigReport) || (i == 11 && useGradeMark))) {
             submissionsDataTableColumns.push({"sClass": "right", "iDataSort": i-1, "sType":"numeric"});
             visibleCols.push(true);
-        } else if (i == 1 || ((i >= 7 && !showOrigReport && !useGradeMark)
-                                || (i >= 9 && ((!showOrigReport && useGradeMark) || (showOrigReport && !useGradeMark))) 
-                                || (i >= 11 && showOrigReport && useGradeMark))) {
+        } else if (i == 1 || ((i >= 8 && !showOrigReport && !useGradeMark)
+                                || (i >= 10 && ((!showOrigReport && useGradeMark) || (showOrigReport && !useGradeMark))) 
+                                || (i >= 12 && showOrigReport && useGradeMark))) {
             submissionsDataTableColumns.push({"sClass": "center", "bSortable": false});
             visibleCols.push(true);
-        } else if ((i == 0) || (i == 5) || (i == 7 && showOrigReport) || ((i == 7 && !showOrigReport) || (i == 9 && useGradeMark))) {
+        } else if ((i == 0) || (i == 3) || (i == 6) || (i == 8 && showOrigReport) || ((i == 8 && !showOrigReport) || (i == 10 && useGradeMark))) {
             submissionsDataTableColumns.push({"bVisible": false});
             visibleCols.push(false);
         }
@@ -615,9 +618,9 @@ jQuery(document).ready(function($) {
             }
         });
 
-        if ( $('#export_options').hasClass('tii_export_options_hide') ) {
+        if ($('#export_options').hasClass('tii_export_options_hide')) {
             $('#export_options').hide();
-            $('.export_data').append('<span class="empty-dash">--</span>');
+            $('.export_data').html('<span class="empty-dash">--</span>');
         }
 
         $('.editable_postdue').on("click", function() {
@@ -670,7 +673,7 @@ jQuery(document).ready(function($) {
 
                     if (response.export_option == "tii_export_options_hide") {
                         $('#export_options').hide();
-                        $('.export_data').append('<span class="empty-dash">--</span>');
+                        $('.export_data').html('<span class="empty-dash">--</span>');
                     } else {
                         $('.empty-dash').remove();
                         $('#export_options').show();

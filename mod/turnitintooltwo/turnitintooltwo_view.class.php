@@ -489,6 +489,8 @@ class turnitintooltwo_view {
         $cells["checkbox"] = new html_table_cell( ($istutor) ? html_writer::checkbox(false, false, false, '', array("class" => "select_all_checkbox")) : '&nbsp;' );
         $cells["student"] = ($istutor) ? new html_table_cell(get_string('student', 'turnitintooltwo')) : new html_table_cell();
         $cells["student"]->attributes['class'] = 'left';
+        $cells["title_raw"] = new html_table_cell('&nbsp;');
+        $cells["title_raw"]->attributes['class'] = 'raw_data';
         $cells["title"] = new html_table_cell(get_string('submissiontitle', 'turnitintooltwo'));
         $cells["title"]->attributes['class'] = 'left';
         $cells["paper_id"] = new html_table_cell(get_string('objectid', 'turnitintooltwo'));
@@ -584,18 +586,18 @@ class turnitintooltwo_view {
                     $cells = array();
                     foreach ($submission as $cell) {
                         $cells[$j] = new html_table_cell($cell);
-                        if ($j == 2 || $j == 3) {
+                        if ($j == 2 || $j == 3 || $j == 4) {
                             $cells[$j]->attributes['class'] = "left";
-                        } else if ($j == 4 || $j == 6) {
+                        } else if ($j == 5 || $j == 7) {
                             $cells[$j]->attributes['class'] = "right";
-                        } else if (($j == 7 && $origreportenabled) || ($j == 7 && !$origreportenabled && $grademarkenabled) ||
-                                    ($j == 9 && $origreportenabled && $grademarkenabled)) {
+                        } else if (($j == 8 && $origreportenabled) || ($j == 8 && !$origreportenabled && $grademarkenabled) ||
+                                    ($j == 10 && $origreportenabled && $grademarkenabled)) {
                             $cells[$j]->attributes['class'] = "raw_data";
                         } else {
                             $cells[$j]->attributes['class'] = "centered_cell";
                         }
 
-                        if ((count($submission) == 15 && $j == 10) || (count($submission) == 14 && $j == 9)) {
+                        if ((count($submission) == 16 && $j == 11) || (count($submission) == 15 && $j == 10)) {
                             $cells[$j]->attributes['class'] = "noscript_hide";
                         }
 
@@ -638,7 +640,7 @@ class turnitintooltwo_view {
                 $output .= $OUTPUT->box($messagesinbox.$refreshlink.$refreshinglink, 'tii_table_functions', 'tii_table_functions_'.$partid);
             }
         }
-        
+
         $output .= html_writer::alist($tabitems, array("id" => "part_tabs_menu"));
 
         $output .= $tables;
@@ -807,7 +809,12 @@ class turnitintooltwo_view {
                                      'tii_export_options_show' : 'tii_export_options_hide';
 
             $links = $OUTPUT->box_start($export_options, 'export_options');
-            $links .= $exportxlszip.$exportpdfzip.$exportoriginalzip;
+
+            // Show the export links if they should be available. 
+            if ($turnitintooltwoassignment->turnitintooltwo->anon == 0 || time() > $partdetails[$partid]->dtpost) {
+                $links .= $exportxlszip.$exportpdfzip.$exportoriginalzip;
+            }
+
             $links .= $OUTPUT->box_end(true);
 
             if ($turnitintooltwoassignment->count_submissions($cm, $partid) == 0) {
@@ -1105,11 +1112,13 @@ class turnitintooltwo_view {
         //submission title
         if ( !empty($submission->submission_objectid) AND !empty($submission->submission_objectid) ) {
             $title = $OUTPUT->box_start('default_open', 'default_'.$submission->submission_objectid.'_'.$partid.'_'.$moodleuserid);
-            $title .= $OUTPUT->box(format_string($submission->submission_title), 'submission_title');
+            $title .= $OUTPUT->box(format_string($submission->submission_title), 'submission_title underline');
             $title .= $OUTPUT->box($CFG->wwwroot.'/mod/turnitintooltwo/view.php?id='.$cm->id, 'dv_url', 'default_url_'.$submission->submission_objectid);
             $title .= $OUTPUT->box_end(true);
+            $rawtitle = $submission->submission_title;
         } else {
             $title = "--";
+            $rawtitle = "--";
         }
 
         $objectid = (!empty($submission->submission_objectid)) ? $submission->submission_objectid : "--";
@@ -1170,7 +1179,12 @@ class turnitintooltwo_view {
 
         // Show grade and link to DV.
         if ($config->usegrademark) {
-            if (isset($submission->submission_objectid) && ($istutor || (!$istutor && $parts[$partid]->dtpost < time()))) {
+            if ($turnitintooltwoassignment->turnitintooltwo->grade == 0) {
+                //We set the grade column to N/A if there is no grade type set.
+                $rawgrade = null;
+                $grade = $OUTPUT->box('N/A', '');
+            }
+            else if (isset($submission->submission_objectid) && ($istutor || (!$istutor && $parts[$partid]->dtpost < time()))) {
                 $submissiongrade = (!is_null($submission->submission_grade)) ? $submission->submission_grade : '';
 
                 if (is_null($submission->submission_grade) || ($submission->submission_gmimaged == 0 && !$istutor)) {
@@ -1347,7 +1361,7 @@ class turnitintooltwo_view {
             }
         }
 
-        $data = array($partid, $checkbox, $studentname, $title, $objectid, $rawmodified, $modified);
+        $data = array($partid, $checkbox, $studentname, $rawtitle, $title, $objectid, $rawmodified, $modified);
         if (($istutor) || (!$istutor && $turnitintooltwoassignment->turnitintooltwo->studentreports)) {
             $data[] = $rawscore;
             $data[] = $score;
@@ -1390,6 +1404,7 @@ class turnitintooltwo_view {
         if ($start == 0) {
             $submissions = $turnitintooltwoassignment->get_submissions($cm, $partid);
             $_SESSION["submissions"][$partid] = $submissions[$partid];
+            $_SESSION["num_submissions"][$partid] = count($submissions[$partid]);
         }
 
         $submissiondata = array();
@@ -1400,15 +1415,12 @@ class turnitintooltwo_view {
         foreach ($_SESSION["submissions"][$partid] as $submission) {
             $i++;
 
-            if ($i < $start) {
-                continue;
-            } else {
-
-                $data = $this->get_submission_inbox_row($cm, $turnitintooltwoassignment, $parts, $partid, $submission,
+            $data = $this->get_submission_inbox_row($cm, $turnitintooltwoassignment, $parts, $partid, $submission,
                                                         $useroverallgrades, $istutor);
-                $submissiondata[] = $data;
-                $j++;
-            }
+            $submissiondata[] = $data;
+            // Remove submission from session
+            unset($_SESSION["submissions"][$partid][$submission->userid]);
+            $j++;
 
             if ($j == TURNITINTOOLTWO_SUBMISSION_GET_LIMIT) {
                 break;

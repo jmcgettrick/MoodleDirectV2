@@ -47,7 +47,7 @@ class turnitintooltwo_user {
     }
 
     /**
-     *  Get the Moodle user id from the Turnitin id
+     *  Get the Moodle user id from the Turnitin id ignoring and unlinking deleted Moodle accounts.
      *
      * @param int $tiiuserid The turnitin userid
      * @return int the moodle user id
@@ -56,9 +56,17 @@ class turnitintooltwo_user {
         global $DB;
         $userid = 0;
 
-        if ($user = $DB->get_record('turnitintooltwo_users', array('turnitin_uid' => $tiiuserid))) {
-            $userid = (int)$user->userid;
+        $tiiusers = $DB->get_records('turnitintooltwo_users', array('turnitin_uid' => $tiiuserid));
+
+        foreach ($tiiusers as $tiiuser) {
+            $moodleuser = $DB->get_record('user', array('id' => $tiiuser->userid));
+            // Don't return a deleted user
+            if ($moodleuser->deleted == 0) {
+                $userid = (int)$tiiuser->userid;
+                break;
+            }
         }
+
         return $userid;
     }
 
@@ -263,27 +271,27 @@ class turnitintooltwo_user {
      */
     public function edit_tii_user() {
 
-        // $config = turnitintooltwo_admin_config();
-        // $turnitincomms = new turnitintooltwo_comms();
-        // $turnitincall = $turnitincomms->initialise_api();
+        $config = turnitintooltwo_admin_config();
+        $turnitincomms = new turnitintooltwo_comms();
+        $turnitincall = $turnitincomms->initialise_api();
 
-        // // Only update if pseudo is not enabled.
-        // if (empty($config->enablepseudo)) {
-        //     $user = new TiiUser();
-        //     $user->setFirstName($this->firstname);
-        //     $user->setLastName($this->lastname);
+        // Only update if pseudo is not enabled.
+        if (empty($config->enablepseudo)) {
+            $user = new TiiUser();
+            $user->setFirstName($this->firstname);
+            $user->setLastName($this->lastname);
 
-        //     $user->setUserId($this->tii_user_id);
-        //     $user->setDefaultRole($this->role);
+            $user->setUserId($this->tii_user_id);
+            $user->setDefaultRole($this->role);
 
-        //     try {
-        //         $turnitincall->updateUser($user);
-        //         turnitintooltwo_activitylog("Turnitin User updated: ".$this->id." (".$this->tii_user_id.")", "REQUEST");
-        //     } catch (Exception $e) {
-        //         $toscreen = ($this->workflowcontext == "cron") ? false : true;
-        //         $turnitincomms->handle_exceptions($e, 'userupdateerror', $toscreen);
-        //     }
-        // }
+            try {
+                $turnitincall->updateUser($user);
+                turnitintooltwo_activitylog("Turnitin User updated: ".$this->id." (".$this->tii_user_id.")", "REQUEST");
+            } catch (Exception $e) {
+                $toscreen = ($this->workflowcontext == "cron") ? false : true;
+                $turnitincomms->handle_exceptions($e, 'userupdateerror', $toscreen);
+            }
+        }
     }
 
     /**
