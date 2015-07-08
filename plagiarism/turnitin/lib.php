@@ -1548,7 +1548,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
         }
 
         $assignment->setAuthorOriginalityAccess($modulepluginsettings["plagiarism_show_student_report"]);
-        $assignment->setResubmissionRule($modulepluginsettings["plagiarism_report_gen"]);
+        $assignment->setResubmissionRule((int)$modulepluginsettings["plagiarism_report_gen"]);
         $assignment->setBibliographyExcluded($modulepluginsettings["plagiarism_exclude_biblio"]);
         $assignment->setQuotedExcluded($modulepluginsettings["plagiarism_exclude_quoted"]);
         $assignment->setSmallMatchExclusionType($modulepluginsettings["plagiarism_exclude_matches"]);
@@ -2816,7 +2816,7 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                                     get_string('turnitinsubmissionid', 'turnitintooltwo').': '.$newsubmissionid;
 
             //Send a message to the user's Moodle inbox with the digital receipt.
-            if ( ! empty($CFG->smtphosts) && ! empty($CFG->smtpuser) && ! empty($CFG->smtppass) ) {
+            if ( ! empty($CFG->smtphosts)) {
                 $receipt = new receipt_message();
 
                 $moduledata = $DB->get_record($cm->modname, array('id' => $cm->instance));
