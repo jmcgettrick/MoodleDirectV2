@@ -1,7 +1,17 @@
-Moodle Direct v2 
+Moodle Direct v2
 ================
 
-Please be aware that the **Develop** branch should not be considered production ready and may contain bugs. It should be avoided in favor of the **Master** branch. 
+This collection of Moodle plugins is no longer updated. The folders have been split into separate repositories at:
+
+- https://github.com/jmcgettrick/moodle-mod_turnitintooltwo
+- https://github.com/jmcgettrick/moodle-plagiarism_turnitin
+- https://github.com/jmcgettrick/moodle-block_turnitin
+
+The code will remain here until our next release and we will endeavour to resolve currently open issues and pull requests. This page will remain but only as a pointer to the separate repositories.
+
+--------------
+
+Please be aware that the **Develop** branch should not be considered production ready and may contain bugs. It should be avoided in favor of the **Master** branch.
 
 To see what has changed in recent versions of Moodle Direct V2, see the [CHANGELOG](https://github.com/jmcgettrick/MoodleDirectV2/blob/master/CHANGELOG.md).
 
