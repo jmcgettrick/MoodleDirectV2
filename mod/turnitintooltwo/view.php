@@ -102,6 +102,8 @@ if ($viewcontext == "window") {
     $PAGE->set_course($course);
 }
 
+$PAGE->set_cm($cm);
+
 // Configure URL correctly.
 $urlparams = array('id' => $id, 'a' => $a, 'part' => $part, 'user' => $user, 'do' => $do, 'action' => $action, 
                     'view_context' => $viewcontext);
