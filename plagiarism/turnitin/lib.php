@@ -1235,8 +1235,9 @@ class plagiarism_plugin_turnitin extends plagiarism_plugin {
                     $gradeitem = $DB->get_record('grade_items',
                                     array('iteminstance' => $cm->instance, 'itemmodule' => $cm->modname, 'courseid' => $cm->course, 'itemnumber' => 0));
                 }
+                $plagiarismfile->grade = is_null($plagiarismfile->grade) ? 0 : $plagiarismfile->grade;
 
-                if (!is_null($plagiarismfile->grade) && !empty($gradeitem)) {
+                if (!empty($gradeitem)) {
                     $return = $this->update_grade($cm, $tiisubmission, $submissiondata->userid);
                 }
             }
